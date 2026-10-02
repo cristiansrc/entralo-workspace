@@ -1,0 +1,13 @@
+# .gitleaksignore — allowlist estrecha por fingerprint para Gitleaks (formato v8: file:rule-id:start-line)
+# Regla: cada línea no vacía y sin '#' es un fingerprint EXACTO a ignorar; nada más tiene efecto.
+#
+# Registro de motivo (sin reproducir el match):
+#   - Hallazgo: unico finding del secret scan filesystem, clasificado FALSO POSITIVO por security-reviewer.
+#   - Motivo: prosa de documentacion de arquitectura sobre manejo de tarjetas/ambito PCI; no es una credencial.
+#   - Alcance: SOLO el fingerprint exacto indicado abajo. No se excluye el archivo completo
+#     ni se desactiva/atenúa la regla global generic-api-key.
+#   - Procedencia: decision explicita de security-reviewer (falso positivo unico), 2026-10-01.
+#   - Reversion: retirar esta entrada si la clasificacion de seguridad cambia o si la estructura
+#     del archivo referenciado cambia (el fingerprint depende de la linea de inicio).
+#
+docs/architecture/architecture-proposal.md:generic-api-key:293
