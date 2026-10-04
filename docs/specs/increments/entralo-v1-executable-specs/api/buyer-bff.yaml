@@ -1,0 +1,412 @@
+openapi: 3.1.0
+info: {title: Entralo canal Buyer BFF, version: 1.0.0, description: 'Lifecycle planning. Browser same-origin→transporteVercel→RESTWAF→BFFKotlinAWS. Cookies de host buyer, no owner público directo. No reglas de stock/saga enBFF.'}
+security: [{Session: []}]
+servers: [{url: 'https://buyer.entralo.invalid', description: 'Canal documental same-origin; host real pendiente de bootstrap.'}]
+tags: [{name: BuyerBff, description: 'Grupo generado del componente Buyer BFF.'}]
+x-http-contract: {timeout_seconds: 5, connect_timeout_seconds: 1, read_max_attempts: 2, read_total_budget_seconds: 5, mutation_retry: same-key-only, caching: no-store, public_cache_seconds: 0, sensitive_body_logging: forbidden, error_contract: ApiErrorResponse, origin_policy: exact-allowlist, principal_validation: owner-validated}
+x-owner-error-propagation: 'Conservar status de todo 4xx/429 del owner, code y details seguros ApiErrorResponse; path template del canal, trace_id correlacionado, rejected_value null. Conservar Retry-After 429/503 y no-store; sin 200 falso, sin convertir 4xx a 503. Timeout/transporte sin respuesta válida: 503 DEPENDENCY_UNAVAILABLE. Owner 5xx: 500 INTERNAL_ERROR o 503 DEPENDENCY_UNAVAILABLE sin datos internos. Sin retry de 4xx/429 ni de mutación incierta. Verificación conserva su envelope 503 explícito.'
+x-error-code-registry: {source: 'common.yaml#/x-error-codes', registry_version: 1, parity: owner-status-code-details, unknown_owner_code_or_status: contract-drift}
+x-owner-contract-drift: 'Status no declarado en proxy o code fuera registry/status/operación: 503 DEPENDENCY_UNAVAILABLE sanitizado e incidente bff_owner_contract_drift_total{owner,operation}; sin body/PII en log, no reintento monetario. Verificación usa VerificationUnavailable503 con code VERIFICACION_NO_DISPONIBLE y last_known=null. No reemplazar errores conocidos por fallback.'
+paths:
+  /v1/session:
+    get:
+      operationId: readBuyerSession
+      summary: Consultar sesión de comprador
+      tags: [BuyerBff]
+      security: []
+      description: 'Read5s segura/idempotente; sin sesión200authenticatedfalse/profile null, no crea sesión/hold. ACTIVE mapping verifiedactual; noCognito token respuesta. Rate limit excedido:429 RATE_LIMITED con Retry-After; sin sesión no es401.'
+      responses:
+        '200': {description: Sesiónbuyer, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/SessionView'}}}}
+        '429': {$ref: 'common.yaml#/components/responses/Error'}
+        '500': &err {$ref: 'common.yaml#/components/responses/Error'}
+        '503': *err
+    delete:
+      operationId: logoutBuyer
+      summary: Cerrar sesión de comprador
+      tags: [BuyerBff]
+      security: &mutation [{Session: [], Csrf: []}]
+      description: 'Originexacto+CSRF. Idempotentelogout5s, sesiónlocalrevocada aunqueCognito caiga, borracookie; no revierteorden/hold/pago. Sesión yaausente204, noKeynecesaria.'
+      responses:
+        '204': {description: Logoutlocaldurable.}
+        '403': *err
+        '500': *err
+        '503': *err
+  /v1/login-requests:
+    post:
+      operationId: beginBuyerLogin
+      summary: Iniciar autenticación de comprador
+      tags: [BuyerBff]
+      security: []
+      description: 'Originexacto/rate/CAPTCHA risk-based. Crea state/nonce/PKCEserver-side TTL5min y loginintentúnico,key. DevuelveURLCognitoallowlist noexternaarbitraria;5s. Signup/reset en HostedUI no contraseñas Entralo; nohold.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/LoginRequest'}}}}
+      responses:
+        '201': {description: 'Redirección OIDC allowlist, no bearer/session token.', content: {application/json: {schema: {type: object, additionalProperties: false, required: [authorization_url], properties: {authorization_url: {type: string, format: uri, description: Cognitoauthorizeissuerallowlist}}}}}}
+        '400': *err
+        '403': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/auth/callback:
+    get:
+      operationId: completeBuyerOidc
+      summary: Completar autenticación de comprador
+      tags: [BuyerBff]
+      security: []
+      description: 'OIDC callback sideeffectprotocol explícito, no GETnegocio. stateoneuse TTL5min/nonce/PKCE/issuer/clientid tokenvalidado, Identitybinding antes sesiónoperable/contactverified. Codeexchangeincierto reinicialogin no replaycode;5sCognito+mappingbudget5s/store2s, total15s. Setcookie nunca tokenpayload/log;303returnpathallowlist.'
+      x-timeout-seconds: 15
+      parameters:
+        - {name: code, in: query, required: true, schema: {type: string, minLength: 1, maxLength: 2048}, description: Sensiblenolog/noquerysampling.}
+        - {name: state, in: query, required: true, schema: {type: string, minLength: 32, maxLength: 200}}
+      responses:
+        '303': {description: Sesiónsegura operable/nohold, headers: {Location: {schema: {type: string}}, Set-Cookie: {schema: {type: string}, description: HttpOnly/Secure/SameSiteLax __Host- cookie hostbuyer.}}}
+        '400': *err
+        '401': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/me:
+    get:
+      operationId: readBuyerProfile
+      summary: Consultar perfil de comprador
+      tags: [BuyerBff]
+      description: 'ProxyIdentityreadOwnProfile,5s safe/idempotente, userIdserverbinding no cliente; noeffects.'
+      responses:
+        '200': {description: Perfilpropio, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Profile'}}}}
+        '401': *err
+        '403': *err
+        '429': *err
+        '500': *err
+        '503': *err
+    put:
+      operationId: replaceBuyerProfile
+      summary: Reemplazar perfil de comprador
+      tags: [BuyerBff]
+      security: *mutation
+      description: 'ProxyIdentityreplaceOwnProfile exactDTO/key/If-Match,Origin/CSRF,5s; efectosprofileversion owner, no identidadnueva.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/ProfileUpdate'}}}}
+      responses:
+        '200': {description: Perfilactualizado, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Profile'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '409': *err
+        '412': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/events:
+    get:
+      operationId: listBuyerCatalog
+      summary: Listar catálogo público
+      tags: [BuyerBff]
+      security: []
+      description: 'ProxyCatalogpúblico; seguraidempotente5s/page0size20max100 startsatasc/id, sinhold; oferta noPII.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Page'}, {$ref: 'common.yaml#/components/parameters/Size'}]
+      responses:
+        '200': {description: Catálogo, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/EventPage'}}}}
+        '400': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/events/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readBuyerEvent
+      summary: Consultar evento y disponibilidad
+      tags: [BuyerBff]
+      security: []
+      description: 'Catalog+PurchasesAvailabilitylecturasindependientes,5stotal/read1retrydentrobudget. Version mismatch/dependenciaavailabilityfallo→UNKNOWN no promesa stock; Catalogfallo503. Seguro/idempotente/sinefecto.'
+      responses:
+        '200': {description: Oferta+disponibilidadfechada, content: {application/json: {schema: {type: object, additionalProperties: false, required: [event, availability], properties: {event: {$ref: 'common.yaml#/components/schemas/EventPublic'}, availability: {$ref: 'common.yaml#/components/schemas/Availability'}}}}}}
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/holds:
+    post:
+      operationId: createBuyerHold
+      summary: Crear reserva propia
+      tags: [BuyerBff]
+      security: *mutation
+      description: 'Auth anteshold,5s exactproxyPurchasesreserveTickets; preserveskey/DTO noclientuser/monto. Efectosstock/limit/order/hold sóloownertx; sinCognito/ownerdeny ceroeffects. Replaymismoclocks.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/HoldRequest'}}}}
+      responses:
+        '201': {description: Holdpropio, headers: {Location: {schema: {type: string}}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Order'}}}}
+        '200': {description: Replaymismohold, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Order'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readBuyerOrder
+      summary: Consultar orden propia
+      tags: [BuyerBff]
+      description: 'ProxyPurchasesreadOwnOrder,5sseguraidempotente/sin renovarhold; ajeno404.'
+      responses:
+        '200': {description: Ordenpropia, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Order'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/card-payments:
+    post:
+      operationId: createBuyerCardPayment
+      summary: Crear pago propio con tarjeta
+      tags: [BuyerBff]
+      security: *mutation
+      x-timeout-seconds: 15
+      description: 'ProxyPaymentscreateCardPayment,15s total/MP10s, syncTLSúnicamente. TokennoDB/log/SQS/APM/bodysampling; no nuevoMP porretrybrowser, key estableorderintent consultable. Buyerowner/OriginCSRF antescobro; providerapproved no prueba entrega/venta.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/CardPaymentRequest'}}}}
+      responses:
+        '202': {description: EstadoMP noemisión, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PaymentView'}}}}
+        '200': {description: Replaymismopago, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PaymentView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}/refund-requests:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: createBuyerRefundRequest
+      summary: Solicitar devolución propia
+      tags: [BuyerBff]
+      security: *mutation
+      description: 'ProxyPurchasesrequestOwnRefund,5s/key/OriginCSRF, nocalculaeligibilityBFF. Sóloowner/SUPPORTautorizadespués; efecto solicitud noMP.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundRequest'}}}}
+      responses:
+        '202': {description: Solicituddurable, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}/refund-adjustments:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: listBuyerRefundAdjustments
+      summary: Consultar ajustes de orden propia
+      tags: [BuyerBff]
+      description: 'Proxy Purchases listOwnRefundAdjustments, sesión buyer propia, 5s total/no-store, máximo una repetición segura dentro budget. Sin body/Key/CSRF por lectura; auth/propiedad owner, ajeno404. Mismo AdjustmentPage/order/page/size/errores, id/amount sólo servidor. No estado BFF ni mapping/monto/guard/approval/MP; desde cuenta buyer obtiene adjustment_id para RefundRequest, no depende email. HTTP transport timeout503, sin efectos; refund_adjustment_read_total{outcome} en owner.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Page'}, {$ref: 'common.yaml#/components/parameters/Size'}]
+      responses:
+        '200': {description: Página de ajustes propios, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdjustmentPage'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/payment-intents/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readBuyerPaymentIntent
+      summary: Consultar intención de pago propia
+      tags: [BuyerBff]
+      description: 'ProxyPaymentsreadOwnPaymentIntent5s; lectura segura/idempotente sóloowner, sinMP/nuevo pago, ajeno404.'
+      responses:
+        '200': {description: Estadopropio, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PaymentView'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders:
+    get:
+      operationId: listBuyerOrders
+      summary: Listar órdenes propias
+      tags: [BuyerBff]
+      description: 'ProxyPurchaseslistOwnOrders5s seguro/idempotente, created_atdesc/id,page0size20max100, sinPIIajena.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Page'}, {$ref: 'common.yaml#/components/parameters/Size'}]
+      responses:
+        '200': {description: Órdenespropias, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/OrderPage'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/holds/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readBuyerHold
+      summary: Consultar reserva propia
+      tags: [BuyerBff]
+      description: 'ProxyPurchasesreadOwnHold5s seguro/idempotente sin renovarclocks ni stock, ajeno404.'
+      responses:
+        '200': {description: Holdpropio, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Order'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}/cancellations:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: cancelBuyerUnpaidOrder
+      summary: Cancelar orden sin pago iniciado
+      tags: [BuyerBff]
+      security: *mutation
+      description: 'ProxyPurchasescancelUnpaidOwnOrder5s key/OriginCSRF, sinbody; sólo nointentclaim/venta, releaseirreversible; iniciada409 no refund porabandonar.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      responses:
+        '200': {description: Ordenliberadaoreplay, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Order'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}/tickets:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}, {$ref: 'common.yaml#/components/parameters/Page'}, {$ref: 'common.yaml#/components/parameters/Size'}]
+    get:
+      operationId: readBuyerOwnTickets
+      summary: Listar boletas propias privadas
+      tags: [BuyerBff]
+      description: 'ProxyTicketingreadOwnTickets5s seguro/idempotente, owner/CSRF no para lectura, no-store sin logQR/body/referrer; page0size20max100 ticket_idasc. Sin proofmetadata pública.'
+      responses:
+        '200': {description: Boletasprivadascomprador, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/TicketPage'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/refunds/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readBuyerRefund
+      summary: Consultar devolución propia
+      tags: [BuyerBff]
+      description: 'ProxyPurchasesreadOwnRefund5s segura/idempotente, owner/ajeno404, sinMP ni acreditaciónprometida.'
+      responses:
+        '200': {description: Refundpropio, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundView'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}/receipts:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readBuyerReceipt
+      summary: Descargar comprobante no fiscal propio
+      tags: [BuyerBff]
+      x-timeout-seconds: 15
+      description: 'ProxyPurchasesreadOwnNonFiscalReceipt owner10s/canal15s; GET seguro/idempotente no-store/attachment/≤3MBarchivo4MBbody/nopresign302; retry sóloantesbytes, fallo no rollback.'
+      responses:
+        '200': {description: 'Comprobante de compra — NO fiscal', headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}, Content-Disposition: {schema: {type: string, const: attachment}}}, content: {application/pdf: {schema: {type: string, format: binary}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}/invoice-requests:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: createBuyerExternalInvoiceRequest
+      summary: Solicitar factura externa manual
+      tags: [BuyerBff]
+      security: *mutation
+      description: 'ProxyPurchasesrequestExternalInvoice5s/key/CSRFOrigin; PIIholder sólo esta solicitud, no logs, manualexterna noAPI ni CUFEgenerado.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceRequest'}}}}
+      responses:
+        '202': {description: Solicitudoficialmanual, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/invoice-requests/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readBuyerInvoiceRequest
+      summary: Consultar solicitud fiscal propia
+      tags: [BuyerBff]
+      description: 'Proxy Purchases readOwnInvoiceRequest5s seguro/idempotente sin efectos, owner/ajeno404; no-store, mismo DTO, propagar4xx/429/Retry-After.'
+      responses:
+        '200': {description: Estado propio, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceView'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+    put:
+      operationId: correctBuyerInvoiceHolder
+      summary: Corregir solicitud fiscal propia
+      tags: [BuyerBff]
+      security: *mutation
+      description: 'Proxy Purchases correctOwnInvoiceHolder5s key/If-Match/CSRF/Origin; sin PII logs/caché ni decisión fiscal BFF. Replay sin nuevo expediente, propagar4xx/429/Retry-After sin retry incierto.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceRequest'}}}}
+      responses:
+        '200': {description: Datos corregidos, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '412': *err
+        '422': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/verifications:
+    post:
+      operationId: readBuyerBoundedVerification
+      summary: Consultar verificación pública acotada
+      tags: [BuyerBff]
+      security: []
+      description: 'ProxyTicketingreadBoundedVerification allowlistpregate,no sesión,5sreadseguro/idempotente/noeffects/noKey. IDsseparadosQR/noecho; erroresuniformes/noPII/order/proofmetadata.'
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/VerificationRequest'}}}}
+      responses:
+        '200': {description: Vistaacotada, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/VerificationView'}}}}
+        '400': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': {$ref: 'common.yaml#/components/responses/VerificationUnavailable'}
+components:
+  securitySchemes:
+    Session: {$ref: 'common.yaml#/components/securitySchemes/Session'}
+    Csrf: {$ref: 'common.yaml#/components/securitySchemes/Csrf'}

@@ -1,0 +1,1024 @@
+openapi: 3.1.0
+info:
+  title: Entralo V1 componentes comunes documentales
+  version: 1.0.0
+  description: 'Lifecycle planning. No servicio desplegable. Referencias compartidas de contratos, no modelos de dominio. Reglas transversales en Master Spec e integration-contract.'
+servers: [{url: 'https://componentes.entralo.invalid', description: 'Componentes documentales; no servicio desplegado.'}]
+x-http-contract: {timeout_seconds: 3, connect_timeout_seconds: 1, read_max_attempts: 2, read_total_budget_seconds: 3, mutation_retry: same-key-only, caching: no-store, public_cache_seconds: 0, sensitive_body_logging: forbidden, error_contract: ApiErrorResponse, origin_policy: not-applicable, principal_validation: owner-validated}
+paths: {}
+x-error-codes:
+  registry_version: 1
+  policy: 'Registro cerrado. HTTP status debe coincidir con status y con statuses del código. owner/operations restringen códigos específicos; códigos generales aplican sólo a responses HTTP declaradas. BFF conserva código/status del owner, no crea traducciones. failure_code de OperationReceipt usa códigos operation-only. Agregar o cambiar semántica requiere delta/version de registry; nunca reciclar un código.'
+  codes:
+    VALIDATION_ERROR: {statuses: [400], meaning: 'Tipos, formato, parámetros o campos no permitidos; incluye unknown webhook schema.'}
+    INVALID_REQUEST_BODY: {statuses: [400], meaning: 'JSON malformado o body ausente.'}
+    WEBHOOK_ID_MISMATCH: {statuses: [400], owner: payments, operations: [receiveMercadoPagoNotification], meaning: 'data.id de query y body diferentes.'}
+    AUTHENTICATION_REQUIRED: {statuses: [401], meaning: 'Credencial requerida ausente.'}
+    TOKEN_INVALID: {statuses: [401], meaning: 'Credencial, firma o token inválido/expirado.'}
+    ACCESS_DENIED: {statuses: [403], meaning: 'Principal autenticado sin permiso actual.'}
+    RESOURCE_NOT_FOUND: {statuses: [404], meaning: 'Recurso inexistente o fuera de alcance; sin filtrar existencia.'}
+    IDEMPOTENCY_CONFLICT: {statuses: [409], meaning: 'Misma clave durable con contenido distinto; webhook sólo mismo inbox ID con payload hash diferente.'}
+    STATE_CONFLICT: {statuses: [409], meaning: 'Estado actual impide operación.'}
+    VERSION_CONFLICT: {statuses: [409], meaning: 'Versiones de proyección/negocio incompatibles; no mismatch If-Match.'}
+    CONTROL_PREPARATION_IN_PROGRESS: {statuses: [409], owner: catalog, operations: [requestEventControl], propagated_by: [admin-bff], meaning: 'Otra intención PREPARING concurrente ya existe; N2 existente, no nueva regla.'}
+    STOCK_UNAVAILABLE: {statuses: [409], owner: purchases, operations: [reserveTickets], meaning: 'Cupo insuficiente.'}
+    ACCOUNT_EVENT_LIMIT: {statuses: [409], owner: purchases, operations: [reserveTickets], meaning: 'Límite vigente cuenta/evento excedido.'}
+    SALE_CLOSED: {statuses: [409], owner: purchases, operations: [reserveTickets, claimPaymentStart], meaning: 'Gate de venta cerrado.'}
+    OFFER_STALE: {statuses: [409], owner: purchases, operations: [reserveTickets, estimateAppliedOfferPrice], propagated_by: [catalog, admin-bff, buyer-bff], meaning: 'Oferta solicitada no coincide con aplicada.'}
+    ISSUANCE_CLOSED: {statuses: [409], owner: ticketing, operations: [issueAcceptedSaleTickets], meaning: 'Guard de emisión terminal cerrado.'}
+    ADJUSTMENT_NOT_FOUND: {statuses: [409], owner: purchases, operations: [requestOwnRefund], meaning: 'Referencia de mapping de ajuste no disponible; no 404 del recurso orden.'}
+    ADJUSTMENT_SCOPE_CONFLICT: {statuses: [409], owner: purchases, operations: [createRefundAdjustment, requestOwnRefund], meaning: 'Membresía, snapshot o alcance incompatibles.'}
+    REFUND_AMOUNT_CONFLICT: {statuses: [409], owner: purchases, operations: [createRefundAdjustment, requestOwnRefund, decideRefundRequest], meaning: 'Claims solapados, remanente cero o límites financieros excedidos.'}
+    BUSINESS_RULE_VIOLATION: {statuses: [422], meaning: 'Validación semántica de negocio; no cambia política aprobada.'}
+    REFUND_NOT_ELIGIBLE: {statuses: [422], owner: purchases, operations: [createRefundAdjustment, requestOwnRefund, decideRefundRequest], meaning: 'No cumple política R05/R07 actual.'}
+    PRECONDITION_FAILED: {statuses: [412], meaning: 'If-Match no coincide con versión vigente.'}
+    PRECONDITION_REQUIRED: {statuses: [428], meaning: 'If-Match obligatorio ausente.'}
+    RATE_LIMITED: {statuses: [429], meaning: 'Rate limit; Retry-After obligatorio.'}
+    INTERNAL_ERROR: {statuses: [500], meaning: 'Fallo inesperado sanitizado.'}
+    DEPENDENCY_UNAVAILABLE: {statuses: [503], meaning: 'Dependencia o transporte no disponible, sin resultado ficticio.'}
+    VERIFICACION_NO_DISPONIBLE: {statuses: [503], owner: ticketing, operations: [readBoundedVerification], propagated_by: [buyer-bff], meaning: 'VerificationUnavailable; last_known informativo, no autorización.'}
+    CONTROL_SUPERSEDED: {statuses: [], usage: operation-only, meaning: 'failure_code de control sustituido; no error HTTP de lectura.'}
+components:
+  headers:
+    NoStore:
+      required: true
+      schema: {type: string, const: no-store}
+      description: 'Obligatorio en owner y canal; prohíbe almacenamiento browser/CDN/BFF/proxy de payload sensible.'
+    NoReferrer:
+      required: true
+      schema: {type: string, const: no-referrer}
+      description: 'No transmitir identificadores ni accesos privados por Referer.'
+    EventETag:
+      required: true
+      schema: {type: string, pattern: '^"[1-9][0-9]*"$'}
+      description: 'Versión de event, exactamente event_version entre comillas; usar en If-Match, no offer_version.'
+  securitySchemes:
+    Workload:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'AWS SigV4 IAM en Gateway REST, no API key estática. Público sin sesión aún requiere workload canal. Policies por owner/ruta.'
+    Cognito:
+      type: apiKey
+      in: header
+      name: X-User-Access-Token
+      description: 'Access JWT Cognito: firma, issuer, exp, token_use=access, client_id/scopes allowlist. No header enviado arbitrariamente por browser.'
+    Principal:
+      type: apiKey
+      in: header
+      name: X-Entralo-Principal
+      description: 'Aserción BFF existente ligada al token hash, issuer/sub/user_id/mapping_version/audience/exp <=60s. No grant nuevo de admisión.'
+    Session:
+      type: apiKey
+      in: cookie
+      name: __Host-entralo-session
+      description: Cookie por host/canal HttpOnly Secure SameSite=Lax; sesión server-side; no JWT localStorage.
+    Csrf:
+      type: apiKey
+      in: header
+      name: X-CSRF-Token
+      description: Double-submit ligado a sesión y Origin exacto para mutaciones autenticadas.
+    MpSignature:
+      type: apiKey
+      in: header
+      name: x-signature
+      description: 'Validación firma oficial MP y x-request-id/data.id. Algoritmo/ventana replay y modalidad exacta sujetos DR05; no auth Cognito ni IAM MP.'
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    Key:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: {type: string, format: uuid}
+      description: 'Scope principal+operation+key; hash payload no sensible. Distinto payload 409. Resultado durable y key no expiran mientras obligación abierta; mínimo técnico60d, purga legal gate.'
+    Match:
+      name: If-Match
+      in: header
+      required: true
+      schema: {type: string, pattern: '^"[1-9][0-9]*"$'}
+      description: ETag versión vigente; ausente428, mismatch412; no overwrite silencioso.
+    Page:
+      name: page
+      in: query
+      schema: {type: integer, minimum: 0, default: 0}
+    Size:
+      name: size
+      in: query
+      schema: {type: integer, minimum: 1, maximum: 100, default: 20}
+  responses:
+    Error:
+      description: 'ApiErrorResponse cerrado. Códigos/status/owner/operación del registry x-error-codes; código específico tiene prioridad sobre genérico cuando su condición coincide. status igual HTTP, sin echo sensibles. Retry-After obligatorio en 429/503, ausente en otros status. BFF preserva status/code/details seguros.'
+      x-error-codes: {$ref: '#/x-error-codes'}
+      x-error-codes-by-status:
+        '400': [VALIDATION_ERROR, INVALID_REQUEST_BODY, WEBHOOK_ID_MISMATCH]
+        '401': [AUTHENTICATION_REQUIRED, TOKEN_INVALID]
+        '403': [ACCESS_DENIED]
+        '404': [RESOURCE_NOT_FOUND]
+        '409': [IDEMPOTENCY_CONFLICT, STATE_CONFLICT, VERSION_CONFLICT, CONTROL_PREPARATION_IN_PROGRESS, STOCK_UNAVAILABLE, ACCOUNT_EVENT_LIMIT, SALE_CLOSED, OFFER_STALE, ISSUANCE_CLOSED, ADJUSTMENT_NOT_FOUND, ADJUSTMENT_SCOPE_CONFLICT, REFUND_AMOUNT_CONFLICT]
+        '412': [PRECONDITION_FAILED]
+        '422': [BUSINESS_RULE_VIOLATION, REFUND_NOT_ELIGIBLE]
+        '428': [PRECONDITION_REQUIRED]
+        '429': [RATE_LIMITED]
+        '500': [INTERNAL_ERROR]
+        '503': [DEPENDENCY_UNAVAILABLE]
+      headers:
+        Retry-After: {schema: {type: integer, minimum: 1}, description: 'Obligatorio sólo429/503; ausente en otros status. Segundos; no retry ciego de mutación.'}
+        Cache-Control: {$ref: '#/components/headers/NoStore'}
+        Referrer-Policy: {$ref: '#/components/headers/NoReferrer'}
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ApiErrorResponse'}
+    Accepted:
+      description: 'Obligación durable aceptada, no éxito monetario/emisión. Consultar resource_path autenticado; replay misma operación.'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/OperationReceipt'}
+    EventAccepted:
+      description: 'Intención de create/replace durable. resource_path=/v1/admin/operations/{operation_id} invocable en la misma API. resource_id=event_id, event_version versión durable asociada; null sólo antes de materialización, consultar misma operación hasta no null. COMPLETED requiere ambos no null. BFF adapta ruta y conserva identidad/versión.'
+      headers:
+        Cache-Control: {$ref: '#/components/headers/NoStore'}
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/EventOperationReceipt'}
+    VerificationUnavailable:
+      description: '503 VERIFICACION_NO_DISPONIBLE. last_known sólo allowlist VerificationView o null; no autorización de ingreso ni raw proof. BFF conserva envelope; ante timeout propio usa last_known=null, nunca caché local.'
+      x-error-codes: [VERIFICACION_NO_DISPONIBLE]
+      headers:
+        Cache-Control: {$ref: '#/components/headers/NoStore'}
+        Referrer-Policy: {$ref: '#/components/headers/NoReferrer'}
+        Retry-After: {required: true, schema: {type: integer, minimum: 1}, description: 'Segundos de espera técnica, no extensión de deadline comercial.'}
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/VerificationUnavailable'}
+    WebhookBadRequest:
+      description: '400 VALIDATION_ERROR para unknown schema/campo/tipo, INVALID_REQUEST_BODY para JSON inválido, WEBHOOK_ID_MISMATCH para query/body distintos. Ningún inbox/job/efecto monetario ni echo del payload.'
+      x-error-codes: [VALIDATION_ERROR, INVALID_REQUEST_BODY, WEBHOOK_ID_MISMATCH]
+      headers:
+        Cache-Control: {$ref: '#/components/headers/NoStore'}
+      content:
+        application/json:
+          schema:
+            allOf:
+              - {$ref: '#/components/schemas/ApiErrorResponse'}
+              - properties: {status: {const: 400}, code: {enum: [VALIDATION_ERROR, INVALID_REQUEST_BODY, WEBHOOK_ID_MISMATCH]}}
+    WebhookConflict:
+      description: '409 sólo inbox ID idéntico con hash de payload normalizado distinto. IDEMPOTENCY_CONFLICT; conserva inbox original sin overwrite/job duplicado ni efecto monetario.'
+      x-error-codes: [IDEMPOTENCY_CONFLICT]
+      headers:
+        Cache-Control: {$ref: '#/components/headers/NoStore'}
+      content:
+        application/json:
+          schema:
+            allOf:
+              - {$ref: '#/components/schemas/ApiErrorResponse'}
+              - properties: {status: {const: 409}, code: {const: IDEMPOTENCY_CONFLICT}}
+  schemas:
+    MercadoPagoDecimalId:
+      oneOf: [{type: integer, minimum: 1}, {type: string, pattern: '^[1-9][0-9]{0,127}$'}]
+      description: 'Entero JSON positivo o string decimal sin ceros iniciales; conversión exacta sin IEEE754 para comparación/hash. ID máximo 128 dígitos; ID integer debe cumplir mismo límite en aplicación.'
+    MercadoPagoPaymentNotificationV1:
+      type: object
+      additionalProperties: false
+      required: [type, data]
+      properties:
+        id: {$ref: '#/components/schemas/MercadoPagoDecimalId', description: 'ID notificación, no data.id.'}
+        type: {type: string, const: payment}
+        action: {type: string, maxLength: 100}
+        api_version: {type: string, maxLength: 20}
+        date_created: {type: string, format: date-time}
+        live_mode: {type: boolean}
+        user_id: {$ref: '#/components/schemas/MercadoPagoDecimalId', description: 'ID vendedor del proveedor; privado, nunca métricas/colas internas.'}
+        data:
+          type: object
+          additionalProperties: false
+          required: [id]
+          properties:
+            id: {$ref: '#/components/schemas/MercadoPagoDecimalId'}
+      description: 'Allowlist versionada mp-payment-webhook-v1. No ignorar ni pasar campos nuevos. Un api_version desconocido no cambia schema: sólo campos/tipos de esta policy se aceptan. Payload únicamente trigger de lookup, nunca autoridad monetaria. Fixtures en fixtures/mercado-pago.'
+    Uuid: {type: string, format: uuid}
+    Instant: {type: string, format: date-time, description: 'UTC Z; no sustituir precisión proveedor; comparación exacta, no tolerancia.'}
+    Money: {type: string, pattern: '^(0|[1-9][0-9]*)\.[0-9]{2}$', description: COP decimal no float; scale2 HALF_UP por componente unitario.}
+    ServiceRate: {type: string, pattern: '^(0|[1-9][0-9]*)(\.[0-9]{1,6})?$', description: 'Mismo decimal no negativo en escritura, lectura y OfferChangeRequestedV1; no nuevo máximo/tasa comercial.'}
+    ErrorCode:
+      type: string
+      enum: [VALIDATION_ERROR, INVALID_REQUEST_BODY, WEBHOOK_ID_MISMATCH, AUTHENTICATION_REQUIRED, TOKEN_INVALID, ACCESS_DENIED, RESOURCE_NOT_FOUND, IDEMPOTENCY_CONFLICT, STATE_CONFLICT, VERSION_CONFLICT, CONTROL_PREPARATION_IN_PROGRESS, STOCK_UNAVAILABLE, ACCOUNT_EVENT_LIMIT, SALE_CLOSED, OFFER_STALE, ISSUANCE_CLOSED, ADJUSTMENT_NOT_FOUND, ADJUSTMENT_SCOPE_CONFLICT, REFUND_AMOUNT_CONFLICT, BUSINESS_RULE_VIOLATION, REFUND_NOT_ELIGIBLE, PRECONDITION_FAILED, PRECONDITION_REQUIRED, RATE_LIMITED, INTERNAL_ERROR, DEPENDENCY_UNAVAILABLE, VERIFICACION_NO_DISPONIBLE]
+      description: 'Subconjunto HTTP del registry x-error-codes; código aplicable validado contra status/owner/operación.'
+    Version: {type: integer, format: int64, minimum: 1}
+    ApiErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [timestamp, status, error, code, message, path, trace_id, details]
+      properties:
+        timestamp: {$ref: '#/components/schemas/Instant'}
+        status: {type: integer, minimum: 400, maximum: 599}
+        error: {type: string, maxLength: 80}
+        code: {$ref: '#/components/schemas/ErrorCode'}
+        message: {type: string, maxLength: 300}
+        path: {type: string, maxLength: 200, description: Template path sin identificador sensible ni query.}
+        trace_id: {type: string, maxLength: 64}
+        details:
+          type: array
+          maxItems: 50
+          items:
+            type: object
+            additionalProperties: false
+            required: [code, message, rejected_value]
+            properties:
+              field: {type: [string, 'null'], maxLength: 80}
+              code: {$ref: '#/components/schemas/ErrorCode'}
+              message: {type: string, maxLength: 200}
+              rejected_value: {type: 'null'}
+    OperationReceipt:
+      type: object
+      additionalProperties: false
+      required: [operation_id, state, resource_path]
+      properties:
+        operation_id: {$ref: '#/components/schemas/Uuid'}
+        resource_id: {type: [string, 'null'], format: uuid, description: 'event_id en create/replace de evento; obligatorio en EventOperationReceipt.'}
+        event_version: {type: [integer, 'null'], minimum: 1, description: 'Versión durable event en create/replace, no offer_version.'}
+        state: {type: string, enum: [PENDING, COMPLETED, FAILED, UNKNOWN]}
+        resource_path: {type: string, maxLength: 200, description: 'Ruta relativa consultable en la misma API que entrega el recibo; BFF adapta sólo la ruta, nunca el estado. No URL bearer.'}
+        phase: {type: string, enum: [PREPARING, RECORDED, APPLIED, REOPENING, OPENED, CLOSED, SUPERSEDED], description: 'Obligatorio en operaciones CHANGE/CANCEL; PREPARING aún no registra hito.'}
+        recorded_at: {type: [string, 'null'], format: date-time, description: 'Obligatorio en controls; null sólo preparación sin hito, después inmutable.'}
+        failure_code: {oneOf: [{$ref: '#/components/schemas/ErrorCode'}, {type: string, const: CONTROL_SUPERSEDED}, {type: 'null'}]}
+      dependentRequired:
+        phase: [recorded_at, failure_code]
+        resource_id: [event_version]
+        event_version: [resource_id]
+      allOf:
+        - if: {required: [resource_id, event_version], properties: {resource_id: {}, event_version: {}, state: {const: COMPLETED}}}
+          then: {properties: {resource_id: {type: string, format: uuid}, event_version: {$ref: '#/components/schemas/Version'}}}
+      description: 'CHANGE/CANCEL requieren phase/recorded_at/failure_code; PREPARING sin registro. Otras operaciones no deben fabricar fase de evento.'
+    EventOperationReceipt:
+      allOf:
+        - {$ref: '#/components/schemas/OperationReceipt'}
+        - required: [resource_id, event_version]
+          properties: {resource_id: {}, event_version: {}}
+        - if: {properties: {state: {const: COMPLETED}}, required: [state]}
+          then: {properties: {resource_id: {type: string, format: uuid}, event_version: {$ref: '#/components/schemas/Version'}}}
+      description: 'Create/replace: misma operación consultable hasta identidad y versión materializadas. COMPLETED nunca null; versión de recibo no sustituye GET+ETag actual para edición concurrente.'
+    Profile:
+      type: object
+      additionalProperties: false
+      required: [user_id, status, contact_verified, version]
+      properties:
+        user_id: {$ref: '#/components/schemas/Uuid'}
+        status: {type: string, enum: [ACTIVE, SUSPENDED]}
+        contact_verified: {type: boolean}
+        display_name: {type: [string, 'null'], maxLength: 100}
+        version: {$ref: '#/components/schemas/Version'}
+    ProfileUpdate:
+      type: object
+      additionalProperties: false
+      required: [display_name]
+      properties:
+        display_name: {type: [string, 'null'], maxLength: 100, description: Texto plano; no HTML. No cambio issuer/sub/email verificado.}
+    IdentityBinding:
+      type: object
+      additionalProperties: false
+      required: [issuer, subject]
+      properties:
+        issuer: {type: string, format: uri, maxLength: 300, description: Allowlist Cognito ambiente/canal.}
+        subject: {type: string, maxLength: 128, minLength: 1, description: Debe coincidir token validado; no confianza en body.}
+    AuthorizationRequest:
+      type: object
+      additionalProperties: false
+      required: [user_id, action, event_id]
+      properties:
+        user_id: {$ref: '#/components/schemas/Uuid'}
+        action: {type: string, enum: [EVENT_ADMIN, REFUND_APPROVE, ADMIT, INVOICE_MANAGE]}
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        device_id: {$ref: '#/components/schemas/Uuid'}
+    AuthorizationDecision:
+      type: object
+      additionalProperties: false
+      required: [allowed, permission_version, as_of]
+      properties:
+        allowed: {type: boolean}
+        permission_version: {$ref: '#/components/schemas/Version'}
+        as_of: {$ref: '#/components/schemas/Instant'}
+    Contact:
+      type: object
+      additionalProperties: false
+      required: [user_id, contact_version, available, email]
+      properties:
+        user_id: {$ref: '#/components/schemas/Uuid'}
+        contact_version: {$ref: '#/components/schemas/Version'}
+        available: {type: boolean}
+        email: {type: [string, 'null'], format: email, maxLength: 254, description: 'Privado Identity→Purchases avisos, no log/cola interna.'}
+    TaxLine:
+      type: object
+      additionalProperties: false
+      required: [line_kind, classification, taxable_base, rate, liable_role, qualification_reference]
+      properties:
+        line_kind: {type: string, enum: [NOMINAL, SERVICE]}
+        classification: {type: string, enum: [TAXABLE, EXCLUDED_476_11, NOT_APPLICABLE]}
+        taxable_base: {type: string, enum: [UNIT_NOMINAL, UNIT_SERVICE]}
+        rate: {type: string, pattern: '^(0|1|0\.[0-9]{1,6})$', description: 'Tasa cargada validada, no19 universal.'}
+        liable_role: {type: string, maxLength: 100, minLength: 1}
+        qualification_reference: {type: string, maxLength: 200, minLength: 1, description: Referencia protegida validación externa noURL.}
+    FiscalConfig:
+      type: object
+      additionalProperties: false
+      required: [lines, cultural_applicable, cultural_authorization_reference, parafiscal_rate, validated_by]
+      description: 'Propuesta física P04 pendiente SA/aprobación contractual; no implica validación legal nueva ni tasa universal.'
+      properties:
+        lines: {type: array, minItems: 2, maxItems: 2, items: {$ref: '#/components/schemas/TaxLine'}, description: 'Exactamente NOMINAL y SERVICE, sin duplicados.'}
+        cultural_applicable: {type: boolean}
+        cultural_authorization_reference: {type: [string, 'null'], maxLength: 200}
+        parafiscal_rate: {type: [string, 'null'], enum: ['0.10', null], description: 'Sólo si applicable. No agrega línea cobro ni infiere base/retenciones.'}
+        validated_by: {$ref: '#/components/schemas/Uuid'}
+    Locality:
+      type: object
+      additionalProperties: false
+      required: [locality_id, name, capacity, nominal]
+      properties:
+        locality_id: {$ref: '#/components/schemas/Uuid'}
+        name: {type: string, minLength: 1, maxLength: 100}
+        capacity: {type: integer, minimum: 1}
+        nominal: {$ref: '#/components/schemas/Money', description: Valor≥100000.00 validado semánticamente; sin máximo comercial.}
+    EventWrite:
+      type: object
+      additionalProperties: false
+      required: [title, starts_at, venue, localities, fiscal]
+      properties:
+        title: {type: string, minLength: 1, maxLength: 200}
+        starts_at: {$ref: '#/components/schemas/Instant'}
+        venue: {type: string, minLength: 1, maxLength: 300}
+        localities: {type: array, minItems: 1, maxItems: 100, items: {$ref: '#/components/schemas/Locality'}}
+        service_rate: {$ref: '#/components/schemas/ServiceRate', default: '0.15'}
+        order_limit: {type: integer, minimum: 1, default: 8}
+        account_event_limit: {type: integer, minimum: 1, default: 8}
+        hold_ttl_seconds: {type: integer, minimum: 1, default: 1200}
+        grace_seconds: {type: integer, minimum: 1, default: 1800}
+        fiscal: {$ref: '#/components/schemas/FiscalConfig'}
+    EventPublic:
+      type: object
+      additionalProperties: false
+      required: [event_id, title, starts_at, venue, status, offer_version, localities, service_rate]
+      properties:
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        title: {type: string, maxLength: 200}
+        starts_at: {$ref: '#/components/schemas/Instant'}
+        venue: {type: string, maxLength: 300}
+        status: {type: string, enum: [PUBLISHED, CLOSING, CANCELLED]}
+        offer_version: {$ref: '#/components/schemas/Version'}
+        localities: {type: array, maxItems: 100, items: {$ref: '#/components/schemas/Locality'}}
+        service_rate: {$ref: '#/components/schemas/ServiceRate'}
+    EventManaged:
+      type: object
+      additionalProperties: false
+      required: [event_id, event_version, status, event]
+      properties:
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        event_version: {$ref: '#/components/schemas/Version'}
+        status: {type: string, enum: [DRAFT, PUBLISHING, PUBLISHED, CLOSING, CANCELLED]}
+        event: {$ref: '#/components/schemas/EventWrite'}
+      description: 'Representación administrativa actual, incluido draft/configuración; sólo EVENT_ADMIN por evento. event defaults materializados, fiscal sólo privada. No PII comprador ni datos de pago.'
+    EventPage:
+      type: object
+      additionalProperties: false
+      required: [items, page, size, has_next]
+      properties:
+        items: {type: array, maxItems: 100, items: {$ref: '#/components/schemas/EventPublic'}}
+        page: {type: integer, minimum: 0}
+        size: {type: integer, minimum: 1, maximum: 100}
+        has_next: {type: boolean}
+    OrderPage:
+      type: object
+      additionalProperties: false
+      required: [items, page, size, has_next]
+      properties:
+        items: {type: array, maxItems: 100, items: {$ref: '#/components/schemas/Order'}}
+        page: {type: integer, minimum: 0}
+        size: {type: integer, minimum: 1, maximum: 100}
+        has_next: {type: boolean}
+    TicketPage:
+      type: object
+      additionalProperties: false
+      required: [items, page, size, has_next]
+      properties:
+        items: {type: array, maxItems: 100, items: {$ref: '#/components/schemas/OwnTicket'}}
+        page: {type: integer, minimum: 0}
+        size: {type: integer, minimum: 1, maximum: 100}
+        has_next: {type: boolean}
+    OperationPage:
+      type: object
+      additionalProperties: false
+      required: [items, page, size, has_next]
+      properties:
+        items: {type: array, maxItems: 100, items: {$ref: '#/components/schemas/OperationReceipt'}}
+        page: {type: integer, minimum: 0}
+        size: {type: integer, minimum: 1, maximum: 100}
+        has_next: {type: boolean}
+    RefundPage:
+      type: object
+      additionalProperties: false
+      required: [items, page, size, has_next]
+      properties:
+        items: {type: array, maxItems: 100, items: {$ref: '#/components/schemas/RefundView'}}
+        page: {type: integer, minimum: 0}
+        size: {type: integer, minimum: 1, maximum: 100}
+        has_next: {type: boolean}
+    EventControl:
+      type: object
+      additionalProperties: false
+      required: [kind, note]
+      properties:
+        kind: {type: string, enum: [CANCEL, CHANGE]}
+        note: {type: string, minLength: 1, maxLength: 1000}
+        new_starts_at: {$ref: '#/components/schemas/Instant'}
+        new_venue: {type: string, minLength: 1, maxLength: 300}
+      allOf:
+        - if: {properties: {kind: {const: CANCEL}}, required: [kind]}
+          then: {not: {anyOf: [{required: [new_starts_at], properties: {new_starts_at: {}}}, {required: [new_venue], properties: {new_venue: {}}}]}}
+        - if: {properties: {kind: {const: CHANGE}}, required: [kind]}
+          then: {anyOf: [{required: [new_starts_at], properties: {new_starts_at: {}}}, {required: [new_venue], properties: {new_venue: {}}}]}
+      description: 'Schema CHANGE exige al menos new_starts_at o new_venue no null; CANCEL prohíbe ambos incluso null. Unknown/campos prohibidos400 VALIDATION_ERROR. Comparación con términos actuales es semántica: CHANGE sin diferencia real422 BUSINESS_RULE_VIOLATION, sin hito/preparación. If-Match expected_event_version. Preparación fail-closed sin hito antes registro integration §7/7.1; registro fija hito antes ACK BARRIER/APPLIED, CANCEL terminal; control nuevo sustituye CHANGE pendiente sin esperar ACK. No desplazar sello ni ampliar R07.'
+    Milestone:
+      type: object
+      additionalProperties: false
+      required: [event_id, control_version, control_state, milestone_kind, recorded_at, milestone_version]
+      properties:
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        control_version: {$ref: '#/components/schemas/Version'}
+        control_state: {type: string, enum: [OPEN, CLOSING, CLOSED]}
+        milestone_kind: {type: [string, 'null'], enum: [CHANGE, CANCEL, null]}
+        recorded_at: {type: [string, 'null'], format: date-time}
+        milestone_version: {type: integer, minimum: 0}
+    Availability:
+      type: object
+      additionalProperties: false
+      required: [event_id, offer_version, availability_version, as_of, state, localities]
+      properties:
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        offer_version: {$ref: '#/components/schemas/Version'}
+        availability_version: {$ref: '#/components/schemas/Version'}
+        as_of: {$ref: '#/components/schemas/Instant'}
+        state: {type: string, enum: [AVAILABLE, CLOSED, UNKNOWN]}
+        localities:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            additionalProperties: false
+            required: [locality_id, available]
+            properties:
+              locality_id: {$ref: '#/components/schemas/Uuid'}
+              available: {type: [integer, 'null'], minimum: 0}
+    HoldRequest:
+      type: object
+      additionalProperties: false
+      required: [event_id, offer_version, lines]
+      properties:
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        offer_version: {$ref: '#/components/schemas/Version'}
+        lines:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            additionalProperties: false
+            required: [locality_id, quantity]
+            properties:
+              locality_id: {$ref: '#/components/schemas/Uuid'}
+              quantity: {type: integer, minimum: 1}
+      description: Locality única; suma≤order_limit y límite user/event aplicado. No user_id ni importe cliente.
+    Order:
+      type: object
+      additionalProperties: false
+      required: [order_id, hold_id, event_id, reservation_state, saga_state, created_at, expires_at, grace_end_at, reconciliation_deadline, payment_approved_at, accepted_at, total, currency]
+      properties:
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        hold_id: {$ref: '#/components/schemas/Uuid'}
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        reservation_state: {type: string, enum: [RESERVADA, EXPIRANDO, VENDIDA, LIBERADA]}
+        saga_state: {type: string, enum: [PAYMENT_PENDING, ISSUANCE_PENDING, CONFIRMED, ISSUANCE_FAILED_FINAL, COMPENSATION_PENDING_GUARD, ABORTING, REFUND_PENDING, COMPENSATED, MANUAL_RECONCILIATION]}
+        created_at: {$ref: '#/components/schemas/Instant'}
+        expires_at: {$ref: '#/components/schemas/Instant'}
+        grace_end_at: {$ref: '#/components/schemas/Instant'}
+        reconciliation_deadline: {$ref: '#/components/schemas/Instant'}
+        payment_approved_at: {type: [string, 'null'], format: date-time}
+        accepted_at: {type: [string, 'null'], format: date-time}
+        total: {$ref: '#/components/schemas/Money'}
+        currency: {type: string, const: COP}
+    PaymentClaim:
+      type: object
+      additionalProperties: false
+      required: [payment_intent_id]
+      properties:
+        payment_intent_id: {$ref: '#/components/schemas/Uuid'}
+    PaymentPermit:
+      type: object
+      additionalProperties: false
+      required: [order_id, payment_intent_id, amount, currency, grace_end_at, reconciliation_deadline, gate_version, payment_start_fence, start_committed_at]
+      properties:
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        payment_intent_id: {$ref: '#/components/schemas/Uuid'}
+        amount: {$ref: '#/components/schemas/Money'}
+        currency: {type: string, const: COP}
+        grace_end_at: {$ref: '#/components/schemas/Instant'}
+        reconciliation_deadline: {$ref: '#/components/schemas/Instant'}
+        gate_version: {$ref: '#/components/schemas/Version'}
+        payment_start_fence: {$ref: '#/components/schemas/Version'}
+        start_committed_at: {$ref: '#/components/schemas/Instant'}
+    CanonicalPaymentFactV1:
+      type: object
+      additionalProperties: false
+      required: [order_id, payment_intent_id, evidence_id, observation_version, payment_state, payment_approved_at, amount, currency, payment_start_fence, grace_end_at, reconciliation_deadline, observed_at, canonical_confirmed_at, evidence_digest]
+      properties:
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        payment_intent_id: {$ref: '#/components/schemas/Uuid'}
+        evidence_id: {$ref: '#/components/schemas/Uuid'}
+        observation_version: {$ref: '#/components/schemas/Version'}
+        payment_state: {type: string, enum: [APPROVED, DECLINED, FAILED, UNKNOWN]}
+        payment_approved_at: {type: [string, 'null'], format: date-time, description: Required nonnull siAPPROVED y precisión/zona válidas; si no UNKNOWN.}
+        amount: {$ref: '#/components/schemas/Money'}
+        currency: {type: string, const: COP}
+        payment_start_fence: {$ref: '#/components/schemas/Version'}
+        grace_end_at: {$ref: '#/components/schemas/Instant'}
+        reconciliation_deadline: {$ref: '#/components/schemas/Instant'}
+        observed_at: {$ref: '#/components/schemas/Instant'}
+        canonical_confirmed_at: {$ref: '#/components/schemas/Instant'}
+        evidence_digest: {type: string, pattern: '^[a-f0-9]{64}$'}
+    AcceptanceDecision:
+      type: object
+      additionalProperties: false
+      description: 'AC-N1: ACCEPTED sólo venta durable con accepted_at no null; PENDING/RELEASED/REFUND_REQUIRED sin venta llevan accepted_at null. REFUND_REQUIRED prueba obligación R04, no envío/acreditación MP. Commit/fence, importe total y ausencia se validan en aplicación; UNKNOWN nunca crea refund.'
+      required: [order_id, decision, decision_version, accepted_at]
+      properties:
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        decision: {type: string, enum: [ACCEPTED, PENDING, RELEASED, REFUND_REQUIRED]}
+        decision_version: {$ref: '#/components/schemas/Version'}
+        accepted_at: {type: [string, 'null'], format: date-time}
+      allOf:
+        - if: {properties: {decision: {const: ACCEPTED}}, required: [decision]}
+          then: {properties: {accepted_at: {$ref: '#/components/schemas/Instant'}}}
+        - if: {properties: {decision: {enum: [PENDING, RELEASED, REFUND_REQUIRED]}}, required: [decision]}
+          then: {properties: {accepted_at: {type: 'null'}}}
+    CardPaymentRequest:
+      type: object
+      additionalProperties: false
+      required: [order_id, payment_intent_id, provider_token, payment_method_id, installments]
+      properties:
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        payment_intent_id: {$ref: '#/components/schemas/Uuid'}
+        provider_token: {type: string, minLength: 1, maxLength: 512, writeOnly: true, description: 'SóloTLS/memoria, nunca guardar/hash/log/token en respuesta ni cola.'}
+        payment_method_id: {type: string, minLength: 1, maxLength: 80, description: Allowlist tarjeta crédito/débito MP; no otros medios.}
+        installments: {type: integer, minimum: 1, maximum: 48, description: 'Cap técnico, valores permitidos reales DR05.'}
+    PaymentView:
+      type: object
+      additionalProperties: false
+      required: [order_id, payment_intent_id, state, payment_approved_at]
+      properties:
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        payment_intent_id: {$ref: '#/components/schemas/Uuid'}
+        state: {type: string, enum: [CREATED, UNKNOWN, APPROVED, DECLINED, FAILED]}
+        payment_approved_at: {type: [string, 'null'], format: date-time}
+    RefundRequest:
+      type: object
+      additionalProperties: false
+      required: [reason, scope]
+      properties:
+        reason: {type: string, enum: [EVENT_CANCELLED, EVENT_CHANGED]}
+        scope: {type: string, enum: [ORDER, ADJUSTMENT]}
+        adjustment_id: {$ref: '#/components/schemas/Uuid'}
+      description: 'Baseline conservado: reason/scope y adjustment_id condicional. order_id se obtiene del path /v1/orders/{id}/refund-requests; Idempotency-Key del header obligatorio, ambos ligados al registro durable. ADJUSTMENT exige adjustment_id legítimo de esa orden; ORDER no lo admite. Mapping inmutable de ticket_id/line_id/ordinal y paid_allocation PRICE01, sin monto/lista libre del comprador. Refund parcial sólo por subconjunto legítimo de boletas; excluye servicio/fees e impuestos adicionales R07, no pro-rata nuevo. R04 sólo sistema. Mapping inexistente, inconsistente o solapado: 409; elegibilidad R07 incumplida: 422. SUPPORT aprueba y MP devuelve al medio original; nueva key/motivo/hito no elude límites acumulativos por boleta.'
+      allOf:
+        - if: {properties: {scope: {const: ADJUSTMENT}}, required: [scope]}
+          then: {required: [adjustment_id], properties: {adjustment_id: {}}}
+        - if: {properties: {scope: {const: ORDER}}, required: [scope]}
+          then: {not: {required: [adjustment_id], properties: {adjustment_id: {}}}}
+    RefundView:
+      type: object
+      additionalProperties: false
+      required: [refund_id, order_id, state, amount, initiated_at, confirmed_at, cycle_version, cleanup_state, absence_evidence_id]
+      properties:
+        refund_id: {$ref: '#/components/schemas/Uuid'}
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        state: {type: string, enum: [REQUESTED, PENDING_GUARD, AUTHORIZED, UNKNOWN, INITIATED, CONFIRMED, FAILED_FINAL, REJECTED]}
+        amount: {$ref: '#/components/schemas/Money'}
+        initiated_at: {type: [string, 'null'], format: date-time}
+        confirmed_at: {type: [string, 'null'], format: date-time}
+        cycle_version: {$ref: '#/components/schemas/Version'}
+        cleanup_state: {type: string, enum: [NONE, PENDING, COMPLETE]}
+        absence_evidence_id: {type: [string, 'null'], format: uuid, description: 'En R04 referencia opaca a prueba durable de no venta/no emisión, no prueba de cero desembolso. En FAILED_FINAL identifica prueba monetaria terminal canónica Payments de cero efecto/no pendiente; tiene prioridad en la vista actual y no sobrescribe la prueba R04 del snapshot histórico. 404/timeout nunca prueban ausencia. Ambas pruebas conservan owners distintos; no FK crossDB.'}
+      description: 'Misma identidad order/reason/scope/adjustment conserva refund_id y key MP por ciclos. Motivo distinto es identidad distinta; sólo después cleanup y ausencia probada permite otra ORDER, nunca dos totales monetarias ni eludir caps. R05: usada rechazada por CHANGE puede solicitar CANCEL posterior; no mutar reason anterior.'
+    AdjustmentPage:
+      type: object
+      additionalProperties: false
+      required: [items, page, size, has_next]
+      properties:
+        items: {type: array, maxItems: 100, items: {$ref: '#/components/schemas/AdjustmentSnapshot'}}
+        page: {type: integer, minimum: 0}
+        size: {type: integer, minimum: 1, maximum: 100}
+        has_next: {type: boolean}
+    RefundApproval:
+      type: object
+      additionalProperties: false
+      required: [decision, milestone_version]
+      properties:
+        decision: {type: string, enum: [APPROVE, REJECT]}
+        milestone_version: {$ref: '#/components/schemas/Version'}
+        note: {type: string, maxLength: 1000}
+    InvoiceRequest:
+      type: object
+      additionalProperties: false
+      required: [name, document_type, document_number, email]
+      properties:
+        name: {type: string, minLength: 1, maxLength: 200}
+        document_type: {type: string, enum: [RUT, CC]}
+        document_number: {type: string, minLength: 1, maxLength: 30}
+        email: {type: string, format: email, maxLength: 254}
+    InvoiceEvidence:
+      type: object
+      additionalProperties: false
+      required: [state, external_reference, cufe, dossier_locator, verified_at]
+      properties:
+        state: {type: string, enum: [EN_GESTION_EXTERNA, EMITIDA_Y_ENVIADA, ERROR_PENDIENTE]}
+        external_reference: {type: [string, 'null'], maxLength: 200}
+        cufe: {type: [string, 'null'], maxLength: 200}
+        dossier_locator: {type: [string, 'null'], maxLength: 200, description: 'Localizador opaco protegido, noURL/fetch automático.'}
+        verified_at: {type: [string, 'null'], format: date-time}
+      description: EMITIDA exige referencia/CUFE/localizador/verificación y actor actual; error no inventa evidencia.
+    InvoiceView:
+      type: object
+      additionalProperties: false
+      required: [invoice_request_id, order_id, state, version]
+      properties:
+        invoice_request_id: {$ref: '#/components/schemas/Uuid'}
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        state: {type: string, enum: [SOLICITADA, EN_GESTION_EXTERNA, EMITIDA_Y_ENVIADA, ERROR_PENDIENTE]}
+        version: {$ref: '#/components/schemas/Version'}
+    IssueTicketsRequest:
+      type: object
+      additionalProperties: false
+      required: [order_id, issuance_id, user_id, event_id, sale_authorization_version, payment_start_fence, accepted_at, payment_approved_at, grace_end_at, reconciliation_deadline, evidence_id, attempt_number, lines]
+      properties:
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        issuance_id: {$ref: '#/components/schemas/Uuid'}
+        user_id: {$ref: '#/components/schemas/Uuid'}
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        sale_authorization_version: {$ref: '#/components/schemas/Version'}
+        payment_start_fence: {$ref: '#/components/schemas/Version'}
+        accepted_at: {$ref: '#/components/schemas/Instant'}
+        payment_approved_at: {$ref: '#/components/schemas/Instant'}
+        grace_end_at: {$ref: '#/components/schemas/Instant'}
+        reconciliation_deadline: {$ref: '#/components/schemas/Instant'}
+        evidence_id: {$ref: '#/components/schemas/Uuid'}
+        attempt_number: {type: integer, minimum: 1, maximum: 3}
+        lines:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            additionalProperties: false
+            required: [line_id, quantity]
+            properties:
+              line_id: {$ref: '#/components/schemas/Uuid'}
+              quantity: {type: integer, minimum: 1}
+    IssuanceResult:
+      type: object
+      additionalProperties: false
+      required: [order_id, issuance_id, guard, version, ticket_ids, previous_attempt_outcome]
+      properties:
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        issuance_id: {$ref: '#/components/schemas/Uuid'}
+        guard: {type: string, enum: [OPEN, ISSUED, CLOSED]}
+        version: {$ref: '#/components/schemas/Version'}
+        ticket_ids: {type: array, maxItems: 1000, items: {$ref: '#/components/schemas/Uuid'}}
+        previous_attempt_outcome: {type: string, enum: [NONE, ISSUED, RETRYABLE_TRANSIENT, NON_RETRYABLE_DEFINITIVE, UNCERTAIN]}
+      description: OPEN/404 no prueba ausencia; cierre durable serializado requerido pararefund noemisión.
+    CloseIssuanceRequest:
+      type: object
+      additionalProperties: false
+      required: [order_id, issuance_id, user_id, event_id, sale_authorization_version, payment_start_fence, accepted_at, payment_approved_at, grace_end_at, reconciliation_deadline]
+      properties:
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        issuance_id: {$ref: '#/components/schemas/Uuid'}
+        user_id: {$ref: '#/components/schemas/Uuid'}
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        sale_authorization_version: {$ref: '#/components/schemas/Version'}
+        payment_start_fence: {$ref: '#/components/schemas/Version'}
+        accepted_at: {$ref: '#/components/schemas/Instant'}
+        payment_approved_at: {$ref: '#/components/schemas/Instant'}
+        grace_end_at: {$ref: '#/components/schemas/Instant'}
+        reconciliation_deadline: {$ref: '#/components/schemas/Instant'}
+      description: Contexto venta durable para tombstone aun issuance no llegó; no404 tomado comoausencia.
+    OwnTicket:
+      type: object
+      additionalProperties: false
+      required: [ticket_id, order_id, operational_status, proof_status, qr_content, verification_id]
+      properties:
+        ticket_id: {$ref: '#/components/schemas/Uuid'}
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        operational_status: {type: string, enum: [VIGENTE, UTILIZADA, ANULADA, REEMBOLSADA]}
+        proof_status: {type: string, enum: [PENDIENTE, CONFIRMADA]}
+        qr_content: {type: string, maxLength: 1024, description: Sólo comprador propietario autenticado; protegido/no log ni APIverificaciónpública.}
+        verification_id: {type: string, pattern: '^[A-Za-z0-9_-]{43}$', description: 'SeparadoQR, entregaprivadaowner, nopublicecho.'}
+    GuardRequest:
+      type: object
+      additionalProperties: false
+      required: [refund_id, cycle_version, reason, control_version, scope, adjustment_id, adjustment_snapshot, scope_snapshot, snapshot_digest, tickets]
+      properties:
+        refund_id: {$ref: '#/components/schemas/Uuid'}
+        cycle_version: {$ref: '#/components/schemas/Version'}
+        reason: {type: string, enum: [EVENT_CANCELLED, EVENT_CHANGED]}
+        control_version: {$ref: '#/components/schemas/Version'}
+        scope: {type: string, enum: [ORDER, ADJUSTMENT]}
+        adjustment_id: {type: [string, 'null'], format: uuid}
+        adjustment_snapshot: {oneOf: [{$ref: '#/components/schemas/AdjustmentSnapshot'}, {type: 'null'}]}
+        scope_snapshot: {oneOf: [{$ref: '#/components/schemas/OrderScopeSnapshot'}, {type: 'null'}]}
+        snapshot_digest: {type: string, pattern: '^[a-f0-9]{64}$'}
+        tickets: {type: array, minItems: 1, maxItems: 1000, uniqueItems: true, items: {$ref: '#/components/schemas/TicketReference'}}
+      allOf:
+        - if: {properties: {scope: {const: ADJUSTMENT}}}
+          then: {properties: {adjustment_id: {type: string, format: uuid}, adjustment_snapshot: {$ref: '#/components/schemas/AdjustmentSnapshot'}, scope_snapshot: {type: 'null'}}}
+        - if: {properties: {scope: {const: ORDER}}}
+          then: {properties: {adjustment_id: {type: 'null'}, adjustment_snapshot: {type: 'null'}, scope_snapshot: {$ref: '#/components/schemas/OrderScopeSnapshot'}}}
+      description: 'ADJUSTMENT exige adjustment_id/snapshot y scope_snapshot null; ORDER exige adjustment_id/adjustment_snapshot null y OrderScopeSnapshot completo. tickets/digest/cycle coinciden; pertenencia/sumas en aplicación. R04 excluido, usa prueba de ausencia/no emisión, nunca lista ficticia.'
+    TicketFacts:
+      type: object
+      additionalProperties: false
+      required: [order_id, version, used, refund_guard_state, as_of, items]
+      properties:
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        version: {$ref: '#/components/schemas/Version'}
+        used: {type: boolean}
+        refund_guard_state: {type: string, enum: [NONE, BLOCKED, REJECTED_USED, RELEASED]}
+        refund_id: {type: string, format: uuid, description: 'Requerido en respuesta applyRefundGuard, no en facts agregado.'}
+        cycle_version: {type: integer, minimum: 1, description: 'Requerido junto refund_id en respuesta guard; correlación exacta.'}
+        as_of: {$ref: '#/components/schemas/Instant'}
+        items:
+          type: array
+          maxItems: 1000
+          items:
+            type: object
+            additionalProperties: false
+            required: [ticket, used, operational_status]
+            properties:
+              ticket: {$ref: '#/components/schemas/TicketReference'}
+              used: {type: boolean}
+              operational_status: {type: string, enum: [VIGENTE, UTILIZADA, ANULADA, REEMBOLSADA]}
+      description: 'Facts privados por boleta de orden; used agregado informativo no decide ajuste si usada fuera scope. Guard devuelve items sólo membership exacta. Máximo1000 refs, nunca QR/secreto/PII. Membership/revalidation Purchases.'
+    VerificationRequest:
+      type: object
+      additionalProperties: false
+      required: [verification_id]
+      properties:
+        verification_id: {type: string, pattern: '^[A-Za-z0-9_-]{43}$', writeOnly: true, description: 'Aleatorio256bit separado QR, noecho/log/query.'}
+    VerificationView:
+      type: object
+      additionalProperties: false
+      required: [operational_status, proof_status, proof_as_of]
+      properties:
+        operational_status: {type: string, enum: [VIGENTE, UTILIZADA, ANULADA, REEMBOLSADA]}
+        proof_status: {type: string, enum: [PENDIENTE, CONFIRMADA]}
+        proof_as_of: {type: [string, 'null'], format: date-time, description: 'Sólominuto UTC redondeado abajo, null sin observación.'}
+    VerificationUnavailable:
+      type: object
+      additionalProperties: false
+      required: [error, last_known, banner]
+      properties:
+        error:
+          allOf:
+            - {$ref: '#/components/schemas/ApiErrorResponse'}
+            - properties: {status: {const: 503}, code: {const: VERIFICACION_NO_DISPONIBLE}}
+        last_known: {oneOf: [{$ref: '#/components/schemas/VerificationView'}, {type: 'null'}]}
+        banner: {type: string, const: 'Verificación no disponible; el último estado no autoriza ingreso.'}
+      description: error.code VERIFICACION_NO_DISPONIBLE; último estado sólo informativo sin as_of fino.
+    AdmissionRequest:
+      type: object
+      additionalProperties: false
+      required: [admission_attempt_id, event_id, device_id, ticket_reference]
+      properties:
+        admission_attempt_id: {$ref: '#/components/schemas/Uuid'}
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        device_id: {$ref: '#/components/schemas/Uuid'}
+        ticket_reference: {type: string, minLength: 1, maxLength: 1024, writeOnly: true, description: QR protegida sóloprivado; no logs/colas públicas.}
+    AdmissionResult:
+      type: object
+      additionalProperties: false
+      required: [admission_attempt_id, decision, decided_at]
+      properties:
+        admission_attempt_id: {$ref: '#/components/schemas/Uuid'}
+        decision: {type: string, enum: [ADMITTED, DENIED_USED, DENIED_BLOCKED, DENIED_EVENT]}
+        decided_at: {$ref: '#/components/schemas/Instant'}
+    SessionView:
+      type: object
+      additionalProperties: false
+      required: [authenticated, profile]
+      properties:
+        authenticated: {type: boolean}
+        profile: {oneOf: [{$ref: '#/components/schemas/Profile'}, {type: 'null'}]}
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required: [return_path]
+      properties:
+        return_path: {type: string, pattern: '^/[a-zA-Z0-9/_-]*$', maxLength: 200, description: 'Allowlist mismaorigin, no redirect arbitrario.'}
+    TicketReference:
+      type: object
+      additionalProperties: false
+      required: [line_id, ordinal, ticket_id]
+      properties:
+        line_id: {$ref: '#/components/schemas/Uuid'}
+        ordinal: {type: integer, minimum: 1}
+        ticket_id: {$ref: '#/components/schemas/Uuid'}
+    AdjustmentItem:
+      type: object
+      additionalProperties: false
+      required: [ticket, paid_allocation, nominal, service, nominal_tax, service_tax, refundable_amount]
+      properties:
+        ticket: {$ref: '#/components/schemas/TicketReference'}
+        paid_allocation: {$ref: '#/components/schemas/AdjustmentPaidAllocation'}
+        nominal: {$ref: '#/components/schemas/Money'}
+        service: {type: string, const: '0.00'}
+        nominal_tax: {type: string, const: '0.00'}
+        service_tax: {type: string, const: '0.00'}
+        refundable_amount: {$ref: '#/components/schemas/Money'}
+    AdjustmentSnapshot:
+      type: object
+      additionalProperties: false
+      required: [adjustment_id, order_id, version, created_at, currency, items, nominal_total, service_total, nominal_tax_total, service_tax_total, amount, snapshot_digest]
+      properties:
+        adjustment_id: {$ref: '#/components/schemas/Uuid'}
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        version: {type: integer, const: 1}
+        created_at: {$ref: '#/components/schemas/Instant'}
+        currency: {type: string, const: COP}
+        items: {type: array, minItems: 1, maxItems: 1000, items: {$ref: '#/components/schemas/AdjustmentItem'}}
+        nominal_total: {$ref: '#/components/schemas/Money'}
+        service_total: {type: string, const: '0.00'}
+        nominal_tax_total: {type: string, const: '0.00'}
+        service_tax_total: {type: string, const: '0.00'}
+        amount: {$ref: '#/components/schemas/Money'}
+        snapshot_digest: {type: string, pattern: '^[a-f0-9]{64}$'}
+      description: 'Mapping SUPPORT append-only order_id/adjustment_id; disponible para buyer propietario por GET refund-adjustments, sin creación ni monto buyer. No autorización monetaria ni claims hasta REQUESTED. R07 nominal original, otros devueltos0, paid_allocation conserva PRICE01. SHA256 RFC8785 sin digest, items line_id/ordinal/ticket_id. Motivo/hito/uso actuales se revalidan por solicitud, no se concede derecho por mapping. Identidad refund por motivo permanente; ciclos según integration §8.1, nunca segunda devolución.'
+    AdjustmentCreateRequest:
+      type: object
+      additionalProperties: false
+      required: [reason, milestone_version, ticket_ids]
+      properties:
+        reason: {type: string, enum: [EVENT_CANCELLED, EVENT_CHANGED]}
+        milestone_version: {$ref: '#/components/schemas/Version'}
+        ticket_ids: {type: array, minItems: 1, maxItems: 1000, uniqueItems: true, items: {$ref: '#/components/schemas/Uuid'}}
+      description: 'SUPPORT selecciona subconjunto existente elegible; servidor determina refs/importes. Sin monto, user_id ni ajuste libre buyer.'
+    OrderScopeSnapshot:
+      type: object
+      additionalProperties: false
+      required: [order_id, refund_id, cycle_version, reason, milestone_version, currency, items, amount, snapshot_digest]
+      properties:
+        order_id: {$ref: '#/components/schemas/Uuid'}
+        refund_id: {$ref: '#/components/schemas/Uuid'}
+        cycle_version: {$ref: '#/components/schemas/Version'}
+        reason: {type: string, enum: [EVENT_CANCELLED, EVENT_CHANGED]}
+        milestone_version: {$ref: '#/components/schemas/Version'}
+        currency: {type: string, const: COP}
+        items: {type: array, minItems: 1, maxItems: 1000, items: {$ref: '#/components/schemas/AdjustmentItem'}}
+        amount: {$ref: '#/components/schemas/Money'}
+        snapshot_digest: {type: string, pattern: '^[a-f0-9]{64}$'}
+      description: 'R07 ORDER remanente congelado por ciclo en REQUESTED, SHA256 RFC8785 sin digest e items line_id/ordinal/ticket_id; amount=sum nominal, demás0.00, no pro-rata. Refleja claims previos y paid_allocation original.'
+    ClosingPreparationRequest:
+      type: object
+      additionalProperties: false
+      required: [closure_id, control_version, expected_event_version, kind]
+      properties:
+        closure_id: {$ref: '#/components/schemas/Uuid'}
+        control_version: {$ref: '#/components/schemas/Version'}
+        expected_event_version: {$ref: '#/components/schemas/Version'}
+        kind: {type: string, enum: [CHANGE, CANCEL]}
+    ClosingPreparation:
+      type: object
+      additionalProperties: false
+      required: [closure_id, control_version, prepared_gate_version, prepared_at, state]
+      properties:
+        closure_id: {$ref: '#/components/schemas/Uuid'}
+        control_version: {$ref: '#/components/schemas/Version'}
+        prepared_gate_version: {$ref: '#/components/schemas/Version'}
+        prepared_at: {$ref: '#/components/schemas/Instant'}
+        state: {type: string, const: PREPARED}
+      description: 'Durable Purchases, admisión/CAS pausados y commits previos drenados; no hito R07, no expira por timeout. Aceptación durable previa conserva H2/R07; fence ganador sin venta invalida permiso antiguo. Cobro canónico sin venta aplica R04 total original automático SYSTEM_R04, sin SUPPORT/fee; UNKNOWN sólo concilia. No se devuelve una venta aceptada por mera CLOSING. Registro Catalog requiere esta preparación exacta; Master §13/AC-N1, pendiente revisión independiente.'
+    AdjustmentPaidAllocation:
+      type: object
+      additionalProperties: false
+      required: [nominal, service, nominal_tax, service_tax, total]
+      properties:
+        nominal: {$ref: '#/components/schemas/Money'}
+        service: {$ref: '#/components/schemas/Money'}
+        nominal_tax: {$ref: '#/components/schemas/Money'}
+        service_tax: {$ref: '#/components/schemas/Money'}
+        total: {$ref: '#/components/schemas/Money'}
+      description: 'Asignación original por boleta del snapshot PRICE-01; total suma de componentes. Incluida en digest; no autoriza devolución de servicio o impuestos.'
+    InvoiceDossier:
+      type: object
+      additionalProperties: false
+      required: [request, holder, evidence]
+      properties:
+        request: {$ref: '#/components/schemas/InvoiceView'}
+        holder: {$ref: '#/components/schemas/InvoiceRequest'}
+        evidence: {oneOf: [{$ref: '#/components/schemas/InvoiceEvidence'}, {type: 'null'}]}
+      description: 'Sólo INVOICE_MANAGE actual, no-store; nunca logs, colas o URL pública. Sin consulta a sistema fiscal externo.'
+    AssetIntentRequest:
+      type: object
+      additionalProperties: false
+      required: [event_id, mime, byte_size, visibility]
+      properties:
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        mime: {type: string, enum: [image/jpeg, image/png, image/webp]}
+        byte_size: {type: integer, minimum: 1, maximum: 10485760}
+        visibility: {type: string, enum: [PUBLIC, PRIVATE]}
+    AssetUploadIntent:
+      type: object
+      additionalProperties: false
+      required: [asset_id, upload_intent_id, expires_at, upload_url, fields]
+      properties:
+        asset_id: {$ref: '#/components/schemas/Uuid'}
+        upload_intent_id: {$ref: '#/components/schemas/Uuid'}
+        expires_at: {$ref: '#/components/schemas/Instant'}
+        upload_url: {type: string, format: uri, description: 'POST S3 quarantine allowlist, TTL máximo 5min; nunca log.'}
+        fields:
+          type: object
+          additionalProperties: false
+          required: [key, policy, x-amz-algorithm, x-amz-credential, x-amz-date, x-amz-security-token, x-amz-signature, Content-Type]
+          properties:
+            key: {type: string, maxLength: 300}
+            policy: {type: string, maxLength: 8192}
+            x-amz-algorithm: {type: string, const: AWS4-HMAC-SHA256}
+            x-amz-credential: {type: string, maxLength: 512}
+            x-amz-date: {type: string, maxLength: 32}
+            x-amz-security-token: {type: string, maxLength: 4096}
+            x-amz-signature: {type: string, pattern: '^[a-f0-9]{64}$'}
+            Content-Type: {type: string, enum: [image/jpeg, image/png, image/webp]}
+    AssetFinalizeRequest:
+      type: object
+      additionalProperties: false
+      required: [upload_intent_id, checksum]
+      properties:
+        upload_intent_id: {$ref: '#/components/schemas/Uuid'}
+        checksum: {type: string, pattern: '^[a-f0-9]{64}$'}
+    AssetView:
+      type: object
+      additionalProperties: false
+      required: [asset_id, event_id, version, state, visibility, url, expires_at]
+      properties:
+        asset_id: {$ref: '#/components/schemas/Uuid'}
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        version: {$ref: '#/components/schemas/Version'}
+        state: {type: string, enum: [QUARANTINE, SCANNING, APPROVED, REJECTED]}
+        visibility: {type: string, enum: [PUBLIC, PRIVATE]}
+        url: {type: [string, 'null'], format: uri}
+        expires_at: {type: [string, 'null'], format: date-time}
+      description: 'URL sólo APPROVED; PUBLIC CDN sin PII, PRIVATE firma Catalog máximo 5min; no log. Otros estados url/expires_at null.'
+    PriceEstimateRequest:
+      type: object
+      additionalProperties: false
+      required: [event_id, offer_version, lines]
+      properties:
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        offer_version: {$ref: '#/components/schemas/Version'}
+        lines:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            additionalProperties: false
+            required: [locality_id, quantity]
+            properties:
+              locality_id: {$ref: '#/components/schemas/Uuid'}
+              quantity: {type: integer, minimum: 1}
+    PriceEstimate:
+      type: object
+      additionalProperties: false
+      required: [event_id, offer_version, currency, as_of, binding, lines, total]
+      properties:
+        event_id: {$ref: '#/components/schemas/Uuid'}
+        offer_version: {$ref: '#/components/schemas/Version'}
+        currency: {type: string, const: COP}
+        as_of: {$ref: '#/components/schemas/Instant'}
+        binding: {type: boolean, const: false}
+        lines:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            additionalProperties: false
+            required: [locality_id, quantity, unit_nominal, unit_service, unit_nominal_tax, unit_service_tax, subtotal]
+            properties:
+              locality_id: {$ref: '#/components/schemas/Uuid'}
+              quantity: {type: integer, minimum: 1}
+              unit_nominal: {$ref: '#/components/schemas/Money'}
+              unit_service: {$ref: '#/components/schemas/Money'}
+              unit_nominal_tax: {$ref: '#/components/schemas/Money'}
+              unit_service_tax: {$ref: '#/components/schemas/Money'}
+              subtotal: {$ref: '#/components/schemas/Money'}
+        total: {$ref: '#/components/schemas/Money'}
+      description: 'PRICE01 calculador puro mismo hold: HALF_UP una vez por componente unitario, subtotal=quantity*suma componentes, total=suma subtotales; no reserva, cobro ni garantía.'

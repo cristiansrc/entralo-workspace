@@ -1,0 +1,260 @@
+openapi: 3.1.0
+info: {title: Entralo Catalog, version: 1.0.0, description: 'Lifecycle planning. Público sin sesión aún IAM canal; privado actual EVENT_ADMIN. Capacidad/precio/fiscalidad semántica Master EX11.'}
+security: [{Workload: []}]
+servers: [{url: 'https://catalog.entralo.invalid', description: 'Owner privado documental; host real sujeto a bootstrap.'}]
+tags: [{name: Catalog, description: 'Grupo generado del componente Catalog.'}]
+x-http-contract: {timeout_seconds: 3, connect_timeout_seconds: 1, read_max_attempts: 2, read_total_budget_seconds: 3, mutation_retry: same-key-only, caching: no-store, public_cache_seconds: 30, sensitive_body_logging: forbidden, error_contract: ApiErrorResponse, origin_policy: not-applicable, principal_validation: owner-validated}
+paths:
+  /v1/events:
+    get:
+      operationId: listPublishedEvents
+      summary: Listar eventos publicados
+      tags: [Catalog]
+      description: 'Sin Cognito buyer, orden starts_at asc/event_id asc estable; sólo PUBLISHED/CLOSING/CANCELLED previamente publicados. page0/size20max100. Seguro/idempotente3s, sin hold. No filtros nuevos obligatorios.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Page'}, {$ref: 'common.yaml#/components/parameters/Size'}]
+      responses:
+        '200': {description: Catálogo público sinPII, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/EventPage'}}}}
+        '400': {$ref: 'common.yaml#/components/responses/Error'}
+        '429': {$ref: 'common.yaml#/components/responses/Error'}
+        '500': {$ref: 'common.yaml#/components/responses/Error'}
+        '503': {$ref: 'common.yaml#/components/responses/Error'}
+  /v1/events/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readPublishedEvent
+      summary: Consultar evento publicado
+      tags: [Catalog]
+      description: 'Sólo oferta publicada, draft/ajeno404. Seguro/idempotente3s, sin reserva. Availability compuesto BFF aparte/version mismatch UNKNOWN, esta lectura no garantiza cupo.'
+      responses:
+        '200': {description: Detalle público, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/EventPublic'}}}}
+        '404': {$ref: 'common.yaml#/components/responses/Error'}
+        '429': {$ref: 'common.yaml#/components/responses/Error'}
+        '500': {$ref: 'common.yaml#/components/responses/Error'}
+        '503': {$ref: 'common.yaml#/components/responses/Error'}
+  /v1/admin/events:
+    post:
+      operationId: createEventDraft
+      summary: Crear borrador de evento
+      tags: [Catalog]
+      security: &staff [{Workload: [], Cognito: [], Principal: []}]
+      description: 'EVENT_ADMIN actual Identity. Crea DRAFT+version/oferta, no publica/consume stock. fiscal P04 propuesta explícita; unique localities, nominal>=100000, capacity>0, order_limit<=account_event_limit. Timeout3s/key scoped staff+op. No impuesto universal.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/EventWrite'}}}}
+      responses:
+        '202': {$ref: 'common.yaml#/components/responses/EventAccepted'}
+        '400': &err {$ref: 'common.yaml#/components/responses/Error'}
+        '401': *err
+        '403': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+    get:
+      operationId: listManagedEvents
+      summary: Listar operaciones de eventos gestionados
+      tags: [Catalog]
+      security: *staff
+      description: 'EVENT_ADMIN actual. Lectura3s segura/idempotente, lista metadata operaciones incluyendo drafts, sinPII fiscal. Ordencreated_at desc/id; page0,size20max100.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Page'}, {$ref: 'common.yaml#/components/parameters/Size'}]
+      responses:
+        '200': {description: 'Operaciones visibles. Create/replace contienen resource_id/event_version, null sólo antes materialización, COMPLETED no null; resource_path GET /v1/admin/operations/{operation_id}.', headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/OperationPage'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/events/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readManagedEvent
+      summary: Consultar evento administrado incluido borrador
+      tags: [Catalog]
+      security: *staff
+      description: 'EVENT_ADMIN actual/event scope validado Identity. GET primario por event_id=path id, seguro/idempotente3s, máximo2 intentos dentro3s; sin body/Key/efectos/renovación. Devuelve event_version y ETag coincidentes, configuración EventWrite privada con defaults materializados. DRAFT editable; otros estados visibles pero PUT409. Inexistente/ajeno404, dependencia503 sin snapshot fabricado. Lectura→PUT con If-Match exacto y Key: carrera412, ausente428. managed_event_read_total{outcome}, sin PII labels/logbody.'
+      responses:
+        '200': {description: 'Evento actual privado y versión invocable para If-Match.', headers: {ETag: {$ref: 'common.yaml#/components/headers/EventETag'}, Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/EventManaged'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+    put:
+      operationId: replaceEventDraft
+      summary: Reemplazar borrador de evento
+      tags: [Catalog]
+      security: *staff
+      description: 'EVENT_ADMIN actual, sóloDRAFT; published requiere control CHANGE/oferta versionada, no update directo fecha/lugar. If-Match/key, nueva versión snapshot/audit, sinstock. Timeout3s.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/EventWrite'}}}}
+      responses:
+        '202': {$ref: 'common.yaml#/components/responses/EventAccepted'}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '412': *err
+        '422': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/events/{id}/publications:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: requestOfferPublication
+      summary: Solicitar publicación de oferta
+      tags: [Catalog]
+      security: *staff
+      description: 'EVENT_ADMIN actual. Sin body; If-Match/key. Verifica fiscalidad/autorizaciones/DR gates configuración; outbox OfferChangeRequested, PUBLISHING hasta ACK Purchases; rechazo no publica ni reduce bajo obligaciones. Timeout3s/noesperaSQS.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      responses:
+        '202': {$ref: 'common.yaml#/components/responses/Accepted'}
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '412': *err
+        '422': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/events/{id}/controls:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: requestEventControl
+      summary: Solicitar cambio o cancelación de evento
+      tags: [Catalog]
+      security: *staff
+      description: 'EVENT_ADMIN actual, Key/If-Match expected_event_version. 202 intención durable PREPARING aún sin hito; preparación Purchases fail-closed sin red bajo locks antes registro. Job completa preparación y CAS registro con recorded_at BD: CHANGE latest_change_at/ventana3m desde sello, CANCEL cancelled_at/CANCELLED fin ventas desde sello. Operación RECORDED marca registro, ACK no mueve fecha; aplicación APPLIED y reapertura sólo oferta/ACK BARRIER/APPLIED exactos ambos owners. Nuevo CHANGE o CANCEL sustituye CHANGE incompleto sin esperar ACK, preserva hitos/stale reopen inerte; CANCELLED409 terminal. Igualdad/posterior approval no venta/R04 por release, previo H-A/SUPPORT R07 sin auto refund cancel. If-Match412/ausente428/key conflict409. Timeout3s no cancela preparación/hito; GET operación observable. integration §7/7.1.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/EventControl'}}}}
+      responses:
+        '202': {$ref: 'common.yaml#/components/responses/Accepted'}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '412': *err
+        '422': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/operations/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readCatalogOperation
+      summary: Consultar operación de Catalog
+      tags: [Catalog]
+      security: *staff
+      description: 'EVENT_ADMIN actual/event scope, read3s segura/idempotente sin efectos. PREPARING aún sin registro/recorded_at null; RECORDED sello inicial definitivo, APPLIED/REOPENING PENDING, CHANGE COMPLETED tras OPENED/PUBLISHED y CANCEL tras ACK BARRIER ambos. Phase/recorded_at/failure_code obligatorios en controls; SUPERSEDED FAILED CONTROL_SUPERSEDED conserva hito. ACK no mueve R07; no disponibilidad PENDING ni fin registrado ficticio. resource_path misma API.'
+      responses:
+        '200': {description: 'Estado durable publicación/control/draft. Create/replace contienen resource_id/event_version, COMPLETED no null; resource_path es este GET de operación.', headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/OperationReceipt'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /internal/v1/events/{id}/milestones:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readCurrentMilestone
+      summary: Consultar último hito del evento
+      tags: [Catalog]
+      description: 'Sólo Purchases facts workload, read3s/1retry seguro dentro3s. Último hito/version/control desdeprimario, sin decidir refund ni callback aPurchases. Sin side effect/idempotente.'
+      responses:
+        '200': {description: Hechos del owner, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Milestone'}}}}
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/asset-upload-intents:
+    post:
+      operationId: createAssetUploadIntent
+      summary: Crear intención de carga de imagen
+      tags: [Catalog]
+      security: *staff
+      description: 'EVENT_ADMIN actual del evento. Key; crea asset quarantine/object_key inmutable y POST S3 con policy exacta MIME, tamaño <=10MiB y expiración 5min. Sin bytes en API, sin aprobación ni CDN. Timeout 3s; replay no renueva vencimiento, expirado 409. Firma/fields nunca logs. Compensation limpieza quarantine 24h; object_finalize_total.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AssetIntentRequest'}}}}
+      responses:
+        '201': {description: Intención creada, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AssetUploadIntent'}}}}
+        '200': {description: Replay sin renovar, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AssetUploadIntent'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/assets/{id}/finalizations:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: finalizeCatalogAsset
+      summary: Solicitar verificación de imagen cargada
+      tags: [Catalog]
+      security: *staff
+      description: 'EVENT_ADMIN actual evento del asset. Key; intent coincide asset y scope; checksum no acredita AV. Job durable verifica HEAD/tamaño/MIME/checksum y scan fuera tx, cinco intentos 1/2/4/8/16min timeout10s; fallo definitivo REJECTED sin CDN, cuarentena limpieza24h. Timeout request3s; replay mismo job. object_scan_total/object_finalize_total.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AssetFinalizeRequest'}}}}
+      responses:
+        '202': {description: Verificación durable pendiente, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AssetView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/assets/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readCatalogAsset
+      summary: Consultar imagen y acceso aprobado
+      tags: [Catalog]
+      security: *staff
+      description: 'EVENT_ADMIN actual; read seguro/idempotente3s sin transición ni renovación de upload. Sólo APPROVED devuelve URL: CDN pública sin PII o firma privada Catalog <=5min; quarantine/scanning/rejected null. No-store, no log URL; catalog_image_signing_total.'
+      responses:
+        '200': {description: Estado y acceso de imagen, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AssetView'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/price-estimates:
+    post:
+      operationId: estimateCatalogOfferPrice
+      summary: Consultar estimación PRICE01 de oferta aplicada
+      tags: [Catalog]
+      security: *staff
+      description: 'EVENT_ADMIN actual para event_id; I27 Purchases estimateAppliedOfferPrice, DTO exacto sin cálculo propio ni callback. Read seguro/idempotente sin Key/stock/orden; timeout3s total, sin retry que supere budget; propagar error owner y offer stale409. price_estimate_total{outcome}.'
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PriceEstimateRequest'}}}}
+      responses:
+        '200': {description: Precio no vinculante, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PriceEstimate'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+components:
+  securitySchemes:
+    Workload: {$ref: 'common.yaml#/components/securitySchemes/Workload'}
+    Cognito: {$ref: 'common.yaml#/components/securitySchemes/Cognito'}
+    Principal: {$ref: 'common.yaml#/components/securitySchemes/Principal'}

@@ -11,3 +11,16 @@
 #     del archivo referenciado cambia (el fingerprint depende de la linea de inicio).
 #
 docs/architecture/architecture-proposal.md:generic-api-key:293
+#
+# --- Excepcion 2026-10-03: dos fingerprints EXACTOS sobre fixture de contratos ---
+#   - Autorizacion: humana explicita (responsable: "si autorizado") + adjudicacion ya emitida
+#     por security-reviewer (dos FALSOS POSITIVOS demostrados). NO es una revision nueva.
+#   - Hallazgo: generic-api-key en lineas 9 y 10 de un fixture JSON de contratos de prueba.
+#   - Motivo: marcadores sinteticos idempotency_key "caso-sintetico-r04" (casos R04);
+#     prosa de fixtures de prueba, NO credenciales reales. Sin rotacion aplicable.
+#   - Alcance: SOLO los dos fingerprints exactos indicados abajo (file/rule/line).
+#     No se excluye el archivo completo, ni la regla, ni wildcard/global/allow-inline.
+#   - Reversion: revisar la excepcion si el fixture schema-cases.v1.json cambia
+#     (los fingerprints dependen de la linea de inicio).
+docs/specs/increments/entralo-v1-executable-specs/fixtures/contratos/schema-cases.v1.json:generic-api-key:9
+docs/specs/increments/entralo-v1-executable-specs/fixtures/contratos/schema-cases.v1.json:generic-api-key:10

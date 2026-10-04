@@ -1,0 +1,6 @@
+{
+  "id": 12345,
+  "type": "payment",
+  "data": {"id": "999999999"},
+  "provider_extension": "synthetic-not-allowed"
+}

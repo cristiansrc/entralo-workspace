@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contratos.entralo.invalid/events/change-reopen.v1.schema.json",
+  "title": "ChangeReopenPayloadV1",
+  "description": "Lifecycle planning. Payload dedicado; envelope, producer y tipo se validan en IntegrationEnvelopeV1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["event_id", "event_version", "close_at", "closure_id", "control_version", "milestone_version", "change_recorded_at", "offer_version", "gate_version", "reopen_id", "phase", "applied_at"],
+  "properties": {
+    "event_id": {"type": "string", "format": "uuid"},
+    "event_version": {"type": "integer", "minimum": 1, "description": "committed_event_version de aplicación de términos tras ACK; fija entre fases, no recorded_event_version inicial ni gate_version."},
+    "close_at": {"type": "string", "format": "date-time", "pattern": "Z$", "description": "Sello inicial inmutable del control, no barrera efectiva Purchases ni ACK."},
+    "closure_id": {"type": "string", "format": "uuid"},
+    "control_version": {"type": "integer", "minimum": 1},
+    "milestone_version": {"type": "integer", "minimum": 1},
+    "change_recorded_at": {"type": "string", "format": "date-time", "pattern": "Z$", "description": "Hito del registro inicial anterior a ACK; se preserva en todas las fases sin renovación."},
+    "offer_version": {"type": "integer", "minimum": 1},
+    "gate_version": {"type": "integer", "minimum": 1},
+    "reopen_id": {"type": "string", "format": "uuid"},
+    "phase": {"enum": ["REQUESTED", "PREPARED", "COMMIT", "OPENED"]},
+    "applied_at": {"type": ["string", "null"], "format": "date-time"}
+  },
+  "allOf": [
+    {"if": {"properties": {"phase": {"enum": ["PREPARED", "OPENED"]}}}, "then": {"properties": {"applied_at": {"type": "string", "format": "date-time", "pattern": "Z$"}}}},
+    {"if": {"properties": {"phase": {"enum": ["REQUESTED", "COMMIT"]}}}, "then": {"properties": {"applied_at": {"type": "null"}}}}
+  ]
+}

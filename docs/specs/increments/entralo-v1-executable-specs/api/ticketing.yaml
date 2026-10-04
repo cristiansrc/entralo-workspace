@@ -1,0 +1,161 @@
+openapi: 3.1.0
+info: {title: Entralo Ticketing y Validation, version: 1.0.0, description: 'Lifecycle planning. Única vista pública allowlist pregate; no endpoint Blockchain/proof público. Guards terminales serializados.'}
+security: [{Workload: []}]
+servers: [{url: 'https://ticketing.entralo.invalid', description: 'Owner privado documental; host real sujeto a bootstrap.'}]
+tags: [{name: Ticketing, description: 'Grupo generado del componente Ticketing y Validation.'}]
+x-http-contract: {timeout_seconds: 3, connect_timeout_seconds: 1, read_max_attempts: 2, read_total_budget_seconds: 3, mutation_retry: same-key-only, caching: no-store, public_cache_seconds: 0, sensitive_body_logging: forbidden, error_contract: ApiErrorResponse, origin_policy: not-applicable, principal_validation: owner-validated}
+paths:
+  /v1/orders/{id}/tickets:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}, {$ref: 'common.yaml#/components/parameters/Page'}, {$ref: 'common.yaml#/components/parameters/Size'}]
+    get:
+      operationId: readOwnTickets
+      summary: Listar boletas propias privadas
+      tags: [Ticketing]
+      security: [{Workload: [], Cognito: [], Principal: []}]
+      description: 'Sólo buyerowner derivado principal, no staff arbitrario. Read3s segura/idempotente/sin efectos, page0size20max100 ticket_idasc. QR/tokenverificación privados no-store/no logs; nunca público niBlockchain. Si no emitidas409 sin prometerentrega.'
+      responses:
+        '200': {description: Boletaspropiasprivadas, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/TicketPage'}}}}
+        '400': {$ref: 'common.yaml#/components/responses/Error'}
+        '401': {$ref: 'common.yaml#/components/responses/Error'}
+        '403': {$ref: 'common.yaml#/components/responses/Error'}
+        '404': {$ref: 'common.yaml#/components/responses/Error'}
+        '409': {$ref: 'common.yaml#/components/responses/Error'}
+        '429': {$ref: 'common.yaml#/components/responses/Error'}
+        '500': {$ref: 'common.yaml#/components/responses/Error'}
+        '503': {$ref: 'common.yaml#/components/responses/Error'}
+  /v1/verifications:
+    post:
+      operationId: readBoundedVerification
+      summary: Consultar verificación pública acotada
+      tags: [Ticketing]
+      description: 'Público sin Cognito, workloadcanal/rate30minIP+10mindigest seeds pendientesWAFvalidación. POST readseguro/idempotente sinmutación, noKey; IDaleatorio256bit distintoQR, bodyredactado/noecho. 3s. Sólooperational/proof/minutoUTC/null; hash/leaf/tx/root/batch/proof/finetime/P03 bloqueados. NoPII/order/payment/rawticket/prehash/QR. Inválidos/inexistentesuniforme404; caída503últimoestadoinformativo noautorizatorno.'
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/VerificationRequest'}}}}
+      responses:
+        '200': {description: Vistaacotada sin prueba pública, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/VerificationView'}}}}
+        '400': &err {$ref: 'common.yaml#/components/responses/Error'}
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': {$ref: 'common.yaml#/components/responses/VerificationUnavailable'}
+  /v1/admissions:
+    post:
+      operationId: admitTicketOnce
+      summary: Registrar intento de ingreso único
+      tags: [Ticketing]
+      security: &staff [{Workload: [], Cognito: [], Principal: []}]
+      description: 'ACCESS_STAFF actualIdentity por event/device fuera locks; token/assertion válido. ticket_reference protegida; intento+actor/event/device/key ligada payload; usoúnico+guard+control en tx y audit/outbox. 3s, no retry físicoautomático: consultamismointentoanteACKincierto. ADMITTED sóloprimeruso, replay nosegundoingreso; denied200decisiónnegocio nunca erroroculto. Caída503noingreso/caché.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdmissionRequest'}}}}
+      responses:
+        '200': {description: Decisióndurable, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdmissionResult'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admissions/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readAdmissionAttempt
+      summary: Consultar intento de ingreso
+      tags: [Ticketing]
+      security: *staff
+      description: 'ACCESS_STAFF actualscope/actorattempt; ledgerread3s/seguraidempotente, noacciontorno automática ni ingresonuevo porreplay.'
+      responses:
+        '200': {description: Resultadomismointento, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdmissionResult'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /internal/v1/issuances:
+    post:
+      operationId: issueAcceptedSaleTickets
+      summary: Emitir boletas de venta aceptada
+      tags: [Ticketing]
+      x-timeout-seconds: 10
+      description: 'SóloPurchases issuanceworkload, mismo comando/handler/guard queSQS noattemptnuevo portransporte. Validaraccepted_at<deadline/payment_approved_at<grace/authorization/fence/permisopreviodurable; actualhora postdeadlinepermitida. Atomic guard+set+uniquelineordinal+outboxesdosdestinos; max3ledgerattempt/noreset. Cierre ganacaso409 ISSUANCE_CLOSED; ACKincierto nofallodefinitivo. Timeout10s/queryguardantesretryrefund; orderúnico/key.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/IssueTicketsRequest'}}}}
+      responses:
+        '200': {description: Emisión/guarddurablemismoconjunto, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/IssuanceResult'}}}}
+        '400': *err
+        '403': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /internal/v1/issuances/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readIssuanceGuard
+      summary: Consultar guard de emisión
+      tags: [Ticketing]
+      description: 'SóloPurchases reconciler,read3sseguraidempotente; idissuance. OPEN/404 noausenciaprobada, CLOSEDterminal/ISSUED recupera; cero callbacksMP/Purchases.'
+      responses:
+        '200': {description: Guard/resultadoowner, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/IssuanceResult'}}}}
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /internal/v1/issuances/{id}/closures:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: closeIssuanceTerminally
+      summary: Cerrar emisión terminalmente
+      tags: [Ticketing]
+      description: 'SóloPurchases compensator. Contexto durable CloseIssuanceRequest con issuance_id=path ykeymismoissuance; guardserializacommitincl tardío, crea tombstone aun fila ausente o devuelveISSUEDexistente. Noreopen/refundpor404. 3s/resultadodurable; fallo503mantieneobligación sinrefundciego.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/CloseIssuanceRequest'}}}}
+      responses:
+        '200': {description: Cierreterminal oemisiónyaexistente, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/IssuanceResult'}}}}
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /internal/v1/orders/{id}/ticket-facts:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readCurrentTicketFacts
+      summary: Consultar hechos actuales de boletas
+      tags: [Ticketing]
+      description: 'Sólo Purchases eligibilityworkload read3s segura/idempotente sin callback. TicketFacts.items refs/uso/status por boleta de orden (máximo1000, sinQR/secreto) y version/as_of primario. Permite mapping SUPPORT y scope remanente, used agregado no decide ajuste fuera scope. No autoriza refund. Membership completa canónica; no truncado silencioso.'
+      responses:
+        '200': {description: Hechos actuales, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/TicketFacts'}}}}
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /internal/v1/orders/{id}/refund-guards:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: applyRefundGuard
+      summary: Aplicar guard de devolución
+      tags: [Ticketing]
+      description: 'Sólo Purchases guardworkload, path order=snapshot.order. ADJUSTMENT mapping completo, ORDER OrderScopeSnapshot remanente; refs/digest/cycle exactos contra ticket local. Serializa uso/guard miembros, usada fuera no deniega CHANGE; dentro REJECTED_USED sin bloqueo parcial, CANCEL permite usada sin borrar. BLOCKED antes SUPPORT, sin dinero/fees Ticketing. Replay refund_id/cycle/control/digest mismoresultado, mismatch409. Ciclo RELEASED/tombstone nunca re-bloquea ante comando tardío; devuelve RELEASED. Release sólo eventos Purchases por rechazo predispatch o ausencia monetaria terminal, ACK cleanup durable; UNKNOWN/errorMP no release. No estado VIGENTE forzado ni cancelación revertida. Timeout3s; integration §8.1.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/GuardRequest'}}}}
+      responses:
+        '200': {description: Guarddurable oconflictusoprobado, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/TicketFacts'}}}}
+        '400': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+components:
+  securitySchemes:
+    Workload: {$ref: 'common.yaml#/components/securitySchemes/Workload'}
+    Cognito: {$ref: 'common.yaml#/components/securitySchemes/Cognito'}
+    Principal: {$ref: 'common.yaml#/components/securitySchemes/Principal'}

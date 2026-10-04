@@ -1,0 +1,104 @@
+openapi: 3.1.0
+info: {title: Entralo Payments, version: 1.0.0, description: 'Lifecycle planning. MP adapter real bloqueado DR05 firma/idempotencia/búsqueda/precisión/PCI. No API pública directa salvo webhook dedicado.'}
+security: [{Workload: [], Cognito: [], Principal: []}]
+servers: [{url: 'https://payments.entralo.invalid', description: 'Owner documental; webhook dedicado sujeto a DR-05 y bootstrap.'}]
+tags: [{name: Payments, description: 'Grupo generado del componente Payments.'}]
+x-http-contract: {timeout_seconds: 3, connect_timeout_seconds: 1, read_max_attempts: 2, read_total_budget_seconds: 3, mutation_retry: same-key-only, caching: no-store, public_cache_seconds: 0, sensitive_body_logging: forbidden, error_contract: ApiErrorResponse, origin_policy: not-applicable, principal_validation: owner-validated}
+paths:
+  /v1/card-payments:
+    post:
+      operationId: createCardPayment
+      summary: Crear pago propio con tarjeta
+      tags: [Payments]
+      x-timeout-seconds: 10
+      description: 'Buyerowner validado antesintención/claim. TLS token ephemeral sólomemoria; idempotencynonsensitiveintent/order, no hash token. I24 permiso+montoautoridad antesMP, una transacción/order. Un envíoMP10s, canal15s sinretryciego; incierto202UNKNOWN/jobconciliaciónsin token. Persistintent antesred y resultadoevidence/outbox trascanónico, tokennuncacolalogsDB. Venta sóloPurchases decisiónI08; replay200 mismoestado.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/CardPaymentRequest'}}}}
+      responses:
+        '202': {description: 'Estado monetario conocido oUNKNOWN, no boletas prometidas. Consultar payment_intent_id.', content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PaymentView'}}}}
+        '200': {description: Replaymismaintenciónsincobroextra, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PaymentView'}}}}
+        '400': &err {$ref: 'common.yaml#/components/responses/Error'}
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/payment-intents/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readOwnPaymentIntent
+      summary: Consultar intención de pago propia
+      tags: [Payments]
+      description: 'Sólobuyerowner. Readledger3s segura/idempotente, noMP/create/reconciliaciónporGET. Noexternalreference/PAN/token.'
+      responses:
+        '200': {description: Estadopropio, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PaymentView'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /internal/v1/payment-intents/{id}/canonical-facts:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readDurableCanonicalFact
+      summary: Consultar evidencia canónica durable
+      tags: [Payments]
+      security: [{Workload: []}]
+      description: 'SóloPurchases I28recoveryworkload;3stotal/connect1s/máximo2intentossegurodentrorestante. Sólolecturaledgerdurable; ceroMP/I08/I24callback. UNKNOWN provisional sinventa; inexistencia404 nofallomonetario. latestversion nodup ni sideeffect.'
+      responses:
+        '200': {description: Hechodurablelatestversion, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/CanonicalPaymentFactV1'}}}}
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /internal/v1/refunds/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readDurableRefundFact
+      summary: Consultar hecho monetario de devolución
+      tags: [Payments]
+      security: [{Workload: []}]
+      description: 'Sólo Purchases reconworkload, read ledger3s segura/idempotente/no MP/callback/envío. RefundView cycle/absence_evidence_id: FAILED_FINAL sólo prueba terminal canónica no efecto/no pendiente, 404/timeout no ausencia. cleanup_state Payments NONE; Purchases mantiene limpieza Ticketing. Identidad/key permanentes,3 envíos acumulativos no reset. Ejecutar sólo SQS ExecuteRefundRequestedV1.'
+      responses:
+        '200': {description: Refundmonetariodurable, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundView'}}}}
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /webhooks/v1/mercado-pago:
+    post:
+      operationId: receiveMercadoPagoNotification
+      summary: Recibir notificación autenticada de Mercado Pago
+      tags: [Payments]
+      security: [{MpSignature: []}]
+      x-timeout-seconds: 3
+      description: 'Ruta exclusiva MP/WAF, política mp-payment-webhook-v1 versión1 en integration §9. Allowlist cerrada MercadoPagoPaymentNotificationV1; additionalProperties false raíz/data. Unknown field/type/formato400 VALIDATION_ERROR antes inbox, sin body logs/persistencia. Firma oficial data.id query+x-request-id antes inbox; query/body conversión decimal canónica exacta, discrepancia400 WEBHOOK_ID_MISMATCH. Inbox key type+notification id si existe; fallback x-request-id+data.id. SHA256 RFC8785 payload normalizado allowlist (IDs decimales strings), sin token/PAN/CVV ni incluir firma. Igual inbox key+hash replay204; sólo misma inbox key+hash distinto409 IDEMPOTENCY_CONFLICT, no estado de pago ni campo nuevo409. Commit inbox+job consulta antes204, MP fuera request. Timeout3s; rollback cero inbox parcial. Fixtures sintéticas documentales G-OAS, no capturas sandbox ni prueba firma/PCI/DR05. Alertar tasa400 exacta integration §9.'
+      x-webhook-policy: {name: mp-payment-webhook-v1, version: 1, schema: 'common.yaml#/components/schemas/MercadoPagoPaymentNotificationV1', fixtures: '../fixtures/mercado-pago/README.md'}
+      parameters:
+        - {name: x-request-id, in: header, required: true, schema: {type: string, minLength: 1, maxLength: 200}}
+        - {name: data.id, in: query, required: true, schema: {type: string, pattern: '^[1-9][0-9]{0,127}$'}, description: Identidad pago proveedor firmada; no log/querysampling.}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: 'common.yaml#/components/schemas/MercadoPagoPaymentNotificationV1'}
+      responses:
+        '204': {description: 'Notificación durable, consulta pendiente o replay; nunca venta confirmada.'}
+        '400': {$ref: 'common.yaml#/components/responses/WebhookBadRequest'}
+        '401': *err
+        '409': {$ref: 'common.yaml#/components/responses/WebhookConflict'}
+        '429': *err
+        '500': *err
+        '503': *err
+components:
+  securitySchemes:
+    Workload: {$ref: 'common.yaml#/components/securitySchemes/Workload'}
+    Cognito: {$ref: 'common.yaml#/components/securitySchemes/Cognito'}
+    Principal: {$ref: 'common.yaml#/components/securitySchemes/Principal'}
+    MpSignature: {$ref: 'common.yaml#/components/securitySchemes/MpSignature'}

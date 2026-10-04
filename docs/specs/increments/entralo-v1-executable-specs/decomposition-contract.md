@@ -1,0 +1,111 @@
+# Decomposition Contract — Entralo V1
+
+Lifecycle status: `planning`. **Contrato de fronteras, no task board ni tareas de implementación**. Owner Planner. Nohandoff hasta ready+aprobación humana plancontractual; gates especializados bloquean sólo fronterascorrespondientes, no inventar alternativasenExecutor.
+
+**Delta N1 vigente:** sección final supersede «compensación N1 declarada aprobada» sólo en cuanto bloqueo funcional/confirmación anterior; no existe aprobación específica del usuario, sino derivación Master§13. Sin handoff ni tareas, gate ready y plan contractual humano intactos.
+
+## Fuentes autoritativas y nombres
+
+Rootactual `/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/`. Master `master-spec.md`; APIs `api/{identity,catalog,purchases,payments,ticketing,buyer-bff,admin-bff}.yaml`, components `api/common.yaml`; modelos/migrationcontracts `data/{common,identity,catalog,purchases,payments,ticketing,blockchain}.md`; eventos `events/integration-envelope.v1.schema.json`; integración `integration-contract.md`; gates `gate-register.md`. `review-request.md` proceso, nofirma/approval. Sharedúnico `docs/specs/.working/entralo-v1-executable-specs-sdd-context.md`. Pack curator índice nofuente. Trasladorepos sólomappingMaster aprobado, no reposcreados ni copiasmanuales.
+
+Paths canónicos **exactos** enOpenAPI owner/channel, no rutas deducidas debrief. Owner APIs distintos a browser BFF, nunca publicar/internalporbrowser ni proxy wildcard. DTOschema únicos `Profile/ProfileUpdate/IdentityBinding/AuthorizationRequest/AuthorizationDecision/Contact`, `EventWrite/EventPublic/EventPage/EventControl/FiscalConfig/TaxLine/Milestone`, `HoldRequest/Order/Availability/PaymentClaim/PaymentPermit/CanonicalPaymentFactV1/AcceptanceDecision`, `CardPaymentRequest/PaymentView`, `RefundRequest/RefundApproval/RefundView`, `InvoiceRequest/InvoiceEvidence/InvoiceView`, `IssueTicketsRequest/IssuanceResult/GuardRequest/TicketFacts`, `VerificationRequest/VerificationView/VerificationUnavailable/AdmissionRequest/AdmissionResult`, `SessionView/LoginRequest`, `ApiErrorResponse/OperationReceipt` en common. FuenteYAML, interfaces/modelos Java sólogeneradasbuild/generated/openapi, implementaciónKotlin adapta apuroscommands/domain, no duplicatedDTOhandwritten. Generationoptionsspring/Boot4Master §6, pinbootstrap gate.
+
+Enumsreservation RESERVADA/EXPIRANDO/VENDIDA/LIBERADA; saga PAYMENT_PENDING/ISSUANCE_PENDING/CONFIRMED/ISSUANCE_FAILED_FINAL/COMPENSATION_PENDING_GUARD/ABORTING/REFUND_PENDING/COMPENSATED/MANUAL_RECONCILIATION; guardOPEN/ISSUED/CLOSED; operativoVIGENTE/UTILIZADA/ANULADA/REEMBOLSADA; proofPENDIENTE/CONFIRMADA; invoiceSOLICITADA/EN_GESTION_EXTERNA/EMITIDA_Y_ENVIADA/ERROR_PENDIENTE. CLOSINGevento no CLOSEDissuance. DecimalCOPstringtransport/numericBD scale2, timestamps UTCZ/msreales. `payment_approved_at` proveedor=purchased_at semántico, `accepted_at`CASlocal, `canonical_confirmed_at` auditPayments, `reconciled_at` acceptancePurchases.
+
+## Fronteras y ownership de datos
+
+| Owner | Tablas/columnas clave | Integraciones permitidas |
+|---|---|---|
+| Identity | user_profile user_id/issuer/subject/contact_ciphertext/mapping_version; permission user/action/event/device/version | Cognito ACL, authorizationcurrent, ContactReferenceChanged→Purchases |
+| Catalog | event/offer_version/offer_locality/fiscal_line/event_control/asset; offer_version/controlversion/hitomilestone | Catalog→Purchases ofertacontrol, →Ticketingcontrol; ACK/hito, S3image |
+| Purchases | event_gate event_lock_key/close_requested/gate_version; inventorycapacity/reserved/sold; account_event_counter; purchase_order/clocks/fence; order_line; payment_permit/payment_acceptance; closure_member; issuance_obligation/attempt; refund; invoice_request/document/notification | Orquestasaga/paymentfacts/recoveryledger/claims/issuanceguards/refunds/manualfiscal/SES, no MPtoken |
+| Payments | payment_intent provider_key/orderunique; payment_evidence evidence_id/observationversion/approved_at; webhook_receipt; refund_execution/refund_attempt | MP syncsensibleúnico, I08postcommit/SQS, I28ledgerread/no callbacks |
+| Ticketing | issuance_guard/orderunique; ticketlineordinal/commitment/secret_ciphertext/verification_digest; event_control/refund_guard/admission_attempt | Emisión/closure/guard/access, factsactual, Blockchaincommit/resultprivado |
+| Blockchain | anchor_obligation/emission/proofref; anchor_batch/intent/root; batch_member/anchor_attempt | Eventos/jobrecovery, provideradaptergated, sin HTTP público |
+
+common outbox/inbox/idempotency_record/durable_job/audit_record/incident materializado **cadaDB**, no esquemacompartido. Las FK son únicamente locales declaradas DDL. No querySQL跨DB/copiarPIIcontactomúltiplesowners, ningúnDTOgeneratedentraDomain. No tableholdindependiente: hold_idúnico/orderregistroautoridad, no inventarotraBDInventory.
+
+## Orden permitido entre fronteras (no atomización en tareas)
+
+1. Resolver readiness de artefactos y gates de proceso; elegirpins/adapters externos mediante evidencia enincrementoaprobado, no enExecutor.
+2. Preparación futura repos/toolchain/generación y migraciones comunes/owner antesusarJPA; scaffoldingreal sóloExecutorconaprobación. Flywaymigrationreal/testsvalidate anteslógicapersistencia; Planner aquí sólocontract.
+3. Identitybinding/permisos yCatalogoferta/aplicación/stock anteshold; BFFsesión operableantesmutaciónbuyer, públicocatálogo nodepende login.
+4. Purchasesatomicstock/limit/gate/clocks/claims yPaymentsledger/idempotencia antesMP; MP adapterDR05cerrado antescobrorealsandbox segúncontract aprobado. Factacceptance/release yrecovery antesissuance.
+5. Ticketingguard/tombstone/uso/facts antesactivarissuance/refund; emisión conoutboxdurableBlockchain puede operarsinchainreal yproofpending, sin publicproof.
+6. Refundguard/facts+SUPPORTauthorization+financialledger antesMPrefund; PDF/manualinvoice/avisosindependientes noholdsuccesscondition. Buyer/admin consumircontratosgenerated sin reglasbusinessnuevas.
+7. Cadenaadapterreal sóloGCHAIN+crypto; público ampliado sóloP03/nuevocontrato; carga/restore/seguridad/observabilidad antesgo-live. QAhumana distinta Gate1/contracts.
+
+Task Decomposer futuro decideatomización sólo conorden/ownership anteriores yCAsEX01–15/IEX01–10/data/CAsbrief; Planner no escribe tareas/estadosdone/taskboard. No autorizaciónmonetaria por stubs/demos/cache.
+
+## Invariantes de bloqueo
+
+Blocked: Spec Validator approval required si veredictodistinto ready; Gate1heredado no autorizaimplementación. Trasready, awaiting-human-plan-approval **del plancontractual**, sin repetirmacro. Blocked: OpenAPI contract not ready si parse/ref/schemas/generationdrift; Blocked: contract decision required anteomisiónscope/closing/fiscal/gateexterno, no tomar arquitecturadeExecutor. Secretscanfailure bloqueareview/handoff; noclaimreadyness porceroresultadoengrep.
+
+Seguridadno negociable: authanteshold/ownerstable8limit; token sólosyncTLSnoDB/SQS/log; usage/refund/stockexactamenteunefecto porledger; releaseirreversible; acceptanceCASpredeadline/approvalpregrace opciónA realusuario; no cuartoissuanceattempt/no false refundACK; ninguna venta nueva50–55min; no rawticket/QR/PII/orderefsenpublic; públicoallowlistpregate yBlockchainnoAPI; fiscalmanualexterno/PDFNOfiscal; no tasauniversal/grossup; no callbacksI24/I08/I28; deadlinejobsinred.
+
+Forbidden stale terms: `projects/entralo-* creado`, `Inventory séptimo`, `useSpringBoot3 paraBoot4`, generatedclassescommitted/DTOreimplementado, `CreatePaymentRequestedV1`enSQS/tokenvault, `unknown_hold_until`renovable, `issuance_deadline_at`, rawMPaccepted, `accepted_at=purchased_at`, LIBERADA→VENDIDA, emisión4intentos, refundporlatencia/CLOSING, refundcancelautotodas, noauthhold, 19%/10%universales, tarifaMPcontractualseed, fiscalCUFElocal, proofpublicpregate, cacheofflinegreen, grantfirmadopropiopuerto, DAGglobal(linksbidirecciónsonporfase), `ready`sinValidator.
+
+## Verificación de consistencia obligatoria anteshandoff
+
+Validatorcoteja path/op/schema→dato/status/column→eventpayload/key→saga/sideeffect/timeout. Mismoslimits/deadlines/amount/timestamps/attempts no contradictorios. CAsboundaries igualdad−1ms/igual/+1ms/crashlocksrollbackACK, injectiontokenenlogsinks, laststock/accountparallel/use/refundconcurrentes, graphphasecallbacks. JsonSchemaconditionalproducer/payload/ordernull yfullrefs OAS; residualfindings no seocultan comodeuda. Este documento no afirma pass ni permiteimpltarbloqueado.
+
+## Delta normativo de nombres y orden — ronda actual
+
+Fuente Master §9/integration §§7–8, sin tasks ni handoff. Paths nuevos exactos:
+- Purchases/Admin BFF GET `/v1/admin/sales`, GET `/v1/admin/refunds`, GET `/v1/admin/refunds/{id}`, GET `/v1/admin/invoice-requests/{id}/dossiers`; PUT `/v1/admin/invoice-requests/{id}` conservado owner y proxy añadido.
+- Catalog/Admin BFF POST `/v1/admin/asset-upload-intents`, POST `/v1/admin/assets/{id}/finalizations`, GET `/v1/admin/assets/{id}`, POST `/v1/admin/price-estimates`; Purchases POST `/internal/v1/price-estimates` exclusivamente Catalog workload I27.
+- Purchases/Buyer BFF GET/PUT `/v1/invoice-requests/{id}` propios.
+
+Schemas nuevos: `OrderPage`, `TicketPage`, `OperationPage`, `RefundPage` junto `EventPage` materializan PageEnvelope<T> **offset** (`items,page,size,has_next`). `AdjustmentSnapshot`, `AdjustmentItem`, `TicketReference`, `InvoiceDossier`, `AssetIntentRequest`, `AssetUploadIntent`, `AssetFinalizeRequest`, `AssetView`, `PriceEstimateRequest`, `PriceEstimate`. Grupos generated por tags `Identity/Catalog/Purchases/Payments/Ticketing/BuyerBff/AdminBff`, no renombrar operationId.
+
+Data proposals DRAFT en data/purchases/catalog/ticketing: `adjustment_snapshot`, `adjustment_item`, `refund_component_claim`, `refund_guard_ticket`; `refund.version/snapshot_digest`; `event_gate.milestone_version/change_recorded_at/reopen_id/reopen_state`; `event_control.target_offer_version/milestone_version/reopen_id/reopen_state/prepared_gate_version/opened_gate_version`; `asset.upload_expires_at`. No migration .sql creada/aplicada. Estado claims RESERVED/UNKNOWN/INITIATED/CONFIRMED, reopen PREPARED/OPENED Purchases y REQUESTED/PREPARED/COMMITTED/OPENED Catalog.
+
+Orden adicional: mapping SUPPORT antes solicitud ADJUSTMENT; REQUESTED snapshot/claims antes guard/approval/dinero. Preparación Purchases sin hito→registro Catalog→ACK BARRIER→APPLIED→ACK APPLIED ambos/oferta→reopen. Cinco schemas events/{integration-envelope,adjustment-snapshot,change-reopen,change-lifecycle,order-scope-snapshot}.v1.schema.json; RefundAdjustmentV1 retirado, guard autocontenido. No ampliar R07 ni derecho buyer.
+
+Forbidden stale terms adicionales: arrays sueltos en listados; cursor obligatorio (decisión offset); OfferApplied abre CHANGE; reopen antes hito/ACK; overwrite AdjustmentSnapshot; adjustment_id autoriza monto arbitrario; 4xx owner convertido a200/503; hosts .invalid desplegados; DRAFT SQL aplicada. Gates: nuevo Spec Validator ready imprescindible; Gate1 no se repregunta, intervención humana sólo para diff material real según solicitud actual. Sin ready no transición tasks ni Executor.
+
+RefundAdjustment lógico adjustment_snapshot/items, transport AdjustmentSnapshot sólo API SUPPORT/guard, no evento/proyección paralela. paid_* original vs nominal R07. ChangeProposal event_control sin módulo nuevo; expected=If-Match, recorded vs committed, ACK ack_stage/acknowledged_event_version/owner_projection_version. paths nuevos delta siguiente, sin código ni task board.
+
+Orden actual completo Master§10/integration§7.1/8.1/8.2: preparación sin hito antes registro; commits de venta previos drenados, barrier ganador no aceptación vieja ni por approval<T. Registro no espera ACK previo/posterior. Nuevo control sustituye CHANGE con SUPERSEDED/historial preservado; CANCEL terminal. No espera MP/vencimientos. Forbidden: hito tras ACK, preparación=hito, committed_at cambia ventana, CANCEL reopen, approval aislado=venta, compensación N1 declarada aprobada, refund automático ventas previas canceladas, R07 paid_allocation completo, R13 fee, informe Planner=aval.
+
+## Owner dependencies y criterios SA (fronteras, no tareas)
+
+| Frontera/owner | Prerrequisito autoritativo y dependencia permitida | Criterio de habilitación |
+|---|---|---|
+| Catalog control→Purchases prepare | POST /internal/v1/events/{id}/closing-preparations · prepareEventClosing · ClosingPreparationRequest/ClosingPreparation; IAM sólo Catalog | Fence durable y current closure antes registrar; pausa drena CAS locales, sin red/MP en tx; AC-SA01/05 |
+| Catalog→Ticketing/Purchases control | ACK ack_stage BARRIER/APPLIED, acknowledged_event_version y owner_projection_version; Catalog event_control PREPARING/PENDING/APPLIED/COMPLETED/SUPERSEDED/FAILED | Sellos/versiones exactos, ambos APPLIED/oferta/PREPARED antes COMMIT; AC-SA05/08/10 |
+| SUPPORT/admin→Purchases mapping | POST /v1/admin/orders/{id}/refund-adjustments · createRefundAdjustment / createAdminRefundAdjustment · AdjustmentCreateRequest/AdjustmentSnapshot; REFUND_APPROVE actual Identity | Facts Ticketing por ticket y hito Catalog antes snapshot; monto servidor, creación no approval/claims; AC-SA02 |
+| Purchases REQUESTED→Ticketing guard | Refund/Refund_cycle+claims+OrderScopeSnapshot/AdjustmentSnapshot; GuardRequest.cycle_version/scope_snapshot; no RefundAdjustmentV1 | Caps REQUESTED y membership exactos; REJECT release outbox/ACK/tombstone antes nuevo ciclo; AC-SA03/04/06/09 |
+| Purchases→Payments ejecución | RefundCommand cycle/digest/guard/absence_evidence_id, Payments refund_execution/refund_absence_evidence | Snapshot durable y replay mismatch sin red; mismo refund_id/key,≤3 envíos acumulativos/primer autorización7d, no nueva total; AC-SA04/06 |
+| Payments→Purchases release seguro | RefundObserved/GET /internal/v1/refunds/{id}, FAILED_FINAL requiere prueba terminal real DR05 | UNKNOWN/timeout/404 nunca libera; claims liberados auditado y cleanup Ticketing ACK; AC-SA03/04 |
+| Admin→Catalog operación | GET /v1/admin/operations/{id} · readAdminOperation/readCatalogOperation · OperationReceipt.phase/recorded_at/failure_code | Misma API resource_path, estados observable no disponibilidad PENDING; AC-SA07 |
+
+Orden permitido: contratos/gates→ledger/fences y facts owners→preparación/registro/supersession→proyecciones/ACK/reopen; refund facts/origen→snapshot/claims→guard/cleanup→approval/Payments durable→MP sólo DR05. Runtime real, clients/migrations fuera alcance Planner. AC-SA01…11 corregidos y AC-N1…N6 en consistency-review autoritativos junto Master/API/data/events; «N1 blocked confirmación funcional, Executor no elige alternativa» (**mención histórica `superseded` por Master§13 D-N1-01 / gate-register L56: no es instrucción vigente para Executor; N1 hoy `specified-awaiting-independent-review`, sin bloqueo de confirmación funcional vigente**). Forbidden: nuevo refund_id para MISMA identidad terminal, índice parcial BUSINESS identity, reset attempts/SLA por cycle/C2, release restablece UTILIZADA/ANULADA, ACK Ticketing solo abre, RECORDED términos aplicados, aliases retirados/projection mapping.
+
+## Delta N2–N6 / nombres bloqueados
+
+Catalog: `control_one_active_idx WHERE state IN ('PENDING','APPLIED')` y `control_one_preparing_idx WHERE state='PREPARING'`; registro sustituye/promueve en tx única. Purchases: refund_business_key_idx permanente, refund_one_total_idx excluye REJECTED/FAILED_FINAL seguros; Payments refund_functional_idx permanente, refund_total_idx excluye FAILED_FINAL probado. Razones distintas no son replay de una misma identidad. Cleanup/ausencia/claims antes otra ORDER, sin duplicar total monetaria.
+
+GET Purchases/Buyer BFF `/v1/orders/{id}/refund-adjustments`: `listOwnRefundAdjustments`/`listBuyerRefundAdjustments`, `AdjustmentPage`/`AdjustmentSnapshot`, error ApiErrorResponse 400/401/403/404/429/500/503, no efectos. Orden SUPPORT crea mapping→buyer lee id→solicita→SUPPORT autoriza conservado.
+
+Historial: `refund_cycle`/`refund_execution_cycle` PK refund_id/cycle_version, snapshots JSONB completos por scope, append-only desde freeze; refund actual/execution sólo punteros/proyecciones. Component enum schema `$defs.component`/`refund_component_claim.component`: NOMINAL|SERVICE|NOMINAL_TAX|SERVICE_TAX, sin DTO HTTP no consumido. `refund_cycle.support_pending_since`/`support_decided_at`, metrics refund_support_pending_oldest_age_seconds/refund_support_pending_count; propuesta operativa 24h/48h no derecho/plazo de solicitud. Artefactos data/API/integration§8.2/consistency AC-N2…N6 canónicos. No descomposición ni task board; «N1 una confirmación vía orquestador antes freeze/re-reviewSA/Validator» (**mención histórica `superseded` por Master§13 D-N1-01 / gate-register L56: no es instrucción vigente ni se eleva; N1 hoy `specified-awaiting-independent-review`, sin confirmación vía orquestador pendiente**).
+
+## Delta API Governance — nombres y fronteras canónicas
+
+Planning/verdict none, contrato no tareas. Master§11/consistency§Delta API Governance superseden inventarios F05 históricos y singular paths: GET Catalog/Admin `/v1/admin/events` listManagedEvents/listAdminManagedEvents→OperationPage; GET `/v1/admin/events/{id}` readManagedEvent/readAdminManagedEvent→EventManaged; PUT mismo path replaceEventDraft/replaceAdminEventDraft→EventAccepted/EventOperationReceipt. POST create mismo EventAccepted. resource_id/event_version desde operación, GET managed ETag current→If-Match; nunca operation_id=event_id. No DB nueva: event.event_id/version y offer_version/offer_locality/fiscal_line del modelo Catalog vigente; sólo DRAFT edición, no stock/publicación/cobro.
+
+Paths exactos adicionales actuales: Purchases/Buyer GET `/v1/orders/{id}/receipts`; Purchases/Admin GET `/v1/admin/invoice-requests/{id}/dossiers`; Catalog GET `/internal/v1/events/{id}/milestones`; Payments GET `/internal/v1/payment-intents/{id}/canonical-facts`; Identity GET `/internal/v1/users/{id}/contacts`. operationId/DTO/auth unchanged por pluralización. Si se detecta consumidor previo, bloquea renombres y vuelve Planner para versionado; no inventar aliases. Public verification sigue POST `/v1/verifications`, sin endpoint proof público.
+
+Schemas comunes añadidos: EventManaged/EventOperationReceipt/ErrorCode/ServiceRate/MercadoPagoDecimalId/MercadoPagoPaymentNotificationV1; headers NoStore/NoReferrer/EventETag; responses EventAccepted/VerificationUnavailable/WebhookBadRequest/WebhookConflict; x-error-codes registry versión1. Fixtures `fixtures/mercado-pago/README.md` y seis `*.v1.json` son fuentes canónicas de ejemplos G-OAS, no código/test/firmas reales. Retry/compensación webhook exactos integration§9, mismos inbox receipt/job existentes sin DB contract nuevo. Mapping cuatro tipos reopen/fases/colas §2+7, cinco schemas internos preservados.
+
+Orden permitido de fronteras no cambia; criterios AC-GOV-H01/M01/M02/M03/L01…L07 Master§11 son prerrequisitos de revisión, no implementation tasks. Forbidden: singular paths anteriores como inputs vigentes, once default conservados como estado actual, unknown MP409/strip automático, hash raw/token/firma, receipt sin camino GET invocable, If-Match=offer_version, public raw proof, fixtures sintéticas=DR05 aprobado, scan/parser/freeze hash inventados. G-SCAN/G-OAS/G-SA/GOV/Validator/humano pendientes, no descomposición.
+
+Delta G-OAS vigente: `api-lint-policy.md` y Master§12 autoritativos para AC/disposiciones; trece JSON MP+`fixtures/contratos/schema-cases.v1.json`. Retirado DTO OpenAPI `RefundComponent` (no generar ni introducir campo HTTP para usarlo), enum DB/schema intacto. GET buyer/admin `/v1/session`200/429/500/503; callbacks GET `/v1/auth/callback`303 y errores previos, cero defaults. Formatos Uuid/Instant/date_created existentes se asertan; `.invalid` sólo documentación, SDK base URL inyectada despliegue obligatoria. Forbidden: seis fixtures como set vigente, informe35 como validación de bytes nuevos, lint exit0=g_oas_closed, licencia inventada, suppression global, SDK `.invalid` runtime, body schema prueba query/firma/inbox. Orden/prerrequisitos no cambia; sin tasks ni handoff con verdict none.
+
+## D-N1-01 — contrato de descomposición, no tareas
+
+Fuente autoritativa Master§13/AC-N1, integration§7.1, api/purchases.yaml POST `/internal/v1/orders/{id}/payment-facts` reconcileCanonicalPayment→CanonicalPaymentFactV1/AcceptanceDecision; POST `/internal/v1/events/{id}/closing-preparations` prepareEventClosing→ClosingPreparationRequest/ClosingPreparation. IAM workload sólo Payments/Catalog respectivamente; no endpoint refund buyer R04 ni permiso SUPPORT añadido. DTO AcceptanceDecision no campo nuevo: ACCEPTED accepted_at no null, otros null; REFUND_REQUIRED obligación no desembolso.
+
+Datos: purchase_order LIBERADA/accepted_at NULL/payment_approved_at NULL sin venta, payment_permit.invalidated_at/fence, audit_record.evidence_snapshot JSONB local Purchases+prueba audit_id, refund AUTHORIZED/SYSTEM_R04/ORDER/amount total, refund_cycle snapshot immutable/absence; Payments refund_execution/refund_execution_cycle.authority enum SUPPORT|SYSTEM_R04|PRODUCT_OWNER. Envelope ExecuteRefundRequestedV1/refundCommand reason R04 iff SYSTEM_R04, null adjustment/snapshots, prueba UUID/guard_version, total original COP, mismo refund_id/key MP. Cero issuance_obligation/payment_acceptance/BlockTickets/SetTickets en rama sin venta. Enums/retries/customer notices/idempotencia ya fijados sin cambio.
+
+Orden permitido: evidencia canónica+ledger/fence y release/prueba/obligación atómica→Payments inbox/cycle/authority/cap antes red→MP sólo DR05→observación/avisos ya existentes; venta aceptada anterior sigue H2/guard emisión/R07. Prohibido: approval aislado=venta, SUPPORT obligatorio R04, fee/servicio retenido R04, auto refund de venta por CLOSING, UNKNOWN=failed, ausencia boleta=ausencia monetaria, pregunta N1 repetida, frase general=Human Plan Approval, informe35 o44 sin corrida=PASS actual. Gate técnico: parse/lint/fixtures actual; hallazgo parser retorna Planner, no decisión Executor. `specified-awaiting-independent-review`, SA/Validator pendientes.

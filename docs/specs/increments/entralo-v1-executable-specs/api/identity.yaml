@@ -1,0 +1,94 @@
+openapi: 3.1.0
+info: {title: Entralo Identity, version: 1.0.0, description: 'Lifecycle planning. Owner Identity. Errores comunes aplican a todas operaciones; auth/side effects nunca delegados al browser.'}
+security:
+  - Workload: []
+    Cognito: []
+    Principal: []
+servers: [{url: 'https://identity.entralo.invalid', description: 'Owner privado documental; host real sujeto a bootstrap.'}]
+tags: [{name: Identity, description: 'Grupo generado del componente Identity.'}]
+x-http-contract: {timeout_seconds: 3, connect_timeout_seconds: 1, read_max_attempts: 2, read_total_budget_seconds: 3, mutation_retry: same-key-only, caching: no-store, public_cache_seconds: 0, sensitive_body_logging: forbidden, error_contract: ApiErrorResponse, origin_policy: not-applicable, principal_validation: owner-validated}
+paths:
+  /v1/me:
+    get:
+      operationId: readOwnProfile
+      summary: Consultar perfil propio
+      tags: [Identity]
+      description: 'Cuenta propia por user_id derivado del principal. Lectura segura/idempotente, sin efectos. ACTIVE/mapping vigente; ajeno no seleccionable. Timeout3s.'
+      responses:
+        '200': {description: Perfil mínimo propio, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Profile'}}}}
+        '401': {$ref: 'common.yaml#/components/responses/Error'}
+        '403': {$ref: 'common.yaml#/components/responses/Error'}
+        '429': {$ref: 'common.yaml#/components/responses/Error'}
+        '500': {$ref: 'common.yaml#/components/responses/Error'}
+        '503': {$ref: 'common.yaml#/components/responses/Error'}
+    put:
+      operationId: replaceOwnProfile
+      summary: Reemplazar nombre visible propio
+      tags: [Identity]
+      description: 'Reemplaza sólo display_name propio, texto plano; no cambia binding/contact_verified. If-Match y misma key, update+version+audit atómicos. Timeout3s.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/ProfileUpdate'}}}}
+      responses:
+        '200': {description: Perfil actualizado, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Profile'}}}}
+        '400': {$ref: 'common.yaml#/components/responses/Error'}
+        '401': {$ref: 'common.yaml#/components/responses/Error'}
+        '403': {$ref: 'common.yaml#/components/responses/Error'}
+        '409': {$ref: 'common.yaml#/components/responses/Error'}
+        '412': {$ref: 'common.yaml#/components/responses/Error'}
+        '428': {$ref: 'common.yaml#/components/responses/Error'}
+        '429': {$ref: 'common.yaml#/components/responses/Error'}
+        '500': {$ref: 'common.yaml#/components/responses/Error'}
+        '503': {$ref: 'common.yaml#/components/responses/Error'}
+  /internal/v1/identity-bindings:
+    post:
+      operationId: bindAuthenticatedIdentity
+      summary: Vincular identidad autenticada
+      tags: [Identity]
+      description: 'BFF allowlist workload + Cognito válido previo al binding (sin Principal aún). issuer/sub del body deben coincidir token. UUID estable UNIQUE issuer/sub; ACTIVE+contact verificado/staffMFA antes sesión operable. Create/replay idempotente, audit/outbox ContactReferenceChanged si cambia contacto; jamás sesión crea hold. Timeout3s.'
+      security: [{Workload: [], Cognito: []}]
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/IdentityBinding'}}}}
+      responses:
+        '200': {description: Binding estable creado o recuperado, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Profile'}}}}
+        '400': {$ref: 'common.yaml#/components/responses/Error'}
+        '401': {$ref: 'common.yaml#/components/responses/Error'}
+        '403': {$ref: 'common.yaml#/components/responses/Error'}
+        '409': {$ref: 'common.yaml#/components/responses/Error'}
+        '429': {$ref: 'common.yaml#/components/responses/Error'}
+        '500': {$ref: 'common.yaml#/components/responses/Error'}
+        '503': {$ref: 'common.yaml#/components/responses/Error'}
+  /internal/v1/authorization-decisions:
+    post:
+      operationId: readCurrentAuthorization
+      summary: Consultar autorización actual
+      tags: [Identity]
+      description: 'Workload owner allowlist y principal staff válido. user_id coincide principal; permiso actual por action/event/device, device obligatorio ADMIT. Consulta segura/idempotente sin grant firmado nuevo ni side effect negocio; auditoría decisión. Timeout3s, fallo fail-closed503, denied allowed=false no autorización caché.'
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AuthorizationRequest'}}}}
+      responses:
+        '200': {description: Hecho de autorización actual, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AuthorizationDecision'}}}}
+        '400': {$ref: 'common.yaml#/components/responses/Error'}
+        '401': {$ref: 'common.yaml#/components/responses/Error'}
+        '403': {$ref: 'common.yaml#/components/responses/Error'}
+        '429': {$ref: 'common.yaml#/components/responses/Error'}
+        '500': {$ref: 'common.yaml#/components/responses/Error'}
+        '503': {$ref: 'common.yaml#/components/responses/Error'}
+  /internal/v1/users/{id}/contacts:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: resolveVerifiedContact
+      summary: Resolver contacto verificado para avisos
+      tags: [Identity]
+      security: [{Workload: []}]
+      description: 'Sólo Purchases notification workload, purpose notification y usuario con obligación autorizada; email verified actual o null. Sin logs/caché/destino en SQS. Lectura segura/idempotente3s, sin modificación ni rollback compra por unavailable.'
+      responses:
+        '200': {description: Contacto privado mínimo, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Contact'}}}}
+        '403': {$ref: 'common.yaml#/components/responses/Error'}
+        '404': {$ref: 'common.yaml#/components/responses/Error'}
+        '429': {$ref: 'common.yaml#/components/responses/Error'}
+        '500': {$ref: 'common.yaml#/components/responses/Error'}
+        '503': {$ref: 'common.yaml#/components/responses/Error'}
+components:
+  securitySchemes:
+    Workload: {$ref: 'common.yaml#/components/securitySchemes/Workload'}
+    Cognito: {$ref: 'common.yaml#/components/securitySchemes/Cognito'}
+    Principal: {$ref: 'common.yaml#/components/securitySchemes/Principal'}

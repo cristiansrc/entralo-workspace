@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contratos.entralo.invalid/events/change-lifecycle.v1.schema.json",
+  "title": "ChangeLifecycleV1",
+  "description": "Lifecycle planning. Registro de negocio inicial separado de aplicación y ACK operativos. Igualdades/versiones cruzadas se validan en aplicación; nunca cambiar recorded_at por replay o ACK.",
+  "oneOf": [{"$ref": "#/$defs/requested"}, {"$ref": "#/$defs/committed"}, {"$ref": "#/$defs/cancelled"}, {"$ref": "#/$defs/ack"}],
+  "$defs": {
+    "uuid": {"type": "string", "format": "uuid"},
+    "version": {"type": "integer", "minimum": 1},
+    "instant": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "requested": {
+      "type": "object", "additionalProperties": false,
+      "required": ["phase", "event_id", "proposal_id", "closure_id", "control_version", "expected_event_version", "recorded_event_version", "milestone_version", "change_recorded_at", "new_starts_at", "new_venue"],
+      "properties": {
+        "phase": {"const": "REQUESTED"}, "event_id": {"$ref": "#/$defs/uuid"}, "proposal_id": {"$ref": "#/$defs/uuid"}, "closure_id": {"$ref": "#/$defs/uuid"},
+        "control_version": {"$ref": "#/$defs/version"}, "expected_event_version": {"$ref": "#/$defs/version"}, "recorded_event_version": {"$ref": "#/$defs/version"}, "milestone_version": {"$ref": "#/$defs/version"},
+        "change_recorded_at": {"$ref": "#/$defs/instant"}, "new_starts_at": {"type": ["string", "null"], "format": "date-time"}, "new_venue": {"type": ["string", "null"], "minLength": 1, "maxLength": 300}
+      },
+      "anyOf": [{"properties": {"new_starts_at": {"type": "string"}}}, {"properties": {"new_venue": {"type": "string"}}}]
+    },
+    "committed": {
+      "type": "object", "additionalProperties": false,
+      "required": ["phase", "event_id", "proposal_id", "closure_id", "control_version", "recorded_event_version", "committed_event_version", "milestone_version", "change_recorded_at", "committed_at", "starts_at", "venue"],
+      "properties": {
+        "phase": {"const": "COMMITTED"}, "event_id": {"$ref": "#/$defs/uuid"}, "proposal_id": {"$ref": "#/$defs/uuid"}, "closure_id": {"$ref": "#/$defs/uuid"}, "control_version": {"$ref": "#/$defs/version"},
+        "recorded_event_version": {"$ref": "#/$defs/version"}, "committed_event_version": {"$ref": "#/$defs/version"}, "milestone_version": {"$ref": "#/$defs/version"}, "change_recorded_at": {"$ref": "#/$defs/instant"}, "committed_at": {"$ref": "#/$defs/instant"}, "starts_at": {"$ref": "#/$defs/instant"}, "venue": {"type": "string", "minLength": 1, "maxLength": 300}
+      }
+    },
+    "cancelled": {
+      "type": "object", "additionalProperties": false,
+      "required": ["phase", "event_id", "closure_id", "control_version", "expected_event_version", "recorded_event_version", "milestone_version", "cancelled_at", "status"],
+      "properties": {
+        "phase": {"const": "CANCELLED"}, "event_id": {"$ref": "#/$defs/uuid"}, "closure_id": {"$ref": "#/$defs/uuid"}, "control_version": {"$ref": "#/$defs/version"}, "expected_event_version": {"$ref": "#/$defs/version"}, "recorded_event_version": {"$ref": "#/$defs/version"}, "milestone_version": {"$ref": "#/$defs/version"}, "cancelled_at": {"$ref": "#/$defs/instant"}, "status": {"const": "CANCELLED"}
+      }
+    },
+    "ack": {
+      "type": "object", "additionalProperties": false,
+      "required": ["phase", "event_id", "closure_id", "control_version", "ack_stage", "acknowledged_event_version", "owner", "owner_projection_version", "applied_at"],
+      "properties": {
+        "phase": {"const": "ACK"}, "event_id": {"$ref": "#/$defs/uuid"}, "closure_id": {"$ref": "#/$defs/uuid"}, "control_version": {"$ref": "#/$defs/version"}, "ack_stage": {"enum": ["BARRIER", "APPLIED"]}, "acknowledged_event_version": {"$ref": "#/$defs/version", "description": "BARRIER versión registrada; APPLIED versión committed. Control vigente exacto, no alias."}, "owner": {"enum": ["purchases", "ticketing"]}, "owner_projection_version": {"$ref": "#/$defs/version", "description": "Versión local del owner; Purchases gate_version, Ticketing control_version."}, "applied_at": {"$ref": "#/$defs/instant"}
+      }
+    }
+  }
+}

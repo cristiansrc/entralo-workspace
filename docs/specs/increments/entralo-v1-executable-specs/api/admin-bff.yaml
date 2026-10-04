@@ -1,0 +1,444 @@
+openapi: 3.1.0
+info: {title: Entralo canal Admin BFF, version: 1.0.0, description: 'Lifecycle planning. Hoststaff separado/cookiepropia/CognitoMFA/Identitypermissionactual. No permisos derivables de sesiónbuyer. Owner revalida IAM/token/assertion.'}
+security: [{Session: [], Csrf: []}]
+servers: [{url: 'https://admin.entralo.invalid', description: 'Canal staff documental; host real pendiente de bootstrap.'}]
+tags: [{name: AdminBff, description: 'Grupo generado del componente Admin BFF.'}]
+x-http-contract: {timeout_seconds: 5, connect_timeout_seconds: 1, read_max_attempts: 2, read_total_budget_seconds: 5, mutation_retry: same-key-only, caching: no-store, public_cache_seconds: 0, sensitive_body_logging: forbidden, error_contract: ApiErrorResponse, origin_policy: exact-allowlist, principal_validation: owner-validated}
+x-owner-error-propagation: 'Conservar status de todo 4xx/429 del owner, code y details seguros ApiErrorResponse; path template del canal, trace_id correlacionado, rejected_value null. Conservar Retry-After 429/503 y no-store; sin 200 falso, sin convertir 4xx a 503. Timeout/transporte sin respuesta válida: 503 DEPENDENCY_UNAVAILABLE. Owner 5xx: 500 INTERNAL_ERROR o 503 DEPENDENCY_UNAVAILABLE sin datos internos. Sin retry de 4xx/429 ni de mutación incierta.'
+x-error-code-registry: {source: 'common.yaml#/x-error-codes', registry_version: 1, parity: owner-status-code-details, unknown_owner_code_or_status: contract-drift}
+x-owner-contract-drift: 'Status no declarado en proxy o code fuera registry/status/operación: 503 DEPENDENCY_UNAVAILABLE sanitizado e incidente bff_owner_contract_drift_total{owner,operation}; sin body/PII en log, sin reintento monetario. No reemplazar errores conocidos por fallback.'
+paths:
+  /v1/session:
+    get:
+      operationId: readAdminSession
+      summary: Consultar sesión staff
+      tags: [AdminBff]
+      security: []
+      description: 'Read5sseguraidempotente; sinstaffMFA/mappingoperable authenticatedfalse/null, sinholds/grantscached. Rate limit excedido:429 RATE_LIMITED con Retry-After; sin sesión no es401.'
+      responses:
+        '200': {description: Sesiónstaff, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/SessionView'}}}}
+        '429': {$ref: 'common.yaml#/components/responses/Error'}
+        '500': &err {$ref: 'common.yaml#/components/responses/Error'}
+        '503': *err
+    delete:
+      operationId: logoutAdmin
+      summary: Cerrar sesión staff
+      tags: [AdminBff]
+      description: '5slogoutidempotente/CSRFOrigin, revocalocalaunremotofalla; sesióyaausente204, sinsideeffectsnegocio/sinKey.'
+      responses:
+        '204': {description: Cookiehoststaffborrada/revocaciónlocal.}
+        '403': *err
+        '500': *err
+        '503': *err
+  /v1/login-requests:
+    post:
+      operationId: beginAdminLogin
+      summary: Iniciar autenticación staff con MFA
+      tags: [AdminBff]
+      security: []
+      description: 'StaffCognitopool/clientallowlist+MFA, Origin/rate. PKCE/state/nonce5min/key; HostedUI sin passwordEntralo. 5s, nohold/permisonegocio.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/LoginRequest'}}}}
+      responses:
+        '201': {description: URLstaffauthorizeallowlist, content: {application/json: {schema: {type: object, additionalProperties: false, required: [authorization_url], properties: {authorization_url: {type: string, format: uri}}}}}}
+        '400': *err
+        '403': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/auth/callback:
+    get:
+      operationId: completeAdminOidc
+      summary: Completar autenticación staff
+      tags: [AdminBff]
+      security: []
+      x-timeout-seconds: 15
+      description: 'Callbackprotocol efectosdeauth explícitos, stateoneuse/noncePKCE/MFAactual/tokenvalidado yIdentitybindingantesstaffsession. 15stotal; codeexchangeincierto reinicialogin noretrycode;303returnpathallowlist,cookie__Hoststaff no tokenpayload/log.'
+      parameters:
+        - {name: code, in: query, required: true, schema: {type: string, minLength: 1, maxLength: 2048}, description: 'Sensible: nunca logs, trazas, APM, query sampling, WAF access payload ni echo en errores.'}
+        - {name: state, in: query, required: true, schema: {type: string, minLength: 32, maxLength: 200}}
+      responses:
+        '303': {description: SesiónstaffMFAoperable, headers: {Location: {schema: {type: string}}, Set-Cookie: {schema: {type: string}}}}
+        '400': *err
+        '401': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/events:
+    post:
+      operationId: createAdminEventDraft
+      summary: Crear borrador de evento desde admin
+      tags: [AdminBff]
+      description: 'EVENT_ADMIN actualownerIdentity; exactproxyCatalogcreateEventDraft5s/key, no stock/publicación, fiscalP04propuesta.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/EventWrite'}}}}
+      responses:
+        '202': {$ref: 'common.yaml#/components/responses/EventAccepted'}
+        '400': *err
+        '401': *err
+        '403': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+    get:
+      operationId: listAdminManagedEvents
+      summary: Listar operaciones de eventos administrados
+      tags: [AdminBff]
+      security: [{Session: []}]
+      description: 'Proxy exacto Catalog listManagedEvents, EVENT_ADMIN actual. page0/size20max100/orden idéntico,5s seguro/idempotente sin efectos. Cada recurso se obtiene desde operation_id por GET admin operations; create/replace incluyen resource_id/event_version. resource_path misma API, no URL owner. No filtros ni estado BFF.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Page'}, {$ref: 'common.yaml#/components/parameters/Size'}]
+      responses:
+        '200': {description: Operaciones visibles, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/OperationPage'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/events/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readAdminManagedEvent
+      summary: Consultar borrador o evento administrado
+      tags: [AdminBff]
+      security: [{Session: []}]
+      description: 'Proxy Catalog readManagedEvent EVENT_ADMIN actual,5s seguro/idempotente sin efectos. event_id=path id, EventManaged/event_version/ETag exactos; conserva headers no-store. Sin cálculo fiscal ni datos públicos raw. Inexistente/ajeno404, sin fallback público; error/timeout según owner propagation.'
+      responses:
+        '200': {description: Evento privado actual, headers: {ETag: {$ref: 'common.yaml#/components/headers/EventETag'}, Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/EventManaged'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+    put:
+      operationId: replaceAdminEventDraft
+      summary: Reemplazar borrador administrado
+      tags: [AdminBff]
+      description: 'Proxy Catalog replaceEventDraft EVENT_ADMIN actual,5s/CSRF/Origin. Body EventWrite exacto, If-Match de GET y Key preservados, sólo DRAFT; no stock/publicación/cobro. 202 EventOperationReceipt, ruta GET admin operations invocable. Ausente428, carrera412, estado409, replay misma Key sin nueva versión; ningún retry incierto distinto.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/EventWrite'}}}}
+      responses:
+        '202': {$ref: 'common.yaml#/components/responses/EventAccepted'}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '412': *err
+        '422': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/events/{id}/publications:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: publishAdminEvent
+      summary: Solicitar publicación desde admin
+      tags: [AdminBff]
+      description: 'ProxyCatalogrequestOfferPublication, EVENT_ADMINactual, sinbody/keyIfMatch5s, asyncACK/oferta/publicablefiscal noBFFdecision.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      responses:
+        '202': {$ref: 'common.yaml#/components/responses/Accepted'}
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '412': *err
+        '422': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/events/{id}/controls:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: controlAdminEvent
+      summary: Solicitar control de evento desde admin
+      tags: [AdminBff]
+      description: 'Proxy Catalog requestEventControl, EVENT_ADMIN actual/key/If-Match/CSRF5s. PREPARING sin hito; RECORDED sello inicial antes ACK, CANCEL terminal desde recorded_at. Adapta resource_path a GET admin operations misma API, no estado/fases; no disponibilidad CLOSING. Nuevo control sustituye CHANGE pendiente, nunca CANCELLED. integration §7/7.1, sin decisión BFF.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/EventControl'}}}}
+      responses:
+        '202': {$ref: 'common.yaml#/components/responses/Accepted'}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '412': *err
+        '422': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/operations/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readAdminOperation
+      summary: Consultar estado operativo de cambio o cancelación
+      tags: [AdminBff]
+      security: [{Session: []}]
+      description: 'Proxy Catalog readCatalogOperation EVENT_ADMIN actual/event scope. Seguro/idempotente5s sin efectos; PREPARING no registrado/recorded_at null; RECORDED/APPLIED/REOPENING PENDING sin disponibilidad, OPENED CHANGE o ACK CANCEL COMPLETED. FAILED/SUPERSEDED no borra hito. resource_path misma API admin, no URL owner privada. Errores owner401/403/404/429/500/503 exactos.'
+      responses:
+        '200': {description: 'Estado durable de operación; create/replace contienen resource_id/event_version, COMPLETED no null; resource_path mismo GET del canal.', headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/OperationReceipt'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/orders/{id}/refund-adjustments:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: createAdminRefundAdjustment
+      summary: Registrar ajuste legítimo desde SUPPORT
+      tags: [AdminBff]
+      description: 'Proxy Purchases createRefundAdjustment SUPPORT actual REFUND_APPROVE por evento/key/CSRF/Origin5s. Body exacto ticket_ids/reason/milestone_version, servidor owner determina refs/montos; no cálculo/guard/approval/MP BFF. 201 creado/200 replay, mismo snapshot append-only. Errores owner exactos, retry incierto sólo misma key; sin lista buyer.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdjustmentCreateRequest'}}}}
+      responses:
+        '201': {description: Mapping registrado, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdjustmentSnapshot'}}}}
+        '200': {description: Replay sin nuevo mapping, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdjustmentSnapshot'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/refunds/{id}/decisions:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: decideAdminRefund
+      summary: Registrar decisión de devolución desde admin
+      tags: [AdminBff]
+      description: 'SUPPORTactual; proxyPurchasesdecideRefundRequest,5s/keyIfMatch/guardACK, no BFFeligibilidad/MP. Solicitudcancelaciónnoauto.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundApproval'}}}}
+      responses:
+        '202': {description: Decisión/guarddurable, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '412': *err
+        '422': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admissions:
+    post:
+      operationId: admitAdminTicket
+      summary: Registrar ingreso desde canal staff
+      tags: [AdminBff]
+      description: 'ACCESS_STAFFactualevent/device; proxyTicketingadmitTicketOnce/key/CSRFOrigin5s, nocachégrant/noretryfísico. Efectouseownerúnico.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdmissionRequest'}}}}
+      responses:
+        '200': {description: Decisióndurable, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdmissionResult'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admissions/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readAdminAdmissionAttempt
+      summary: Consultar intento de ingreso desde admin
+      tags: [AdminBff]
+      security: [{Session: []}]
+      description: 'ProxyTicketingreadAdmissionAttempt5s segura/idempotente staffscopeactual; nocreaingreso anteACKincierto.'
+      responses:
+        '200': {description: Resultadomismointento, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdmissionResult'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/price-estimates:
+    post:
+      operationId: estimateAdminOfferPrice
+      summary: Estimar precio PRICE01 desde admin
+      tags: [AdminBff]
+      description: 'Proxy Catalog estimateCatalogOfferPrice EVENT_ADMIN actual, Origin/CSRF5s; consulta idempotente sin Key, sin stock/orden/cobro. Mismo DTO/PRICE01 no cálculo BFF. Propagar4xx/429/Retry-After.'
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PriceEstimateRequest'}}}}
+      responses:
+        '200': {description: Estimación no vinculante, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PriceEstimate'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/sales:
+    get:
+      operationId: listAdminSales
+      summary: Listar ventas desde admin
+      tags: [AdminBff]
+      security: [{Session: []}]
+      description: 'Proxy Purchases listManagedSales5s, EVENT_ADMIN actual por event_id; read seguro/idempotente sin efectos/PII adicional. Página/orden idénticos; errors owner400/401/403/429/500/503 sin swallowing.'
+      parameters:
+        - {name: event_id, in: query, required: true, schema: {type: string, format: uuid}}
+        - {$ref: 'common.yaml#/components/parameters/Page'}
+        - {$ref: 'common.yaml#/components/parameters/Size'}
+      responses:
+        '200': {description: Página ventas, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/OrderPage'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/refunds:
+    get:
+      operationId: listAdminRefunds
+      summary: Listar devoluciones desde admin
+      tags: [AdminBff]
+      security: [{Session: []}]
+      description: 'Proxy Purchases listManagedRefunds5s, SUPPORT actual por event_id; read seguro/idempotente sin MP/aprobación, página/orden exactos; errors owner400/401/403/429/500/503.'
+      parameters:
+        - {name: event_id, in: query, required: true, schema: {type: string, format: uuid}}
+        - {$ref: 'common.yaml#/components/parameters/Page'}
+        - {$ref: 'common.yaml#/components/parameters/Size'}
+      responses:
+        '200': {description: Página devoluciones, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundPage'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/refunds/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readAdminRefund
+      summary: Consultar devolución desde admin
+      tags: [AdminBff]
+      security: [{Session: []}]
+      description: 'Proxy Purchases readManagedRefund5s, SUPPORT actual; read seguro/idempotente sin efectos, scope ajeno404; errors401/403/404/429/500/503.'
+      responses:
+        '200': {description: Devolución visible, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundView'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/invoice-requests/{id}/dossiers:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readAdminInvoiceDossier
+      summary: Consultar expediente protegido desde admin
+      tags: [AdminBff]
+      security: [{Session: []}]
+      description: 'Proxy Purchases readProtectedInvoiceDossier5s, INVOICE_MANAGE actual; read seguro/idempotente no-store/sin PII logs/caché/URL fetch, sin motor fiscal; errors401/403/404/429/500/503.'
+      responses:
+        '200': {description: Expediente protegido, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceDossier'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/invoice-requests/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    put:
+      operationId: recordAdminExternalInvoiceEvidence
+      summary: Registrar evidencia externa desde admin
+      tags: [AdminBff]
+      description: 'Proxy Purchases recordVerifiedExternalInvoice5s, INVOICE_MANAGE actual; key/If-Match/CSRF/Origin. No CUFE local ni fetch, no retry incierto; efectos owner. errors400/401/403/404/409/412/422/428/429/500/503.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceEvidence'}}}}
+      responses:
+        '200': {description: Evidencia registrada, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '412': *err
+        '422': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/asset-upload-intents:
+    post:
+      operationId: createAdminAssetUploadIntent
+      summary: Crear intención de imagen desde admin
+      tags: [AdminBff]
+      description: 'Proxy Catalog createAssetUploadIntent5s EVENT_ADMIN actual, key/CSRF/Origin; no firma propia BFF ni bytes, replay sin renovación. URL/fields nunca logs. errors400/401/403/404/409/422/429/500/503.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AssetIntentRequest'}}}}
+      responses:
+        '201': {description: Intención creada, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AssetUploadIntent'}}}}
+        '200': {description: Replay mismo intent, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AssetUploadIntent'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/assets/{id}/finalizations:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: finalizeAdminAsset
+      summary: Solicitar verificación de imagen desde admin
+      tags: [AdminBff]
+      description: 'Proxy Catalog finalizeCatalogAsset5s EVENT_ADMIN actual, key/CSRF/Origin; job único owner, no publicar quarantine ni retry ciego. errors400/401/403/404/409/422/429/500/503.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AssetFinalizeRequest'}}}}
+      responses:
+        '202': {description: Verificación pendiente, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AssetView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/assets/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readAdminAsset
+      summary: Consultar imagen desde admin
+      tags: [AdminBff]
+      security: [{Session: []}]
+      description: 'Proxy Catalog readCatalogAsset5s EVENT_ADMIN actual; read seguro/idempotente sin transición. No-store/sin URL log ni fallback público privado. errors401/403/404/429/500/503.'
+      responses:
+        '200': {description: Imagen y acceso aprobado, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AssetView'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+components:
+  securitySchemes:
+    Session: {$ref: 'common.yaml#/components/securitySchemes/Session'}
+    Csrf: {$ref: 'common.yaml#/components/securitySchemes/Csrf'}

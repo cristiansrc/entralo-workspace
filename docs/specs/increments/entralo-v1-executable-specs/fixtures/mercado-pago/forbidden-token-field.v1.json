@@ -1,0 +1,5 @@
+{
+  "type": "payment",
+  "provider_token": "MARCADOR_NO_ES_CREDENCIAL",
+  "data": {"id": "999999999"}
+}

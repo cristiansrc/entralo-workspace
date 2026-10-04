@@ -1,0 +1,442 @@
+openapi: 3.1.0
+info: {title: Entralo Purchases e Inventory, version: 1.0.0, description: 'Lifecycle planning. Auth anteshold. Reglas/transacciones EX01–11/15 Master. Errores comunes incluyen conflicto key/payload.'}
+security: [{Workload: [], Cognito: [], Principal: []}]
+servers: [{url: 'https://purchases.entralo.invalid', description: 'Owner privado documental; host real sujeto a bootstrap.'}]
+tags: [{name: Purchases, description: 'Grupo generado del componente Purchases e Inventory.'}]
+x-http-contract: {timeout_seconds: 3, connect_timeout_seconds: 1, read_max_attempts: 2, read_total_budget_seconds: 3, mutation_retry: same-key-only, caching: no-store, public_cache_seconds: 0, sensitive_body_logging: forbidden, error_contract: ApiErrorResponse, origin_policy: not-applicable, principal_validation: owner-validated}
+paths:
+  /v1/events/{id}/availability:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readAvailability
+      summary: Consultar disponibilidad fechada
+      tags: [Purchases]
+      security: [{Workload: []}]
+      description: 'Sólo catálogo publicado, seguro/idempotente3s; capacity-sold-reserved incluye gracia/UNKNOWN, versión/as_of. Nohold ni garantía stock; mismatch BFF UNKNOWN.'
+      responses:
+        '200': {description: Disponibilidad fechada, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Availability'}}}}
+        '404': &err {$ref: 'common.yaml#/components/responses/Error'}
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/holds:
+    post:
+      operationId: reserveTickets
+      summary: Reservar boletas y crear orden propia
+      tags: [Purchases]
+      description: 'Buyer propio user_id derivado, no bodyuser. Oferta vigente/gateOPEN/disponibilidad/límites8default pororden/cuentaevento atómicos. Crea hold+order+stocks/counter+snapshot+jobs una tx; replay mismohold/clocks. Timeout3s;409 STOCK_UNAVAILABLE/ACCOUNT_EVENT_LIMIT/SALE_CLOSED/OFFER_STALE/keyconflict;422 quantity/precio/fiscal inválidos; ceroeffects rechazo.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/HoldRequest'}}}}
+      responses:
+        '201':
+          description: Hold yordencreados; replay200.
+          headers: {Location: {schema: {type: string}, description: '/v1/holds/{hold_id}'}}
+          content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Order'}}}
+        '200': {description: Replaymismo resultado, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Order'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/holds/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readOwnHold
+      summary: Consultar reserva propia
+      tags: [Purchases]
+      description: 'Sóloowner, ajeno404. Read3s seguro/idempotente sin renovarTTL ni stock, relojes servidor.'
+      responses:
+        '200': {description: Hold propio/ordenasociada, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Order'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders:
+    get:
+      operationId: listOwnOrders
+      summary: Listar órdenes propias
+      tags: [Purchases]
+      description: 'Sóloowner, ordencreated_atdesc/id; page0size20max100. Read3s/idempotente/sin efectos.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Page'}, {$ref: 'common.yaml#/components/parameters/Size'}]
+      responses:
+        '200': {description: Órdenes propias página, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/OrderPage'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readOwnOrder
+      summary: Consultar orden propia
+      tags: [Purchases]
+      description: 'Sóloowner/ajeno404, read3s segura/idempotente. Venta accepted distinta de entregaCONFIRMED; UNKNOWN nunca failed.'
+      responses:
+        '200': {description: Ordenpropia, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Order'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}/cancellations:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: cancelUnpaidOwnOrder
+      summary: Cancelar orden propia sin pago iniciado
+      tags: [Purchases]
+      description: 'Buyerowner. Sinbody,key. Sólo sin pago iniciado/claim/venta: release irreversible stocks/counter/order/jobs; iniciada/UNKNOWN/venta409, no refund por abandonar. Auth fallo no liberahold ajeno. Timeout3s/replay mismoresultado.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      responses:
+        '200': {description: Orden liberada, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/Order'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}/refund-requests:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: requestOwnRefund
+      summary: Solicitar devolución propia
+      tags: [Purchases]
+      description: 'Buyer propio, venta válida approval<último hito y solicitud [hito,hito+3 meses calendario); nominal R07, usada sólo CANCEL. ADJUSTMENT mapping SUPPORT existente, no lista/monto buyer. En REQUESTED congela alcance/digest/cycle y reserva claims atómicos, guard antes approval. Key replay202 mismo recibo; contenido distinto409. Identidad funcional permanente mismo refund_id: terminal con cleanup COMPLETE/ausencia probada admite nueva key y cycle+1 con revalidación último hito (C2 reinicia ventana, C1 no limita); sin reset MP key/intentos/SLA. Activo/confirmado replay, UNKNOWN no nuevo ciclo. Missing/membership/overlap409; no elegible422; dependencia503 sin efectos. No MP, SUPPORT requerido; R04 interno. Timeout3s, integration §8.1.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundRequest'}}}}
+      responses:
+        '202': {description: Solicitud durable revisiónSUPPORT, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/refunds/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readOwnRefund
+      summary: Consultar devolución propia
+      tags: [Purchases]
+      description: 'Buyerowner read3s segura/idempotente sineffects. Inicio/confirmación noacreditación; ajeno404.'
+      responses:
+        '200': {description: Refund propio, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundView'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/refunds/{id}/decisions:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: decideRefundRequest
+      summary: Registrar decisión de devolución
+      tags: [Purchases]
+      description: 'SUPPORT actual REFUND_APPROVE. Revalida hito/uso/cycle/guard/snapshot/caps. APPROVE sólo ACK BLOCKED exacto autoriza/outbox; incierto202 PENDING_GUARD. REJECT serializado con dispatch, antes envío libera claims y outbox ReleaseRefundGuardV1, cleanup PENDING hasta ACK; nunca desbloqueo por UNKNOWN/timeout. CANCEL conserva ANULADA, usada UTILIZADA. Key/If-Match3s; ciclos mismo refund_id sin reset3 envíos MP ni primer authorized_at/SLA7d. Fees0 R07, medio original, sin MP directo; integration §8.1.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundApproval'}}}}
+      responses:
+        '202': {description: Decisión/guard pendiente o autorización durable, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '412': *err
+        '422': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}/receipts:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readOwnNonFiscalReceipt
+      summary: Descargar comprobante no fiscal propio
+      tags: [Purchases]
+      x-timeout-seconds: 10
+      description: 'Buyerowner uoperación actualscope, compraaceptada. PDF≤3MB/body≤4MB, NO fiscal títuloexacto; privado no-store/attachment/no302/presign. Readidempotente/timeout10s,sóloretry antesbytes; fallo503 mantieneobligación no rollback. No genera facturaoficial.'
+      responses:
+        '200': {description: 'Comprobante de compra — NO fiscal', headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}, Content-Disposition: {schema: {type: string, const: attachment}}}, content: {application/pdf: {schema: {type: string, format: binary}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}/invoice-requests:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: requestExternalInvoice
+      summary: Solicitar factura externa manual
+      tags: [Purchases]
+      description: 'Buyerowner compraaceptada. Sólo entonces recogePIItitular cifrada; una solicitudactual/order/version, key. SOLICITADA+job revisiónmanualexterna. NoAPI fiscal/CUFE inventado; timeout3s.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceRequest'}}}}
+      responses:
+        '202': {description: Solicitudoficialmanual, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/invoice-requests/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readOwnInvoiceRequest
+      summary: Consultar solicitud fiscal propia
+      tags: [Purchases]
+      description: 'Buyer owner derivado, ajeno404; lectura segura/idempotente3s sin evidencia externa/PII ni efectos; estado manual no significa factura generada por Entralo.'
+      responses:
+        '200': {description: Estado propio, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceView'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+    put:
+      operationId: correctOwnInvoiceHolder
+      summary: Corregir datos de solicitud fiscal propia
+      tags: [Purchases]
+      description: 'Buyer owner, key/If-Match3s. Sólo SOLICITADA o ERROR_PENDIENTE sin evidencia EMITIDA; otros409, versión412/ausencia428. Reemplazo InvoiceRequest cifrado+version+audit atómicos, sin motor fiscal ni email nuevo automático. No-store/sin PII logs; replay misma versión/resultado, no nuevo expediente.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceRequest'}}}}
+      responses:
+        '200': {description: Datos corregidos, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '412': *err
+        '422': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/invoice-requests/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    put:
+      operationId: recordVerifiedExternalInvoice
+      summary: Registrar evidencia fiscal externa verificada
+      tags: [Purchases]
+      description: 'INVOICE_MANAGE actualIdentity; If-Match/key. EMITIDA_Y_ENVIADA exige evidenciaexternaverificada, locatorprotegido/actor/instante; nofetchURL/uploadobligatorio. Cambia estado/audit/revisióndiaria, timeout3s.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}, {$ref: 'common.yaml#/components/parameters/Match'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceEvidence'}}}}
+      responses:
+        '200': {description: Estadomanualactualizado, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceView'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '412': *err
+        '422': *err
+        '428': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /internal/v1/orders/{id}/payment-claims:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: claimPaymentStart
+      summary: Reclamar permiso durable de inicio de pago
+      tags: [Purchases]
+      description: 'SóloPaymentsworkload+buyerprincipalownerválido. I24 no I08/I28 callback; recheckprimario/advisory/stock/cuenta/reloj<grace. Permisoestable/orderintent/fence; replaynuevono. Atomicpermit+key; rechazoauth noholdrelease, comercialpropio release conformeMaster. Timeout3s; noMPbajolocks.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PaymentClaim'}}}}
+      responses:
+        '200': {description: PermisodurablemontoautoridadPurchases, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PaymentPermit'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /internal/v1/orders/{id}/payment-facts:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: reconcileCanonicalPayment
+      summary: Conciliar hecho canónico de pago
+      tags: [Purchases]
+      security: [{Workload: []}]
+      description: 'Sólo Payments postcommit I08, sin callbacks/red bajo locks. Venta exige approval<grace y CAS durable<deadline con permiso/asignación válidos. Commit aceptación ganador antes fence devuelve ACCEPTED con accepted_at original y conserva H2; CLOSING no revierte esa venta. Fence ganador sin aceptación invalida permiso y libera asignación irreversiblemente: cero payment_acceptance/issuance_obligation/boleta. Cobro APPROVED canónico verificado devuelve200 REFUND_REQUIRED, accepted_at null, y persiste en una tx release/fence/prueba auditada/refund AUTHORIZED SYSTEM_R04/outbox/job; total original incluye servicio e impuestos, sin fee nuevo ni SUPPORT. UNKNOWN devuelve200 PENDING con accepted_at null mientras no se liberó; si release durable conserva RELEASED/null y conciliación/clocks originales, sin refund ciego; DECLINED/FAILED devuelve RELEASED sin dinero. Replay devuelve decisión durable sin segundo release/refund; ACK/reopen no reactiva permiso antiguo. Error de importe/fence/evidencia409 sin efecto, dependencia503/rollback sin decisión parcial. R07 nominal/SUPPORT sólo ventas válidas; integration §7.1 y Master §13. Timeout3s/retry misma key dentro3s, políticas monetarias/avisos intactas. Especificado, pendiente validación independiente; no permiso de ejecución.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/CanonicalPaymentFactV1'}}}}
+      responses:
+        '200': {description: Decisiónlocaldurable, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AcceptanceDecision'}}}}
+        '400': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /internal/v1/price-estimates:
+    post:
+      operationId: estimateAppliedOfferPrice
+      summary: Estimar precio PRICE01 sin reserva
+      tags: [Purchases]
+      security: [{Workload: []}]
+      description: 'Sólo Catalog workload I27. Consulta segura/idempotente sin Key/stock/orden/MP; oferta aplicada exacta, localidades únicas y suma quantity <=order_limit; fiscal incompleta422, offer stale409. Calculador puro igual hold, no consulta Catalog callback. Timeout3s, una repetición segura dentro3s. price_estimate_total{outcome}; sin datos privados.'
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PriceEstimateRequest'}}}}
+      responses:
+        '200': {description: Estimación no vinculante, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/PriceEstimate'}}}}
+        '400': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /internal/v1/events/{id}/closing-preparations:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: prepareEventClosing
+      summary: Preparar barrera durable antes de registrar control
+      tags: [Purchases]
+      security: [{Workload: []}]
+      description: 'Sólo Catalog workload. Key closure_id/control_version, sin buyer. Tx close_requested/acceptance_paused, barrera exclusiva local drena admisiones/CAS sin red, devuelve fence durable PREPARED. Replay200 misma preparación sin renovar; superior sustituye CHANGE pendiente, CANCEL terminal rechaza409. Version incompatible/key mismatch409, ausente404. No timestamp R07 ni espera MP/Ticketing/holds. Timeout3s/tx1s, máximo retry misma key en3s; recuperación5min/incidente60s, no reapertura automática ante error. event_closing_preparation_age_seconds/integration §7.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/ClosingPreparationRequest'}}}}
+      responses:
+        '200': {description: Barrera y fence durables, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/ClosingPreparation'}}}}
+        '400': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/orders/{id}/refund-adjustments:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    post:
+      operationId: createRefundAdjustment
+      summary: Registrar alcance legítimo de devolución
+      tags: [Purchases]
+      description: 'SUPPORT actual permiso REFUND_APPROVE existente por evento. Key scope actor/operation/order; servidor genera adjustment_id, valida ticket_ids únicos pertenecientes/facts canónicos/último milestone exacto y R07, congela refs/PRICE01/digest. Sin monto libre ni permiso buyer, sin claims/guard/aprobación/dinero; snapshot append-only+audit tx. 409 IDEMPOTENCY_CONFLICT/ADJUSTMENT_SCOPE_CONFLICT/REFUND_AMOUNT_CONFLICT o milestone stale; no elegible422, facts inciertos503 sin mapping. Replay200 mismo snapshot, nuevo201; timeout3s, sin retry incierto salvo misma key. refund_adjustment_created_total{outcome}; integration §8.1.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Key'}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdjustmentCreateRequest'}}}}
+      responses:
+        '201': {description: Mapping registrado sin autorización monetaria, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdjustmentSnapshot'}}}}
+        '200': {description: Replay mapping idéntico, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdjustmentSnapshot'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '409': *err
+        '422': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/orders/{id}/refund-adjustments:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: listOwnRefundAdjustments
+      summary: Consultar ajustes registrados de orden propia
+      tags: [Purchases]
+      description: 'Buyer autenticado propietario, user_id derivado/ajeno404. GET seguro/idempotente3s, no body ni Key, no-store. Lista mappings SUPPORT ya registrados, created_at DESC/adjustment_id ASC; page0 size20 max100, size+1 para has_next. Devuelve adjustment_id y snapshot/amount de servidor, sin actor staff ni permiso/PII/proveedor. Vacío200; id inválido400. No crea mapping/claims/guard ni aprueba dinero; buyer sólo referencia id en RefundRequest. Hito/motivo/uso se revalidan al solicitar y aprobar, listado no garantiza elegibilidad. Fallo503 sin snapshot inventado; read máximo2 intentos dentro3s. refund_adjustment_read_total{outcome}; integration §8.2.'
+      parameters: [{$ref: 'common.yaml#/components/parameters/Page'}, {$ref: 'common.yaml#/components/parameters/Size'}]
+      responses:
+        '200': {description: Página de mappings propios, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/AdjustmentPage'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/sales:
+    get:
+      operationId: listManagedSales
+      summary: Listar ventas gestionadas
+      tags: [Purchases]
+      description: 'EVENT_ADMIN actual por event_id obligatorio, Identity fail-closed. Sólo accepted_at no null, created_at desc/order_id asc; page0 size20 max100. Read seguro/idempotente3s, sin PII contacto/token/MP refs ni efectos.'
+      parameters:
+        - {name: event_id, in: query, required: true, schema: {type: string, format: uuid}}
+        - {$ref: 'common.yaml#/components/parameters/Page'}
+        - {$ref: 'common.yaml#/components/parameters/Size'}
+      responses:
+        '200': {description: Página de ventas autorizadas, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/OrderPage'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/refunds:
+    get:
+      operationId: listManagedRefunds
+      summary: Listar devoluciones gestionadas
+      tags: [Purchases]
+      description: 'SUPPORT actual por event_id obligatorio. created_at desc/refund_id asc; page0 size20 max100. Read seguro/idempotente3s sin aprobación/MP ni datos titular.'
+      parameters:
+        - {name: event_id, in: query, required: true, schema: {type: string, format: uuid}}
+        - {$ref: 'common.yaml#/components/parameters/Page'}
+        - {$ref: 'common.yaml#/components/parameters/Size'}
+      responses:
+        '200': {description: Página de devoluciones, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundPage'}}}}
+        '400': *err
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/refunds/{id}:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readManagedRefund
+      summary: Consultar devolución gestionada
+      tags: [Purchases]
+      description: 'SUPPORT actual evento de orden; fuera scope404. Read seguro/idempotente3s, ningún envío MP ni nuevo guard.'
+      responses:
+        '200': {description: Devolución visible, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/RefundView'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+  /v1/admin/invoice-requests/{id}/dossiers:
+    parameters: [{$ref: 'common.yaml#/components/parameters/Id'}]
+    get:
+      operationId: readProtectedInvoiceDossier
+      summary: Consultar expediente fiscal protegido
+      tags: [Purchases]
+      description: 'INVOICE_MANAGE actual evento de orden; fuera scope404. Read seguro/idempotente3s, no-store/sin logs ni URL fetch; descifrado sólo en memoria para trámite externo manual. Audit private_document_access_total, sin PII en señal. Sin efectos de factura.'
+      responses:
+        '200': {description: Expediente mínimo protegido, headers: {Cache-Control: {$ref: 'common.yaml#/components/headers/NoStore'}, Referrer-Policy: {$ref: 'common.yaml#/components/headers/NoReferrer'}}, content: {application/json: {schema: {$ref: 'common.yaml#/components/schemas/InvoiceDossier'}}}}
+        '401': *err
+        '403': *err
+        '404': *err
+        '429': *err
+        '500': *err
+        '503': *err
+components:
+  securitySchemes:
+    Workload: {$ref: 'common.yaml#/components/securitySchemes/Workload'}
+    Cognito: {$ref: 'common.yaml#/components/securitySchemes/Cognito'}
+    Principal: {$ref: 'common.yaml#/components/securitySchemes/Principal'}
