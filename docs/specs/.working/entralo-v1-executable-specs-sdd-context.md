@@ -19,6 +19,7 @@
 
 ## Current status
 
+- **Autorización humana de integración documental — 2026-10-04:** QA documental aprobada explícitamente para los cambios preservados en el commit `b901bf71f81fc91be8885057c43072bb1f51da8e` y el registro de esta aprobación. Se autoriza a `git-executor` a versionar este registro y fusionar localmente `docs/entralo-v1-executable-specs` en `master`, sólo fast-forward y tras escaneos satisfactorios; **sin push**. Ver §Human QA Approval. No constituye aprobación de plan contractual, implementación ni QA de producto; lifecycle `planning`, Spec Validator `verdict: none` y gates independientes sin cierre. Este bloque registra autorización, no ejecución del merge.
 - **Diagnóstico documental 2026-10-03, sin cambio de contratos/gates:** [informe de recuperación](../../reviews/2026-10-03-documentation-recovery.md). Master y ocho OpenAPI presentes; 44 archivos del incremento no versionados en el corte Git de lectura (`HEAD feb38aa`). No se encontraron copias internas de re-review SA, informe Governance independiente ni captura primaria DevOps; fuentes externas no inspeccionadas, irrecuperabilidad global no afirmada. **Sí: las condiciones SA deben tener evidencia durable y trazable antes de apoyarse en ellas**, no basta una mención en sesión. Recuperar original o pedir revisión nueva; no inventar la anterior. README e índice se corrigen sin trasladar fuentes. Las menciones a pack `refresh #9` son cortes históricos: consultar el pack vigente; se solicita refresh focalizado al curator. Lifecycle `planning`, `verdict: none` y aprobación contractual pendiente intactos.
 - **G-OAS/tooling — sólo diseño, carril `feature`:** plan condicionado en `docs/specs/.working/entralo-v1-executable-specs-goas-tooling-plan.md`; etapa A de metadata completada por DevOps, autorización consumida. Campos primarios `repository`/`engines`/`dist.tarball` siguen sin recuperar; etapa B/transitivos/instalación/corrida requieren propuesta y permiso nuevos. Planner no instala ni ejecuta. Este bloqueo es distinto del SA histórico sustituido; firma nueva no habilita tooling ni freeze. Lifecycle `planning`/`verdict: none`, sin validación técnica actual ni cambios de diseño.
 - **G-OAS — ABIERTO / NO cerrado (corrida 2026-10-03):** verdict `Blocked: permission/tool unavailable` (F-GOAS-RUN-01, BLOCKER de entorno, sin findings de contenido contractual). Parse auxiliar 8/8 YAML + 19/19 JSON **no es PASS**; corrida sobre 8YAML/5schemas/13MPJSON/matriz27 + refs/formatos/generador **pendiente**; parser detecta errores → Planner corrige contratos → rerun. Sin validators pass. [informe-GOAS: L8–L9, L98–L121; gate-register: L10, L54–L60]
@@ -116,6 +117,17 @@ Gate1 macro 2026-10-02, literal «crea el commit y continua, apruebo el plan», 
 ## Human Functional Conformance — F02/F03 (literal, 2026-10-02)
 
 «apruebo el incremento» = conformidad con contenido F02/F03 documentado, **no** respuesta específica al supuesto financiero N1 ni aprobación de plan. N1 se deriva ahora de R03/R04/R07/R08 por solicitud actual, no de ampliar esa frase. G-HUMAN-CONTRACT pendiente posterior ready; ningún heading contractual de aprobación humana, dictamen/cierre ni autorización Decomposer/Executor.
+
+## Human QA Approval: approved_by_user
+
+- approved_by: usuario humano, respuesta explícita en esta conversación.
+- approved_at: 2026-10-04 (fecha del entorno; hora no consignada).
+- approval_verbatim: «Apruebo los cambios documentales y autorizo registrar su aprobación de QA y mezclarlos a master, sin push.»
+- scope: **QA exclusivamente documental** del conjunto de 56 archivos del commit `b901bf71f81fc91be8885057c43072bb1f51da8e` en `docs/entralo-v1-executable-specs`, incluido el incremento de 45 documentos/contratos, índices, revisiones y las excepciones de falsos positivos ya autorizadas; comprende registrar esta aprobación como metadata y versionarla antes de la integración.
+- authorized_actions: `git-executor` comprueba alcance, escanea los bytes nuevos y staging, crea commit local del registro y realiza merge **fast-forward** a `master` si las comprobaciones pasan. Sin bypass de hooks, operaciones destructivas, nuevos cambios ajenos, push, PR ni publicación remota.
+- not_approved: **no** aprobación del plan contractual (G-HUMAN-CONTRACT), QA de implementación, producción/go-live, ejecución de tooling G-OAS, cierre G-SA global/G-OAS/G-API-GOV/G-SCAN contractual ni dictamen de Spec Validator. No habilita Task Decomposer/Executor.
+- lifecycle_effect: se mantiene `planning` y `verdict: none`; aprobación de integración documental, no cierre del incremento. Las prohibiciones históricas de Git no sustituyen esta autorización específica; límites de producto/red/tooling permanecen intactos.
+- execution_evidence: por obtener mediante `git-executor`; no se declara el merge ejecutado por registrar este bloque. Las cifras y hashes citados identifican el commit documental previo, no un freeze de validación contractual.
 
 ## Decisions locked
 
