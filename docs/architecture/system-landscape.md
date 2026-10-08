@@ -185,7 +185,7 @@ Retención legal/comercial Q-N05 pendiente: no fijar años por inferencia ni act
 
 | Decisión / evidencia oficial leída 2026-09-30 | Propuesta |
 |---|---|
-| Spring oficial estable 4.1.1, Java 17–26; Gradle 8.14+ en 8.x o 9.x [S1] | Baseline Boot **4.1.1**; **Java 21 confirmado**, sin Java 27 |
+| Spring oficial estable 4.1.1, Java 17–26; Gradle 8.14+ en 8.x o 9.x [S1] | Target documental **Java25 LTS + Kotlin/Boot4.1.1 en ECS Fargate, propuesto/pendiente de validación** (D-J25-01, 2026-10-04). Java25 dentro del rango framework, no evidencia full-stack; sin Java27 |
 | Kotlin mínimo 2.2.x [S2] | Kotlin >=2.2 estable alineado con BOM; pin exacto junto al wrapper antes de spec ejecutable |
 | PostgreSQL 18 soportado [S3] | PostgreSQL 18.x propuesta; verificar disponibilidad regional RDS, driver/JPA/Flyway concretos antes de fijar runtime |
 | Generator `spring` es Java y tiene `useSpringBoot4` [S4] | Interfaces/DTO Java generados, implementación Kotlin; no asumir soporte idéntico en `kotlin-spring` |
@@ -195,7 +195,11 @@ Retención legal/comercial Q-N05 pendiente: no fijar años por inferencia ni act
 
 Fuente **futura, aún inexistente**: `projects/entralo-<servicio>/docs/api/openapi.yaml` (servicios enumerados en workspace-mapping). Planner único editor; source versionado, validado y sin datos sensibles. Todo código generado y copias empaquetadas derivadas bajo `build/generated/`, no editar/copiar DTOs a `src/`. Si se exige recurso runtime, derivarlo durante build sin fuente manual adicional. DTOs/interfaces HTTP en infraestructura; mapear hacia commands/results de aplicación y dominio Kotlin puros, entidades JPA separadas. Flyway por servicio en `src/main/resources/db/migration`; contratos de migración pendientes, ningún SQL creado.
 
+**Registro histórico R-9: target del corte2026-09-30, superseded sólo en target documental por D-J25-01; contenido conservado como procedencia, no elección vigente.**
+
 **R-9, fuentes reconsultadas 2026-09-30:** Java21 LTS compatible Boot4.1.1 (17–26). Java27 **GA no-LTS** [S7/S12]; Gradle9.8.0 acepta27 [S6], insuficiente para soporte Spring4.1.1. Java25 **ya es LTS**, candidato a upgrade futuro del proyecto (no release futura ni elección actual). Context7 devuelve main que menciona27: no es contrato estable4.1.1; prevalece página oficial4.1.1. Claim Gradle<=26 del pack: refresh context-curator ejecutado 2026-10-01 (`stale_status: cleared`), sin reescribirlo. Pins exactos Kotlin/Gradle/generator se fijan después en propuesta SDD aprobable y prueba de compatibilidad, no versiones flotantes en implementación. Elegir distribución/updates/licencia JDK por separado; roadmap Oracle no equivale soporte de todos los vendors.
+
+**D-J25-01 — sincronización documental 2026-10-04:** literal humano «apruebo la actualizacion de la sfuentes canonicas a java 25 lts» (mensaje/pack #31), conforme al [borrador](../specs/.working/entralo-v1-executable-specs-java25-compatibility-proposal.md) aprobado en diseño por [SA ronda2](../specs/.working/entralo-v1-executable-specs-java25-sa-review.md). No firma SA de este landscape ni aprobación de adopción. [Master §6.1](../specs/increments/entralo-v1-executable-specs/master-spec.md#61-d-j25-01--target-documental-y-matriz-de-adopción-pendiente) exige matriz por los seis servicios, dos BFF Kotlin AWS y workers/jobs JVM, versiones exactas, CI/JVM efectiva, paquete/imagen/digest/CPU ECS, suite contractual/capacidad/seguridad/rolling/rollback/restore. JDK de build, toolchain, API y bytecode separados del runtime25; no autoelevar release/jvmTarget ni afirmar dual21/25. Java21 = referencia previa/candidato continuidad-rollback pendiente de verificar; Java26 local = Generator G-OAS, no producto. Generación contractual y empaquetado derivado de §§6/7 preservados; tooling/salidas locales G-OAS no se transfieren al producto. React/Node/Vercel sin cambio. G-BOOTSTRAP, G-OAS, G-VALIDATOR y G-HUMAN-CONTRACT siguen abiertos; sin implementación ni despliegue.
 
 ## 7. Operación, escala y entrega
 

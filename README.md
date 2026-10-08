@@ -61,13 +61,15 @@ flowchart LR
 Preferencias y recomendaciones registradas en la [propuesta de arquitectura](docs/architecture/architecture-proposal.md) y resumidas en el [resumen de decisiones](docs/architecture/decision-summary.md). Se presentan **como diseño, no como algo implementado**; los ADRs siguen en estado `proposed`. La aprobación conceptual ya está registrada; la validación y aprobación del plan contractual siguen pendientes. Las concreciones y deltas V1 están en la [Master Spec actual](docs/specs/increments/entralo-v1-executable-specs/master-spec.md), que declara las divergencias pendientes de reconciliación macro.
 
 - **Microservicios en AWS:** seis servicios (Identity, Catalog, Purchases+Inventory, Payments, Ticketing+Validation y Blockchain) sobre ECS Fargate.
-- **Lenguaje y runtime:** Kotlin con Java 21 y Spring Boot 4.
+- **Lenguaje y runtime objetivo backend:** Kotlin con **Java 25 LTS + Spring Boot 4.1.1 en AWS ECS Fargate**, baseline documental **propuesto/pendiente de validación**, no runtime implementado ni desplegado. Java25 está dentro del rango declarado por Boot4.1.1 (Java17–26); la compatibilidad full-stack Kotlin/plugins/dependencias/imagen/ECS sigue sin demostrar. JDK de build, toolchain, límite de APIs, bytecode y runtime se deciden por separado: no se eleva automáticamente `--release` ni `jvmTarget` a25.
 - **Persistencia y contratos:** PostgreSQL con JPA y Flyway por servicio, bajo enfoque **API-first** (OpenAPI como fuente de contrato).
 - **Mensajería:** AWS SQS (con outbox/inbox y saga persistida) para coordinación y eventos internos.
 - **Ingreso de APIs:** AWS API Gateway regional con WAF.
 - **Identidad y canales:** Amazon Cognito + BFF (Backend for Frontend) con sesión por canal.
 - **Frontend:** React (buyer y admin en proyectos separados) desplegado en Vercel.
 - **Almacenamiento:** Amazon S3 para imágenes y documentos.
+
+**Sincronización documental autorizada — 2026-10-04:** literal humano «apruebo la actualizacion de la sfuentes canonicas a java 25 lts», procedente del mensaje del usuario y del pack #31. Base: [revisión SA Java25, ronda2](docs/specs/.working/entralo-v1-executable-specs-java25-sa-review.md), `approved` sólo para el diseño del borrador, no firma de estas fuentes. [Master §6.1](docs/specs/increments/entralo-v1-executable-specs/master-spec.md#61-d-j25-01--target-documental-y-matriz-de-adopción-pendiente) y [ADR-006](docs/architecture/decision-records/ADR-006-stack-runtime-y-entrega.md) conservan matriz, alternativas y gaps. Java21 es referencia previa y candidato de continuidad/rollback por verificar, no rollback acreditado; Java26 del Generator G-OAS local no es runtime del producto. React/Vercel no cambia. G-BOOTSTRAP/G-OAS/G-VALIDATOR/G-HUMAN-CONTRACT siguen abiertos; no aprobación del plan contractual, implementación ni despliegue.
 
 ## Activos y diseño
 
@@ -101,4 +103,4 @@ Preferencias y recomendaciones registradas en la [propuesta de arquitectura](doc
 
 ---
 
-*Resumen documental actualizado el 2026-10-03. No es un dictamen de readiness ni evidencia de despliegue.*
+*Resumen documental del 2026-10-03 con delta focalizado de target backend del 2026-10-04. No es un dictamen de readiness ni evidencia de despliegue.*
