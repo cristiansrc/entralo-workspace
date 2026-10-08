@@ -1,0 +1,6 @@
+# Custodia SHA-256 (calculado localmente, sin red)
+# run: 20261005T010240537579199Z
+# artifact: openapi-generator-cli-7.25.0.jar (Maven Central)
+41ce4f6b07f196676439d710759fa1ced7a08066d06ff1bf314681470289efae  tools/goas/vendor/tarballs/openapi-generator-cli-7.25.0.20261005T010240537579199Z-1687.jar
+4a1676b09472e2606c3740a14bc37468cfbdae1e174b8f0281af1bfa95a683d6  tools/goas/provenance/headers-maven-jar-7.25.0.20261005T010240537579199Z-1687.txt
+6463314f9981107ffb9f4277a6f3a43b8d75015018673bc237a5de3618ce1148  tools/goas/provenance/fetch-maven-jar-sha1header-7.25.0.20261005T010240537579199Z-1687.log

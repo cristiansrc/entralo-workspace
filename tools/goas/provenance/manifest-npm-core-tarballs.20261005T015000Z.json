@@ -1,0 +1,29 @@
+{
+  "schema": "goas-npm-core-acquisition-manifest/v1",
+  "run_id": "20261005T015000Z",
+  "generated_by": "devops-architect",
+  "source": "docs/specs/.working/entralo-v1-executable-specs-goas-tooling-plan.md §14.2 (N01–N09)",
+  "authorization": "Mandato amplio vigente hasta Spec Validator (pack #34/#38) + instrucción humana actual: descarga/stage exacto de los 9 tarballs N01–N09, 1 request por URL, sin retries/backoff, sin redirects, sin HEAD.",
+  "phase": "adquisicion-exacta-core-g-oas",
+  "limits": {
+    "requests_max": 9,
+    "requests_per_url": 1,
+    "timeout_seconds_per_url": 30,
+    "max_individual_bytes": 104857600,
+    "max_aggregate_bytes": 524288000,
+    "follow_redirects": false,
+    "retries": 0,
+    "head": false
+  },
+  "entries": [
+    { "id": "N01", "name": "yaml", "version": "2.9.1", "url": "https://registry.npmjs.org/yaml/-/yaml-2.9.1.tgz", "integrity": "sha512-3NxN8+78OdzbT7C/WjGsyfPAtJaN3FNDsWxv7Y7mcDsT/oOmgW8BpyQQFFBnvZE3j9Y2Sdz1ULFLezL7Eb2yFw==", "filename": "yaml-2.9.1.tgz", "evidence": "§11.5 run 20261004T191337Z" },
+    { "id": "N02", "name": "jsonc-parser", "version": "3.3.1", "url": "https://registry.npmjs.org/jsonc-parser/-/jsonc-parser-3.3.1.tgz", "integrity": "sha512-HUgH65KyejrUFPvHFPbqOY0rsFip3Bo5wb4ngvdi1EpCYWUQDC5V+Y7mZws+DLkr4M//zQJoanu1SP+87Dv1oQ==", "filename": "jsonc-parser-3.3.1.tgz", "evidence": "§11.5 run 20261004T191337Z" },
+    { "id": "N03", "name": "@redocly/cli", "version": "2.57.0", "url": "https://registry.npmjs.org/@redocly/cli/-/cli-2.57.0.tgz", "integrity": "sha512-1d5fVyUaYlMNgCHUoyE2vUyxBhs/jmOHgsX/kFmfWzESw4f/G/OV/SU9E55rU7aUNmw9rHj1vXmL6yUdIn+KKQ==", "filename": "redocly-cli-2.57.0.tgz", "evidence": "§11.5 run 20261004T191337Z" },
+    { "id": "N04", "name": "ajv", "version": "8.20.0", "url": "https://registry.npmjs.org/ajv/-/ajv-8.20.0.tgz", "integrity": "sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==", "filename": "ajv-8.20.0.tgz", "evidence": "§11.5 run 20261004T191337Z" },
+    { "id": "N05", "name": "ajv-formats", "version": "3.0.1", "url": "https://registry.npmjs.org/ajv-formats/-/ajv-formats-3.0.1.tgz", "integrity": "sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==", "filename": "ajv-formats-3.0.1.tgz", "evidence": "§11.5 run 20261004T191337Z" },
+    { "id": "N06", "name": "fast-deep-equal", "version": "3.1.3", "url": "https://registry.npmjs.org/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz", "integrity": "sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==", "filename": "fast-deep-equal-3.1.3.tgz", "evidence": "§12.6 run 20261004T194645Z" },
+    { "id": "N07", "name": "fast-uri", "version": "3.1.8", "url": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.8.tgz", "integrity": "sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==", "filename": "fast-uri-3.1.8.tgz", "evidence": "§12.6 run 20261004T194645Z" },
+    { "id": "N08", "name": "json-schema-traverse", "version": "1.0.0", "url": "https://registry.npmjs.org/json-schema-traverse/-/json-schema-traverse-1.0.0.tgz", "integrity": "sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==", "filename": "json-schema-traverse-1.0.0.tgz", "evidence": "§12.6 run 20261004T194645Z" },
+    { "id": "N09", "name": "require-from-string", "version": "2.0.2", "url": "https://registry.npmjs.org/require-from-string/-/require-from-string-2.0.2.tgz", "integrity": "sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==", "filename": "require-from-string-2.0.2.tgz", "evidence": "§12.6 run 20261004T194645Z" }
+  ]
+}

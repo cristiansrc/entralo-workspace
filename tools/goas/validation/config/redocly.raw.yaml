@@ -1,0 +1,10 @@
+# G-OAS raw lint pass — plan §4 / api-lint-policy §"Excepciones de lint".
+# Baseline: Redocly 2.57.0 `recommended`, WITHOUT additional deactivations and
+# WITHOUT the ignore file. This pass keeps every warning visible.
+#
+# Constraints (do not violate):
+#   - No `rules: <rule>: off`, no wildcards, no `--generate-ignore-file`.
+#   - No suppressions of struct / unresolved refs / unknown fields / security / format.
+#   - This file is a tooling artifact; it never modifies canonical contracts.
+extends:
+  - recommended

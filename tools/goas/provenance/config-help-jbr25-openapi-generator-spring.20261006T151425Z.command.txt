@@ -1,0 +1,13 @@
+# G-OAS config-help provenance — comando REAL exacto
+# runid: 20261006T151425Z
+# cwd  : /mnt/data/Shares/Projects/entralo-workspace/tools/goas
+# Nota : NUNCA se uso `java` por PATH (Java 26). Runtime = JBR 25.0.3 por ruta absoluta.
+#        Subcomando unico del generador: config-help -g spring (sin generate/validate/redocly/ajv).
+#        Aislamiento: unshare --user --map-root-user --net (netns nuevo, sin egress configurado).
+
+env -i HOME="/mnt/data/Shares/Projects/entralo-workspace/tools/goas/.tmp/config-help-jbr25-openapi-generator-spring.20261006T151425Z/home" TMPDIR="/mnt/data/Shares/Projects/entralo-workspace/tools/goas/.tmp/config-help-jbr25-openapi-generator-spring.20261006T151425Z/tmp" PATH="/home/cristiansrc/.local/share/JetBrains/Toolbox/apps/intellij-idea/jbr/bin" LANG=C.UTF-8 LC_ALL=C.UTF-8 JAVA_HOME="/home/cristiansrc/.local/share/JetBrains/Toolbox/apps/intellij-idea/jbr" /usr/bin/unshare --user --map-root-user --net -- /usr/bin/sh -c 'printf "userns=%s\nnetns=%s\n" "$(/usr/bin/readlink /proc/self/ns/user)" "$(/usr/bin/readlink /proc/self/ns/net)" > "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/.tmp/config-help-jbr25-openapi-generator-spring.20261006T151425Z/isolation.txt"; exec "$0" "$@"' "/home/cristiansrc/.local/share/JetBrains/Toolbox/apps/intellij-idea/jbr/bin/java" -Duser.home="/mnt/data/Shares/Projects/entralo-workspace/tools/goas/.tmp/config-help-jbr25-openapi-generator-spring.20261006T151425Z/home" -Djava.io.tmpdir="/mnt/data/Shares/Projects/entralo-workspace/tools/goas/.tmp/config-help-jbr25-openapi-generator-spring.20261006T151425Z/tmp" -jar "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/tarballs/openapi-generator-cli-7.25.0.20261005T010240537579199Z-1687.jar" config-help -g spring
+
+# Redirecciones del run:
+#   > <scratch>/config-help.stdout.log
+#   2> <scratch>/config-help.stderr.log
+#   exit code -> <scratch>/config-help.exit.txt

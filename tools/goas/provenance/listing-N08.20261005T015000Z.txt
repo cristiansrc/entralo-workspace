@@ -1,0 +1,12 @@
+package/LICENSE
+package/index.js
+package/spec/index.spec.js
+package/spec/fixtures/schema.js
+package/package.json
+package/README.md
+package/index.d.ts
+package/.eslintrc.yml
+package/spec/.eslintrc.yml
+package/.github/workflows/build.yml
+package/.github/FUNDING.yml
+package/.github/workflows/publish.yml

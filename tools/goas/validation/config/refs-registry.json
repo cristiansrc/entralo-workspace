@@ -1,0 +1,40 @@
+{
+  "registry": "g-oas-offline-refs",
+  "registry_version": "1.0.0",
+  "plan_refs": ["plan §5 refs offline", "api-lint-policy §Hosts documentales y SDK"],
+  "network_policy": "never",
+  "note": "The five event resources are registered by their ORIGINAL $id and physical path. `$id` values on `.invalid` hosts are DOCUMENTARY identifiers resolved by this local registry; they are NEVER fetched. Any $ref that is an absolute http(s) URI not present here is an unresolved reference (blocker), not a network request.",
+  "base_dir": "events",
+  "schemas": [
+    {
+      "file": "events/adjustment-snapshot.v1.schema.json",
+      "$id": "https://contratos.entralo.invalid/events/adjustment-snapshot.v1.schema.json",
+      "kind": "json-schema-2020-12",
+      "register_in_ajv": true
+    },
+    {
+      "file": "events/change-lifecycle.v1.schema.json",
+      "$id": "https://contratos.entralo.invalid/events/change-lifecycle.v1.schema.json",
+      "kind": "json-schema-2020-12",
+      "register_in_ajv": true
+    },
+    {
+      "file": "events/change-reopen.v1.schema.json",
+      "$id": "https://contratos.entralo.invalid/events/change-reopen.v1.schema.json",
+      "kind": "json-schema-2020-12",
+      "register_in_ajv": true
+    },
+    {
+      "file": "events/integration-envelope.v1.schema.json",
+      "$id": "https://contratos.entralo.invalid/events/integration-envelope.v1.schema.json",
+      "kind": "json-schema-2020-12",
+      "register_in_ajv": true
+    },
+    {
+      "file": "events/order-scope-snapshot.v1.schema.json",
+      "$id": "https://contratos.entralo.invalid/events/order-scope-snapshot.v1.schema.json",
+      "kind": "json-schema-2020-12",
+      "register_in_ajv": true
+    }
+  ]
+}

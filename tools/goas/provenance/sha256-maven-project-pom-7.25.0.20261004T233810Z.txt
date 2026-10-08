@@ -1,0 +1,7 @@
+# SHA-256 manifest — OpenAPI Generator project (parent) POM capture
+# run_utc=20261004T233810Z
+# url=https://repo.maven.apache.org/maven2/org/openapitools/openapi-generator-project/7.25.0/openapi-generator-project-7.25.0.pom
+# attempts=1  redirects_followed=0  retries=0
+1a7083fe73ee36210e7b65ce3b0e233cbef85d6f79c953578dd7287006acf68a  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/maven-openapi-generator-project-7.25.0.pom.20261004T233810Z.xml
+87a99456becce1473ba0a54cdfbae3635f471e783eb47e432117ecd05b4d9970  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-maven-openapi-generator-project-pom-7.25.0.20261004T233810Z.txt
+cfc080f7852d67cd1cc8e8766f01029cb8ffc1470fa6a316821c4784e61ef9b1  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/fetch-maven-project-pom-7.25.0.20261004T233810Z.log

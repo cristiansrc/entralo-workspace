@@ -1,0 +1,12 @@
+# G-OAS disposed lint pass — plan §4.
+# Identical baseline to redocly.raw.yaml. The ONLY permitted difference is the
+# external ignore file `.redocly.lint-ignore.yaml` (exactly ten approved tuples,
+# file + rule + JSON Pointer). No per-rule deactivation lives in this file.
+#
+# The ignore file is discovered by Redocly's linter by name
+# (Redocly 2.57.0 default ignore filename = `.redocly.lint-ignore.yaml`,
+# verified in node_modules/@redocly/cli, constant IGNORE_FILE). A future run
+# must make it discoverable (place a byte-exact copy alongside the lint cwd or
+# resolved config path inside the external run dir; never inside the repo).
+extends:
+  - recommended

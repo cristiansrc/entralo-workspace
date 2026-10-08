@@ -1,0 +1,7 @@
+# SHA-256 manifest — Maven metadata capture
+# run_utc=20261004T233531Z
+# url=https://repo.maven.apache.org/maven2/org/openapitools/openapi-generator-cli/maven-metadata.xml
+# attempts=1  redirects_followed=0  retries=0
+999d0b983bcea1867a9ee3ab7b15c8758a424110d061f2ec5ae0cdd640978f53  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/maven-openapi-generator-cli-maven-metadata.20261004T233531Z.xml
+faa6a095b23fd37c9170973bf95a62abebbc5189ea2571dbae16efabaea18572  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-maven-openapi-generator-cli.20261004T233531Z.txt
+6debf756f4d1981843a5ce8c33d4e915990116cb6ab5fabcc257d2223644dd3a  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/fetch-maven-metadata.20261004T233531Z.log

@@ -1,0 +1,49 @@
+{
+  "manifest": "g-oas-fixtures",
+  "manifest_version": "1.0.0",
+  "lifecycle_status": "planning",
+  "plan_refs": ["plan §4", "plan §5", "plan §6", "api-lint-policy §Matriz documental", "fixtures/mercado-pago/README.md"],
+  "note": "Data-only map of canonical fixtures. Polarities transcribed from the canonical README; this file never replaces the canonical sources and MUST NOT be edited to make a run pass.",
+  "matrix": {
+    "path": "fixtures/contratos/schema-cases.v1.json",
+    "expected_case_count": 27,
+    "driver": "cases[]: each case carries {id, schema_ref, expected_valid, instance}; validate instance against schema_ref, never the matrix document as payload"
+  },
+  "mercado_pago": {
+    "readme": "fixtures/mercado-pago/README.md",
+    "schema_ref": "api/common.yaml#/components/schemas/MercadoPagoPaymentNotificationV1",
+    "base_dir": "fixtures/mercado-pago",
+    "expected_valid": 4,
+    "expected_invalid": 9,
+    "files": [
+      { "file": "payment-created.v1.json", "expected_valid": true },
+      { "file": "payment-updated.v1.json", "expected_valid": true },
+      { "file": "payment-minimal.v1.json", "expected_valid": true },
+      { "file": "inbox-conflict.v1.json", "expected_valid": true },
+      { "file": "unknown-root.v1.json", "expected_valid": false },
+      { "file": "unknown-data.v1.json", "expected_valid": false },
+      { "file": "unsupported-type.v1.json", "expected_valid": false },
+      { "file": "zero-id.v1.json", "expected_valid": false },
+      { "file": "leading-zero-id.v1.json", "expected_valid": false },
+      { "file": "invalid-date.v1.json", "expected_valid": false },
+      { "file": "missing-date-zone.v1.json", "expected_valid": false },
+      { "file": "forbidden-token-field.v1.json", "expected_valid": false },
+      { "file": "forbidden-email-field.v1.json", "expected_valid": false }
+    ]
+  },
+  "format_controls": {
+    "note": "Instances and expectations are NOT duplicated here; they are read from the canonical matrix and MP fixtures.",
+    "expect_keyword": "format",
+    "matrix_case_ids": [
+      "uuid-valid",
+      "uuid-invalid",
+      "instant-valid",
+      "instant-impossible-date",
+      "instant-missing-zone"
+    ],
+    "mercado_pago_files": [
+      "invalid-date.v1.json",
+      "missing-date-zone.v1.json"
+    ]
+  }
+}

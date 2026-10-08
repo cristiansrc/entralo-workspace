@@ -1,6 +1,6 @@
 # Registro API Governance — Entralo V1
 
-Lifecycle status: `planning`. Fecha: 2026-10-02. Autor: Planner. Tipo: registro de interpretación y cotejo documental focalizado; **no auditoría independiente ejecutada por api-governance-agent**, no parser/lint, no dictamen ready.
+Lifecycle status: `planning`. Actualización de estado/reporte: 2026-10-07. Autor del registro: Planner. Tipo: cotejo documental histórico (2026-10-02) y resumen atribuido del informe independiente **G-API-GOV PASS** (sección final). Planner no ejecuta ni firma la auditoría independiente; no parser/lint ni dictamen ready. Las menciones previas a auditoría/G-OAS pendientes son históricas y quedan sustituidas en ese alcance por el resumen final; S-01 y los límites funcionales no cambian.
 
 ## Procedencia y S-01
 
@@ -41,3 +41,26 @@ Fuente: solicitud humana actual H-01 high, M-01…03, L-01…07. Informe indepen
 | L-07 | freeze/source manifest/bundles externos/byte hashes/scan/review exacto y invalidación al cambiar bytes gate-register | Procedimiento escrito, no freeze/hash/scan ejecutado |
 
 AC-GOV en Master§11 y cotejo actual consistency al final. PCI/PII/no public raw proof/financial decisions intactos; el estado previo «N1 no resuelto por esta solicitud» queda **`superseded`** por la nota de precedencia Master§13 D-N1-01/gate-register L56 (N1 `specified-awaiting-independent-review`, sin confirmación pendiente). Re-auditoría api-governance-agent tras G-OAS real sobre snapshot frozen identificado, luego gates restantes; lifecycle planning/verdict none. No Git/código/scripts/migraciones/boards/tests ni handoff.
+
+## Resumen del informe independiente — G-API-GOV PASS
+
+- **Fecha de registro y firma documental:** 2026-10-07 — **Planner** (sincronización y atribución, no firma del auditor).
+- **Autor del veredicto independiente:** `api-governance-agent`.
+- **Veredicto recibido:** **PASS**, registrado por Documentation Agent en la 15ª escritura del shared `docs/specs/.working/entralo-v1-executable-specs-sdd-context.md` (§primera nota y §Gates, fila G-API-GOV). Esta es la fuente de transcripción; no se presenta como un informe original recuperado.
+- **Needs confirmation: fecha original y ruta del artefacto del informe independiente.** No disponibles en la fuente; no se inventan timestamp, archivo, run_id propio de GOV ni firma del auditor. 2026-10-07 es la fecha de registro del PASS y de este resumen.
+- **Snapshot revisado:** los mismos28 archivos del run G-OAS autoritativo `20261007T235900Z-consolidated`; manifest SHA256 **`535f671b243d550d2c2ade1f17307ee5590ef0410e2d113e33e261f862c0b3b1`**. Driver G-OAS `/tmp/opencode/goas-consolidated-driver.mjs`, SHA256 **`b42e2f568b5d4e43545d4391a2cd3a6a868ffad8e762242742378baf3182adf4`**; no es un driver nuevo de GOV.
+- **Prerrequisito cumplido:** G-OAS real PASS, 12/12 criterios, evidencia `/tmp/opencode/entralo-v1-executable-specs/20261007T235900Z-consolidated/g-oas-report.md` y `manifests/consolidated-summary.json`; ambos leídos para sincronización, sin rerun. Tres runs intermedios superseded y retenidos: `20261007T233630Z-consolidated`, `20261007T234500Z-consolidated`, `20261007T235500Z-consolidated`; historia/motivos en `gate-register.md` §Historia retenida y run autoritativo y `/tmp/opencode/goas-consolidated-runs-index.md`.
+
+### Hallazgos y compatibilidad atribuidos
+
+| Comprobación / hallazgo del informe | Resultado registrado |
+|---|---|
+| Compatibilidad | **Sin breaking changes no documentados** en el snapshot revisado. Se conserva el criterio anterior: cambios incompatibles frente al borrador prepublicación están documentados; mantener v1 inicial no acredita compatibilidad con consumidores desplegados. Si aparecen consumidores previos reales, bloquear despliegue y exigir versión contractual mediante Planner; sin importes/timestamps ficticios ni redrive incompleto. |
+| Excepciones lint | **10 ignores conformes** con api-lint-policy: ocho info-license + dos operation-2xx-response, tuplas file/rule/JSON Pointer exactas, sin ampliar policy. |
+| Identidad de operaciones | **105 operationId totales/únicos**, sin duplicados, según informe y verificación transcrita del Documentation Agent. |
+| Hallazgo residual | **1 low/nit: DEFERRED**, no resuelto/cerrado; sin nueva ronda por nits (`no new round`). ID, descripción concreta y mitigación propia no constan en la fuente resumida: no inventarlos ni equipararlo al TOCTOU del tooling. |
+| Discrepancia documental | El informe señaló gate-register/api-lint-policy STALE frente al PASS factual. Corregida por este delta de estado/reporte en los tres registros; no modificación de contratos ni nueva auditoría. |
+
+Este resumen no asigna cierres individuales no reportados a H-01/M-01…03/L-01…07 ni recupera el informe histórico ausente de §Procedencia. **S-01 sigue unverified-source**, no resuelto por inferencia. G-API-GOV PASS proviene del informe independiente transcrito, no del cotejo de Planner ni del lint exit0.
+
+**Límites y conservación:** el snapshot excluye estos tres registros; su sincronización no altera API/schemas/fixtures auditados, pero sus nuevos bytes deben entrar en el freeze/G-SCAN final. Retener la evidencia externa y la atribución; si desaparece la evidencia necesaria: `Blocked: verification evidence unavailable`, sin reconstruir. Lifecycle `planning`, Spec Validator `verdict: none`; **G-SCAN final, G-VALIDATOR y G-HUMAN-CONTRACT abiertos**. Sin ready, aprobación humana contractual, Git, implementación ni handoff por esta firma documental. Shared/pack no modificados; actualización de sus referencias a sync pendiente corresponde a su owner.

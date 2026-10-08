@@ -1,0 +1,40 @@
+=== name=npmjs-yaml
+url_requested=https://registry.npmjs.org/yaml
+curl_exit=0
+result=200|386415|0.391994|https://registry.npmjs.org/yaml
+headers_file=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-yaml.20261004T191337Z.txt
+body_file=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-yaml.20261004T191337Z.json
+location_header=
+
+=== name=npmjs-jsonc-parser
+url_requested=https://registry.npmjs.org/jsonc-parser
+curl_exit=0
+result=200|102715|0.379253|https://registry.npmjs.org/jsonc-parser
+headers_file=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-jsonc-parser.20261004T191337Z.txt
+body_file=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-jsonc-parser.20261004T191337Z.json
+location_header=
+
+=== name=npmjs-redocly-cli
+url_requested=https://registry.npmjs.org/@redocly%2Fcli
+curl_exit=0
+result=200|2458147|0.768154|https://registry.npmjs.org/@redocly%2Fcli
+headers_file=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-redocly-cli.20261004T191337Z.txt
+body_file=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-redocly-cli.20261004T191337Z.json
+location_header=
+
+=== name=npmjs-ajv
+url_requested=https://registry.npmjs.org/ajv
+curl_exit=0
+result=200|1142658|0.931929|https://registry.npmjs.org/ajv
+headers_file=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-ajv.20261004T191337Z.txt
+body_file=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-ajv.20261004T191337Z.json
+location_header=
+
+=== name=npmjs-ajv-formats
+url_requested=https://registry.npmjs.org/ajv-formats
+curl_exit=0
+result=200|141264|0.145574|https://registry.npmjs.org/ajv-formats
+headers_file=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-ajv-formats.20261004T191337Z.txt
+body_file=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-ajv-formats.20261004T191337Z.json
+location_header=
+

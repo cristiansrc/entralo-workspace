@@ -1,0 +1,15 @@
+package/LICENSE
+package/dist/formats.js
+package/dist/index.js
+package/dist/limit.js
+package/package.json
+package/dist/formats.js.map
+package/dist/index.js.map
+package/dist/limit.js.map
+package/README.md
+package/dist/formats.d.ts
+package/src/formats.ts
+package/dist/index.d.ts
+package/src/index.ts
+package/dist/limit.d.ts
+package/src/limit.ts

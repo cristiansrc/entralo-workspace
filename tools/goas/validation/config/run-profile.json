@@ -1,0 +1,125 @@
+{
+  "profile": "g-oas-run-profile",
+  "profile_version": "1.0.0",
+  "lifecycle_status": "planning",
+  "plan_refs": ["plan §4", "plan §5", "plan §6", "plan §7", "plan §16.4", "plan §16.5", "gate-register G-OAS"],
+  "authority": "Documental, no ejecutada. Este perfil no habilita corrida, no cierra gates y no es Human Plan Approval.",
+  "evidence_root": "/tmp/opencode/entralo-v1-executable-specs",
+  "run_id": {
+    "pattern": "^[0-9]{8}T[0-9]{6,9}Z(-[A-Za-z0-9]{1,64})?$",
+    "assigned_by": "the tool at run time",
+    "note": "No placeholder is evidence. Refuse to reuse/overwrite a run id."
+  },
+  "write_guard": {
+    "refuse_if_destination_exists": true,
+    "assert_output_realpath_under_evidence_root": true,
+    "single_writer_sequential": true,
+    "inputs_read_only": true,
+    "canonical_sources_never_written": true,
+    "note": "No output inside the repository, tools/goas, build/generated, product or /tmp outside the approved evidence root."
+  },
+  "no_egress": {
+    "mechanism": "unshare --user --map-root-user --net",
+    "unshare_args": ["--user", "--map-root-user", "--net"],
+    "caveat": "Network isolation only; NOT a filesystem sandbox. File write limits are enforced by the write guard, not by unshare.",
+    "proxy_is_not_a_substitute": true,
+    "env_isolated": true
+  },
+  "retries": {
+    "automatic_retries": false,
+    "backoff": false,
+    "attempts_per_command": 1,
+    "note": "One attempt per command/artifact. Failures are recorded, never retried."
+  },
+  "timeouts_ms": {
+    "acquisition_request": 30000,
+    "acquisition_stage": 300000,
+    "lint_per_artifact": 120000,
+    "bundle_per_artifact": 120000,
+    "refs_per_artifact": 120000,
+    "schema_compile": 60000,
+    "case_validation": 10000,
+    "generator_validate_per_root": 120000,
+    "generator_generate_per_root": 120000,
+    "run_total": 900000
+  },
+  "limits": {
+    "max_bytes_per_document": 10485760,
+    "max_yaml_depth": 100,
+    "max_alias_expansions": 256
+  },
+  "signals": [
+    "TOOLCHAIN_BLOCKED",
+    "PARSE_REJECTED",
+    "LINT_RECORDED",
+    "REF_UNRESOLVED",
+    "FORMAT_ASSERTION_BLOCKED",
+    "CASE_POLARITY_MISMATCH",
+    "SOURCE_CHANGED",
+    "GENERATOR_BLOCKED",
+    "GENERATOR_VALIDATE_RECORDED",
+    "GENERATOR_GENERATE_RECORDED",
+    "RUN_INCOMPLETE",
+    "RUN_RECORDED"
+  ],
+  "phases": [
+    { "id": "snapshot", "adapter": "run-guard.mjs", "output": "external snapshot manifest (byte-exact, SHA-256/bytes)" },
+    { "id": "parse", "adapter": "strict-yaml.mjs + strict-json.mjs", "output": "parse results, duplicate-key rejections" },
+    { "id": "lint.raw", "adapter": "redocly:config/redocly.raw.yaml", "output": "raw JSON diagnostics" },
+    { "id": "lint.disposed", "adapter": "redocly:config/redocly.disposed.yaml + config/.redocly.lint-ignore.yaml", "output": "disposed JSON diagnostics" },
+    { "id": "bundle", "adapter": "redocly:emit", "output": "7 root bundles + common documentary, external only" },
+    { "id": "refs", "adapter": "offline-refs.mjs", "output": "source->bundle map, unresolved refs" },
+    { "id": "compile", "adapter": "schema-adapter.mjs (Ajv2020 + ajv-formats full)", "output": "compiled schemas + options record" },
+    { "id": "matrix", "adapter": "matrix-mp-runner.mjs", "output": "27 case results" },
+    { "id": "mercado_pago", "adapter": "matrix-mp-runner.mjs", "output": "13 MP results (4 valid / 9 invalid)" },
+    { "id": "format_controls", "adapter": "format-controls.mjs", "output": "keyword=format diagnostics per control" },
+    { "id": "generate", "adapter": "generation.mjs", "output": "validate/generate argv + exit/logs, external only" }
+  ],
+  "canonical_sources": {
+    "increment_root_hint": "docs/specs/increments/entralo-v1-executable-specs",
+    "read_only": true,
+    "yaml": [
+      "api/admin-bff.yaml",
+      "api/buyer-bff.yaml",
+      "api/catalog.yaml",
+      "api/common.yaml",
+      "api/identity.yaml",
+      "api/payments.yaml",
+      "api/purchases.yaml",
+      "api/ticketing.yaml"
+    ],
+    "json_schemas": [
+      "events/adjustment-snapshot.v1.schema.json",
+      "events/change-lifecycle.v1.schema.json",
+      "events/change-reopen.v1.schema.json",
+      "events/integration-envelope.v1.schema.json",
+      "events/order-scope-snapshot.v1.schema.json"
+    ],
+    "fixtures": [
+      "fixtures/contratos/schema-cases.v1.json",
+      "fixtures/mercado-pago/README.md",
+      "fixtures/mercado-pago/payment-created.v1.json",
+      "fixtures/mercado-pago/payment-updated.v1.json",
+      "fixtures/mercado-pago/payment-minimal.v1.json",
+      "fixtures/mercado-pago/inbox-conflict.v1.json",
+      "fixtures/mercado-pago/unknown-root.v1.json",
+      "fixtures/mercado-pago/unknown-data.v1.json",
+      "fixtures/mercado-pago/unsupported-type.v1.json",
+      "fixtures/mercado-pago/zero-id.v1.json",
+      "fixtures/mercado-pago/leading-zero-id.v1.json",
+      "fixtures/mercado-pago/invalid-date.v1.json",
+      "fixtures/mercado-pago/missing-date-zone.v1.json",
+      "fixtures/mercado-pago/forbidden-token-field.v1.json",
+      "fixtures/mercado-pago/forbidden-email-field.v1.json"
+    ]
+  },
+  "prohibited": [
+    "network / egress",
+    "redistribution of N03 @redocly/cli",
+    "installation outside tools/goas",
+    "lifecycle scripts (ignore-scripts=true remains)",
+    "writes to canonical contracts / fixtures / docs",
+    "compile / javac / maven / gradle / product build",
+    "git / scans / AWS"
+  ]
+}

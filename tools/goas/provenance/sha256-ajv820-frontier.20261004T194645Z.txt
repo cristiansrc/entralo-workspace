@@ -1,0 +1,12 @@
+# SHA-256 custody manifest - ajv@8.20.0 frontier (4 authorized GETs)
+# run_utc=20261004T194645Z  registry=registry.npmjs.org  http=HTTP/2 200 (all)  redirects=0 (all)
+# bodies:
+490d6b92e71413bba95d4c6dc9015e3ff974aa56db066cf756310c3bb78b85a2  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-fast-deep-equal.20261004T194645Z.json
+7d999d8c49bad0132be2ac5828b35d560e63f4a9d02b394ca384cbd97fca46eb  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-fast-uri.20261004T194645Z.json
+b9c213075bc26f316fd5a3d9393401cf13a28ca05b26dce2d07b0d007e490d04  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-json-schema-traverse.20261004T194645Z.json
+306a04f6125642e8b422a90fc24033ba250946584d9510175467390773b928b5  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-require-from-string.20261004T194645Z.json
+# response headers:
+66d4e7a72649a9d2a52d4ea08976637b0d1d8a4113b4aaeee46874851ce1b91b  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-fast-deep-equal.20261004T194645Z.txt
+2d0987a93c3c2acd92edef9c409bf03fe5d13b7b00513a3579d13a7b6d6694e8  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-fast-uri.20261004T194645Z.txt
+c0e572425636dac4eb7bb6189aadab1e8f9c5580dd18c2432788907e03c2efc2  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-json-schema-traverse.20261004T194645Z.txt
+6a93ae0575ac32ee10f1c529384d501ace9e3fcffba1c0a2d9f63e4a757efb29  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-require-from-string.20261004T194645Z.txt

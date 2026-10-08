@@ -1,0 +1,11 @@
+-rw-r--r-- 0/0            1074 1985-10-26 03:15 package/LICENSE
+-rw-r--r-- 0/0            1935 1985-10-26 03:15 package/es6/index.js
+-rw-r--r-- 0/0            1177 1985-10-26 03:15 package/index.js
+-rw-r--r-- 0/0            2209 1985-10-26 03:15 package/es6/react.js
+-rw-r--r-- 0/0            1451 1985-10-26 03:15 package/react.js
+-rw-r--r-- 0/0            1496 1985-10-26 03:15 package/package.json
+-rw-r--r-- 0/0            3323 1985-10-26 03:15 package/README.md
+-rw-r--r-- 0/0              66 1985-10-26 03:15 package/es6/index.d.ts
+-rw-r--r-- 0/0             103 1985-10-26 03:15 package/index.d.ts
+-rw-r--r-- 0/0              66 1985-10-26 03:15 package/es6/react.d.ts
+-rw-r--r-- 0/0              66 1985-10-26 03:15 package/react.d.ts

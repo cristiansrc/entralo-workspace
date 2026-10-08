@@ -1,0 +1,12 @@
+http_code=200
+size_download=51098
+num_redirects=0
+url_effective=https://repo.maven.apache.org/maven2/org/openapitools/openapi-generator-project/7.25.0/openapi-generator-project-7.25.0.pom
+redirect_url=
+time_total=0.086513
+exit_code=0
+run_utc=20261004T233810Z
+url_requested=https://repo.maven.apache.org/maven2/org/openapitools/openapi-generator-project/7.25.0/openapi-generator-project-7.25.0.pom
+body=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/maven-openapi-generator-project-7.25.0.pom.20261004T233810Z.xml
+headers=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-maven-openapi-generator-project-pom-7.25.0.20261004T233810Z.txt
+curlrc_disabled=yes(-q)

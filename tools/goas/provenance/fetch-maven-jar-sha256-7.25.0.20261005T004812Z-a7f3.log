@@ -1,0 +1,84 @@
+Note: Unnecessary use of -X or --request, GET is already inferred.
+*   Trying [2606:4700::6812:120c]:443...
+* connect to 2606:4700::6812:120c port 443 from fe80::3861:1b20:a35:f3aa port 55656 failed: Network is unreachable
+*   Trying [2606:4700::6812:130c]:443...
+* connect to 2606:4700::6812:130c port 443 from fe80::3861:1b20:a35:f3aa port 43604 failed: Network is unreachable
+* Host repo.maven.apache.org:443 was resolved.
+* IPv6: 2606:4700::6812:120c, 2606:4700::6812:130c
+* IPv4: 104.18.19.12, 104.18.18.12
+*   Trying 104.18.19.12:443...
+* ALPN: curl offers h2,http/1.1
+} [5 bytes data]
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+} [1576 bytes data]
+* SSL Trust Anchors:
+*   CAfile: /etc/ssl/certs/ca-certificates.crt
+{ [5 bytes data]
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+{ [1210 bytes data]
+* TLSv1.3 (IN), TLS change cipher, Change cipher spec (1):
+{ [1 bytes data]
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+{ [19 bytes data]
+* TLSv1.3 (IN), TLS handshake, Unknown (25):
+{ [2352 bytes data]
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+{ [80 bytes data]
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+{ [52 bytes data]
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+} [1 bytes data]
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+} [52 bytes data]
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519MLKEM768 / id-ecPublicKey
+* ALPN: server accepted h2
+* Server certificate:
+*   subject: CN=repo.maven.apache.org
+*   start date: Sep 29 21:02:59 2026 GMT
+*   expire date: Dec 28 21:02:58 2026 GMT
+*   issuer: C=US; O=Let's Encrypt; CN=YE1
+*   Certificate level 0: Public key type EC/prime256v1 (256/128 Bits/secBits), signed using ecdsa-with-SHA384
+*   Certificate level 1: Public key type EC/secp384r1 (384/192 Bits/secBits), signed using ecdsa-with-SHA384
+*   Certificate level 2: Public key type EC/secp384r1 (384/192 Bits/secBits), signed using ecdsa-with-SHA384
+*   Certificate level 3: Public key type EC/secp384r1 (384/192 Bits/secBits), signed using ecdsa-with-SHA384
+*   subjectAltName: "repo.maven.apache.org" matches cert's "repo.maven.apache.org"
+* OpenSSL verify result: 0
+* SSL certificate verified via OpenSSL.
+* Established connection to repo.maven.apache.org (104.18.19.12 port 443) from 192.168.1.23 port 53368 
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+  0      0   0      0   0      0      0      0                              0* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://repo.maven.apache.org/maven2/org/openapitools/openapi-generator-cli/7.25.0/openapi-generator-cli-7.25.0.jar.sha256
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: repo.maven.apache.org]
+* [HTTP/2] [1] [:path: /maven2/org/openapitools/openapi-generator-cli/7.25.0/openapi-generator-cli-7.25.0.jar.sha256]
+* [HTTP/2] [1] [user-agent: curl/8.22.0]
+* [HTTP/2] [1] [accept: */*]
+} [5 bytes data]
+> GET /maven2/org/openapitools/openapi-generator-cli/7.25.0/openapi-generator-cli-7.25.0.jar.sha256 HTTP/2
+> Host: repo.maven.apache.org
+> User-Agent: curl/8.22.0
+> Accept: */*
+> 
+* Request completely sent off
+} [5 bytes data]
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+{ [230 bytes data]
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+{ [230 bytes data]
+< HTTP/2 404 
+< date: Mon, 05 Oct 2026 00:48:24 GMT
+< content-type: text/html
+< cf-ray: a4586baa5b7249e0-BOG
+< cf-cache-status: EXPIRED
+< last-modified: Sat, 11 Oct 2025 00:20:51 GMT
+< x-amz-error-code: NoSuchKey
+< x-amz-error-detail-key: maven2/org/openapitools/openapi-generator-cli/7.25.0/openapi-generator-cli-7.25.0.jar.sha256
+< x-amz-error-message: The specified key does not exist.
+< server: cloudflare
+< alt-svc: h3=":443"; ma=86400
+< 
+{ [5 bytes data]
+100    554   0    554   0      0   1713      0                              0100    554   0    554   0      0   1711      0                              0100    554   0    554   0      0   1710      0                              0
+* Connection #0 to host repo.maven.apache.org:443 left intact

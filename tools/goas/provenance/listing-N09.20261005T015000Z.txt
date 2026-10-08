@@ -1,0 +1,4 @@
+package/package.json
+package/index.js
+package/license
+package/readme.md

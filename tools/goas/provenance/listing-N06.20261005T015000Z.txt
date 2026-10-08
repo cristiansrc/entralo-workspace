@@ -1,0 +1,11 @@
+package/LICENSE
+package/es6/index.js
+package/index.js
+package/es6/react.js
+package/react.js
+package/package.json
+package/README.md
+package/es6/index.d.ts
+package/index.d.ts
+package/es6/react.d.ts
+package/react.d.ts

@@ -1,0 +1,17 @@
+run_utc=20261004T194645Z
+== resource=fast-deep-equal url=https://registry.npmjs.org/fast-deep-equal
+http_code=200 size=48634 time=0.149517 redirects=0 effective=https://registry.npmjs.org/fast-deep-equal
+exit=0 body=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-fast-deep-equal.20261004T194645Z.json headers=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-fast-deep-equal.20261004T194645Z.txt
+
+== resource=fast-uri url=https://registry.npmjs.org/fast-uri
+http_code=200 size=137334 time=0.133234 redirects=0 effective=https://registry.npmjs.org/fast-uri
+exit=0 body=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-fast-uri.20261004T194645Z.json headers=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-fast-uri.20261004T194645Z.txt
+
+== resource=json-schema-traverse url=https://registry.npmjs.org/json-schema-traverse
+http_code=200 size=23537 time=0.153701 redirects=0 effective=https://registry.npmjs.org/json-schema-traverse
+exit=0 body=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-json-schema-traverse.20261004T194645Z.json headers=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-json-schema-traverse.20261004T194645Z.txt
+
+== resource=require-from-string url=https://registry.npmjs.org/require-from-string
+http_code=200 size=15128 time=0.098171 redirects=0 effective=https://registry.npmjs.org/require-from-string
+exit=0 body=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-require-from-string.20261004T194645Z.json headers=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-require-from-string.20261004T194645Z.txt
+

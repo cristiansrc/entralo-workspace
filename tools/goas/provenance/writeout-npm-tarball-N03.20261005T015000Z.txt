@@ -1,0 +1,6 @@
+http_code=200
+num_redirects=0
+redirect_url=
+size_download=2820414
+time_total=0.495417
+content_type=application/octet-stream

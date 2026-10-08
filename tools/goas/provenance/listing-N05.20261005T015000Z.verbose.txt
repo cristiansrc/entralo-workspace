@@ -1,0 +1,15 @@
+-rw-r--r-- 0/0            1074 1985-10-26 03:15 package/LICENSE
+-rw-r--r-- 0/0           12263 1985-10-26 03:15 package/dist/formats.js
+-rw-r--r-- 0/0            1508 1985-10-26 03:15 package/dist/index.js
+-rw-r--r-- 0/0            2900 1985-10-26 03:15 package/dist/limit.js
+-rw-r--r-- 0/0            1897 1985-10-26 03:15 package/package.json
+-rw-r--r-- 0/0            7070 1985-10-26 03:15 package/dist/formats.js.map
+-rw-r--r-- 0/0            1534 1985-10-26 03:15 package/dist/index.js.map
+-rw-r--r-- 0/0            2868 1985-10-26 03:15 package/dist/limit.js.map
+-rw-r--r-- 0/0            6164 1985-10-26 03:15 package/README.md
+-rw-r--r-- 0/0             650 1985-10-26 03:15 package/dist/formats.d.ts
+-rw-r--r-- 0/0           12928 1985-10-26 03:15 package/src/formats.ts
+-rw-r--r-- 0/0             572 1985-10-26 03:15 package/dist/index.d.ts
+-rw-r--r-- 0/0            1793 1985-10-26 03:15 package/src/index.ts
+-rw-r--r-- 0/0             468 1985-10-26 03:15 package/dist/limit.d.ts
+-rw-r--r-- 0/0            3074 1985-10-26 03:15 package/src/limit.ts

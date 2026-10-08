@@ -1,0 +1,14 @@
+curlrc_disabled=yes(-q)
+attempts=1 (no retry/backoff)
+max_filesize=104857600
+max_redirs=0
+url_requested=https://repo.maven.apache.org/maven2/org/openapitools/openapi-generator-cli/7.25.0/openapi-generator-cli-7.25.0.jar
+http_code=200
+size_download=31942042
+num_redirects=0
+url_effective=https://repo.maven.apache.org/maven2/org/openapitools/openapi-generator-cli/7.25.0/openapi-generator-cli-7.25.0.jar
+redirect_url=
+time_total=0.524276
+content_type=application/java-archive
+filename_effective=tools/goas/vendor/tarballs/openapi-generator-cli-7.25.0.20261005T010240537579199Z-1687.jar
+curl_exit=0

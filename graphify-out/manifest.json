@@ -1,0 +1,1562 @@
+{
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/events/adjustment-snapshot.v1.schema.json": {
+    "mtime": 1791094385.0677261,
+    "seen": 1791432781.2581568,
+    "ast_hash": "3c9b1bd21ad081a1899559c30b8ce6a9",
+    "semantic_hash": "3c9b1bd21ad081a1899559c30b8ce6a9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/events/change-lifecycle.v1.schema.json": {
+    "mtime": 1791094385.0677621,
+    "seen": 1791432781.2581606,
+    "ast_hash": "bd047d4fcffa6453adb456c2c60ca3a7",
+    "semantic_hash": "bd047d4fcffa6453adb456c2c60ca3a7"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/events/change-reopen.v1.schema.json": {
+    "mtime": 1791094385.0677621,
+    "seen": 1791432781.2581623,
+    "ast_hash": "00054659494dfdfb261358d1103c5868",
+    "semantic_hash": "00054659494dfdfb261358d1103c5868"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/events/integration-envelope.v1.schema.json": {
+    "mtime": 1791094385.0677621,
+    "seen": 1791432781.258163,
+    "ast_hash": "a69f2e3a704a7a2fef3a01d613364ba8",
+    "semantic_hash": "a69f2e3a704a7a2fef3a01d613364ba8"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/events/order-scope-snapshot.v1.schema.json": {
+    "mtime": 1791094385.068164,
+    "seen": 1791432781.2581637,
+    "ast_hash": "4f87f85f00cb732ad906bd557e2146a7",
+    "semantic_hash": "4f87f85f00cb732ad906bd557e2146a7"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/contratos/schema-cases.v1.json": {
+    "mtime": 1791094385.0682938,
+    "seen": 1791432781.2581642,
+    "ast_hash": "c96bc8637b41bb99a7f47e3e4239ac1b",
+    "semantic_hash": "c96bc8637b41bb99a7f47e3e4239ac1b"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/forbidden-email-field.v1.json": {
+    "mtime": 1791094385.0684962,
+    "seen": 1791432781.258165,
+    "ast_hash": "f50d41d96f190126ad7e3e039908c8e9",
+    "semantic_hash": "f50d41d96f190126ad7e3e039908c8e9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/forbidden-token-field.v1.json": {
+    "mtime": 1791094385.0684962,
+    "seen": 1791432781.2581656,
+    "ast_hash": "7bc41c141cac4405c8263570898e2d8c",
+    "semantic_hash": "7bc41c141cac4405c8263570898e2d8c"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/inbox-conflict.v1.json": {
+    "mtime": 1791094385.0684962,
+    "seen": 1791432781.2581663,
+    "ast_hash": "5235f4b112c3066485bdb5ae0378d923",
+    "semantic_hash": "5235f4b112c3066485bdb5ae0378d923"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/invalid-date.v1.json": {
+    "mtime": 1791094385.0684962,
+    "seen": 1791432781.2581668,
+    "ast_hash": "ca659fb1ad36f008b7a6365e77cd8fa9",
+    "semantic_hash": "ca659fb1ad36f008b7a6365e77cd8fa9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/leading-zero-id.v1.json": {
+    "mtime": 1791094385.0684962,
+    "seen": 1791432781.2581673,
+    "ast_hash": "9d0625ca3b37d27a8e4ce60bdab661e3",
+    "semantic_hash": "9d0625ca3b37d27a8e4ce60bdab661e3"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/missing-date-zone.v1.json": {
+    "mtime": 1791094385.0684962,
+    "seen": 1791432781.2581677,
+    "ast_hash": "3b6098dfbba617cf05307ee626417a9b",
+    "semantic_hash": "3b6098dfbba617cf05307ee626417a9b"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/payment-created.v1.json": {
+    "mtime": 1791094385.0684962,
+    "seen": 1791432781.2581685,
+    "ast_hash": "9c3c9de9552e2778df2e38b747bdc328",
+    "semantic_hash": "9c3c9de9552e2778df2e38b747bdc328"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/payment-minimal.v1.json": {
+    "mtime": 1791094385.068622,
+    "seen": 1791432781.2581692,
+    "ast_hash": "da85cdaa51f2a5acadd97cf370f0fc4c",
+    "semantic_hash": "da85cdaa51f2a5acadd97cf370f0fc4c"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/payment-updated.v1.json": {
+    "mtime": 1791094385.0686285,
+    "seen": 1791432781.2581697,
+    "ast_hash": "b663d5b5fd528e9610a1316e0b131465",
+    "semantic_hash": "b663d5b5fd528e9610a1316e0b131465"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/unknown-data.v1.json": {
+    "mtime": 1791094385.0686285,
+    "seen": 1791432781.2581701,
+    "ast_hash": "ff9d106345309b772a6a056c1db9dec8",
+    "semantic_hash": "ff9d106345309b772a6a056c1db9dec8"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/unknown-root.v1.json": {
+    "mtime": 1791094385.0686285,
+    "seen": 1791432781.2581706,
+    "ast_hash": "01714b78e35874246bf0f560d6f36af9",
+    "semantic_hash": "01714b78e35874246bf0f560d6f36af9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/unsupported-type.v1.json": {
+    "mtime": 1791094385.0686285,
+    "seen": 1791432781.258171,
+    "ast_hash": "c42935c0ded9b6fc2c388e0b8bb95350",
+    "semantic_hash": "c42935c0ded9b6fc2c388e0b8bb95350"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/zero-id.v1.json": {
+    "mtime": 1791094385.0686285,
+    "seen": 1791432781.2581716,
+    "ast_hash": "c1ad2cc7e818adc806c3a04805ee3f5f",
+    "semantic_hash": "c1ad2cc7e818adc806c3a04805ee3f5f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/package.json": {
+    "mtime": 1791260245.7636533,
+    "seen": 1791432781.2581723,
+    "ast_hash": "e50c7f0208c3cd8a8b045d51fbb5d285",
+    "semantic_hash": "e50c7f0208c3cd8a8b045d51fbb5d285"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/analysis-npm-metadata.20261004T191337Z.json": {
+    "mtime": 1791141335.5334969,
+    "seen": 1791432781.2581728,
+    "ast_hash": "7982a0137bbf7a205b940fc22055abd4",
+    "semantic_hash": "7982a0137bbf7a205b940fc22055abd4"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/manifest-npm-core-tarballs.20261005T015000Z.json": {
+    "mtime": 1791165036.3959303,
+    "seen": 1791432781.2581732,
+    "ast_hash": "640d8dfa80567d0e3e0616ce0f6cd4d2",
+    "semantic_hash": "640d8dfa80567d0e3e0616ce0f6cd4d2"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/scans/.npmrc.gitleaks.json": {
+    "mtime": 1791260344.1602209,
+    "seen": 1791432781.258174,
+    "ast_hash": "58e0494c51d30eb3494f7c9198986bb9",
+    "semantic_hash": "58e0494c51d30eb3494f7c9198986bb9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/scans/.npmrc.global.gitleaks.json": {
+    "mtime": 1791260344.8862324,
+    "seen": 1791432781.2581744,
+    "ast_hash": "58e0494c51d30eb3494f7c9198986bb9",
+    "semantic_hash": "58e0494c51d30eb3494f7c9198986bb9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/scans/.npmrc.user.gitleaks.json": {
+    "mtime": 1791260344.5352268,
+    "seen": 1791432781.258175,
+    "ast_hash": "58e0494c51d30eb3494f7c9198986bb9",
+    "semantic_hash": "58e0494c51d30eb3494f7c9198986bb9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/scans/INSTALL-REPORT.gitleaks.json": {
+    "mtime": 1791260392.4019904,
+    "seen": 1791432781.2581754,
+    "ast_hash": "58e0494c51d30eb3494f7c9198986bb9",
+    "semantic_hash": "58e0494c51d30eb3494f7c9198986bb9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/scans/install-ci.20261006T041741Z.log.gitleaks.json": {
+    "mtime": 1791260345.6002438,
+    "seen": 1791432781.258176,
+    "ast_hash": "58e0494c51d30eb3494f7c9198986bb9",
+    "semantic_hash": "58e0494c51d30eb3494f7c9198986bb9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/scans/install-lock-only.20261006T041741Z.log.gitleaks.json": {
+    "mtime": 1791260345.2432382,
+    "seen": 1791432781.2581766,
+    "ast_hash": "58e0494c51d30eb3494f7c9198986bb9",
+    "semantic_hash": "58e0494c51d30eb3494f7c9198986bb9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/scans/package-lock.forced.gitleaks.json": {
+    "mtime": 1791260353.968476,
+    "seen": 1791432781.258177,
+    "ast_hash": "58e0494c51d30eb3494f7c9198986bb9",
+    "semantic_hash": "58e0494c51d30eb3494f7c9198986bb9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/scans/package-lock.json.gitleaks.json": {
+    "mtime": 1791260343.8012152,
+    "seen": 1791432781.2581778,
+    "ast_hash": "58e0494c51d30eb3494f7c9198986bb9",
+    "semantic_hash": "58e0494c51d30eb3494f7c9198986bb9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/scans/package.json.gitleaks.json": {
+    "mtime": 1791260343.417209,
+    "seen": 1791432781.2581782,
+    "ast_hash": "58e0494c51d30eb3494f7c9198986bb9",
+    "semantic_hash": "58e0494c51d30eb3494f7c9198986bb9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/config/fixtures.manifest.json": {
+    "mtime": 1791303973.2070878,
+    "seen": 1791432781.2581787,
+    "ast_hash": "557b8ddb8d9127e28d778f036d5838b4",
+    "semantic_hash": "557b8ddb8d9127e28d778f036d5838b4"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/config/generation-profile.json": {
+    "mtime": 1791373409.822602,
+    "seen": 1791432781.2581794,
+    "ast_hash": "5aac42c0bf66c4023e9bdf83977aecf0",
+    "semantic_hash": "5aac42c0bf66c4023e9bdf83977aecf0"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/config/refs-registry.json": {
+    "mtime": 1791303696.8167706,
+    "seen": 1791432781.25818,
+    "ast_hash": "77102b43b6bd074056a10411b0ee5744",
+    "semantic_hash": "77102b43b6bd074056a10411b0ee5744"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/config/run-profile.json": {
+    "mtime": 1791402706.7358663,
+    "seen": 1791432781.2581804,
+    "ast_hash": "57252225bc468edfcc51cbf9a1c0f34b",
+    "semantic_hash": "57252225bc468edfcc51cbf9a1c0f34b"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/lib/bundler.mjs": {
+    "mtime": 1791397122.1227598,
+    "seen": 1791432781.2581809,
+    "ast_hash": "d7df24a1becc20ff0a5538eb65d9c54f",
+    "semantic_hash": "d7df24a1becc20ff0a5538eb65d9c54f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/lib/entrypoint.mjs": {
+    "mtime": 1791394504.992975,
+    "seen": 1791432781.2581813,
+    "ast_hash": "d6361fb3b69465cb6bc0aecdfb3836d6",
+    "semantic_hash": "d6361fb3b69465cb6bc0aecdfb3836d6"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/lib/format-controls.mjs": {
+    "mtime": 1791361165.3044636,
+    "seen": 1791432781.2581818,
+    "ast_hash": "171d148e1522839ad6b83d0af558f61f",
+    "semantic_hash": "171d148e1522839ad6b83d0af558f61f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/lib/generation.mjs": {
+    "mtime": 1791373330.376455,
+    "seen": 1791432781.2581823,
+    "ast_hash": "d116119b1a5e15378b03cdadc968be1a",
+    "semantic_hash": "d116119b1a5e15378b03cdadc968be1a"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/lib/matrix-mp-runner.mjs": {
+    "mtime": 1791354816.4329612,
+    "seen": 1791432781.258183,
+    "ast_hash": "123e792834e42b98f82293916668d3a9",
+    "semantic_hash": "123e792834e42b98f82293916668d3a9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/lib/offline-refs.mjs": {
+    "mtime": 1791345441.775163,
+    "seen": 1791432781.2581835,
+    "ast_hash": "ea443e95a028eece6fece67c4be5178c",
+    "semantic_hash": "ea443e95a028eece6fece67c4be5178c"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/lib/orchestrator.mjs": {
+    "mtime": 1791390613.6690457,
+    "seen": 1791432781.258184,
+    "ast_hash": "79270dd8edf5e77263266b4cc0c65ac5",
+    "semantic_hash": "79270dd8edf5e77263266b4cc0c65ac5"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/lib/run-guard.mjs": {
+    "mtime": 1791350297.5341246,
+    "seen": 1791432781.2581844,
+    "ast_hash": "101492e5319c779527638b3309d9ce3a",
+    "semantic_hash": "101492e5319c779527638b3309d9ce3a"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/lib/schema-adapter.mjs": {
+    "mtime": 1791414109.3584986,
+    "seen": 1791432781.2581854,
+    "ast_hash": "7565e3d9ba55427d42549e6953a42a69",
+    "semantic_hash": "7565e3d9ba55427d42549e6953a42a69"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/lib/strict-json.mjs": {
+    "mtime": 1791349115.360502,
+    "seen": 1791432781.258186,
+    "ast_hash": "91f3b44149aae06088aca029db29c379",
+    "semantic_hash": "91f3b44149aae06088aca029db29c379"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/lib/strict-yaml.mjs": {
+    "mtime": 1791402702.4158034,
+    "seen": 1791432781.2581866,
+    "ast_hash": "5e8bb375b1a65a41f2f49951fd91ea4f",
+    "semantic_hash": "5e8bb375b1a65a41f2f49951fd91ea4f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/lib/subprocess.mjs": {
+    "mtime": 1791361252.330725,
+    "seen": 1791432781.258187,
+    "ast_hash": "c4045eab6e60927e20bf1e6ef8520af5",
+    "semantic_hash": "c4045eab6e60927e20bf1e6ef8520af5"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/preflight.mjs": {
+    "mtime": 1791402754.5485613,
+    "seen": 1791432781.2581875,
+    "ast_hash": "8f687fea3d1a065b5eda8936fb81e133",
+    "semantic_hash": "8f687fea3d1a065b5eda8936fb81e133"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/additional-reviewer-findings.test.mjs": {
+    "mtime": 1791375363.7903602,
+    "seen": 1791432781.258188,
+    "ast_hash": "b3238f0c485ce359927a7d02b00f9dc2",
+    "semantic_hash": "b3238f0c485ce359927a7d02b00f9dc2"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/bundler.test.mjs": {
+    "mtime": 1791391129.8690417,
+    "seen": 1791432781.2581887,
+    "ast_hash": "103d5f35a1e7a99ef17737e506821cd5",
+    "semantic_hash": "103d5f35a1e7a99ef17737e506821cd5"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/canonical-api-yaml.test.mjs": {
+    "mtime": 1791402465.6713624,
+    "seen": 1791432781.2581892,
+    "ast_hash": "3056cbc0a797b47ba9ec7734e31af67e",
+    "semantic_hash": "3056cbc0a797b47ba9ec7734e31af67e"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/dead-params.test.mjs": {
+    "mtime": 1791379368.046174,
+    "seen": 1791432781.25819,
+    "ast_hash": "4de1d40580f8576776aa31f5e9402a7a",
+    "semantic_hash": "4de1d40580f8576776aa31f5e9402a7a"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/entrypoint.test.mjs": {
+    "mtime": 1791388533.8054154,
+    "seen": 1791432781.2581904,
+    "ast_hash": "ef71e8c8148bf8288acb3e91bf086397",
+    "semantic_hash": "ef71e8c8148bf8288acb3e91bf086397"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/f01-f07-regression.test.mjs": {
+    "mtime": 1791379369.4459124,
+    "seen": 1791432781.2581909,
+    "ast_hash": "9bd4e8ff3ade63db93eab9cc3ec87f07",
+    "semantic_hash": "9bd4e8ff3ade63db93eab9cc3ec87f07"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/format-controls.test.mjs": {
+    "mtime": 1791379370.6009288,
+    "seen": 1791432781.2581913,
+    "ast_hash": "328f3ca199eacdd9be138155a73d6197",
+    "semantic_hash": "328f3ca199eacdd9be138155a73d6197"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/helpers/jbr-fixture.mjs": {
+    "mtime": 1791374951.7243247,
+    "seen": 1791432781.2581916,
+    "ast_hash": "5c99b40c615dccff1f12e3153d4e1fc5",
+    "semantic_hash": "5c99b40c615dccff1f12e3153d4e1fc5"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/helpers/subprocess-probe.mjs": {
+    "mtime": 1791380942.7474623,
+    "seen": 1791432781.258192,
+    "ast_hash": "30e79d09dec777746e0ed7d3f04c8a2a",
+    "semantic_hash": "30e79d09dec777746e0ed7d3f04c8a2a"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/jbr-custody.test.mjs": {
+    "mtime": 1791375308.585555,
+    "seen": 1791432781.2581928,
+    "ast_hash": "627881afa6176c4fa0f2ee506da1b9a4",
+    "semantic_hash": "627881afa6176c4fa0f2ee506da1b9a4"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/matrix-mp-runner.test.mjs": {
+    "mtime": 1791379372.0619497,
+    "seen": 1791432781.2581935,
+    "ast_hash": "dc68aa0a3298e3c021369912be370a9f",
+    "semantic_hash": "dc68aa0a3298e3c021369912be370a9f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/offline-refs.test.mjs": {
+    "mtime": 1791379373.5069704,
+    "seen": 1791432781.258194,
+    "ast_hash": "35a8e2b11432e7f58e06d46a83799ace",
+    "semantic_hash": "35a8e2b11432e7f58e06d46a83799ace"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/orchestrator-contract.test.mjs": {
+    "mtime": 1791379375.1799943,
+    "seen": 1791432781.2581944,
+    "ast_hash": "e0e09e52f6563d478037f88830a032b6",
+    "semantic_hash": "e0e09e52f6563d478037f88830a032b6"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/pack57-findings.test.mjs": {
+    "mtime": 1791375348.5901387,
+    "seen": 1791432781.258195,
+    "ast_hash": "8358b99ce3b22a330ddf7e59b061f9f6",
+    "semantic_hash": "8358b99ce3b22a330ddf7e59b061f9f6"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/pack59-findings.test.mjs": {
+    "mtime": 1791375339.1260006,
+    "seen": 1791432781.2581954,
+    "ast_hash": "0cf748f6de0eb9009eca5ddeacd37e03",
+    "semantic_hash": "0cf748f6de0eb9009eca5ddeacd37e03"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/preflight-gaps.test.mjs": {
+    "mtime": 1791379377.0086591,
+    "seen": 1791432781.2581959,
+    "ast_hash": "cee35adeea70ca793cb6797e05bdb5fa",
+    "semantic_hash": "cee35adeea70ca793cb6797e05bdb5fa"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/preflight.test.mjs": {
+    "mtime": 1791379378.1790373,
+    "seen": 1791432781.2581966,
+    "ast_hash": "a79242741f9ced4549099d3dea856c8e",
+    "semantic_hash": "a79242741f9ced4549099d3dea856c8e"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/run-guard.test.mjs": {
+    "mtime": 1791379379.6600585,
+    "seen": 1791432781.258197,
+    "ast_hash": "d8f4e1270905e35246deff9f7ad75ed2",
+    "semantic_hash": "d8f4e1270905e35246deff9f7ad75ed2"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/schema-adapter-ajv-blocker.test.mjs": {
+    "mtime": 1791413840.793254,
+    "seen": 1791432781.2581975,
+    "ast_hash": "4acb2ac11e5c2eb0c54f9323043f40ca",
+    "semantic_hash": "4acb2ac11e5c2eb0c54f9323043f40ca"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/schema-adapter.test.mjs": {
+    "mtime": 1791379381.1110795,
+    "seen": 1791432781.258198,
+    "ast_hash": "6626880bd2513402233e7bbf875bbb66",
+    "semantic_hash": "6626880bd2513402233e7bbf875bbb66"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/sec61-residuals.test.mjs": {
+    "mtime": 1791382851.9283223,
+    "seen": 1791432781.2581985,
+    "ast_hash": "c8ba1ad581f47efb4d57044bbe0f1126",
+    "semantic_hash": "c8ba1ad581f47efb4d57044bbe0f1126"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/sr01-sr09-security.test.mjs": {
+    "mtime": 1791375396.5128372,
+    "seen": 1791432781.258199,
+    "ast_hash": "6df3cc867ec1535410af95578f4d3651",
+    "semantic_hash": "6df3cc867ec1535410af95578f4d3651"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/sr67.test.mjs": {
+    "mtime": 1791396633.5694044,
+    "seen": 1791432781.2581995,
+    "ast_hash": "910e8df79fab499867cf45f72ea4c417",
+    "semantic_hash": "910e8df79fab499867cf45f72ea4c417"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/strict-json.test.mjs": {
+    "mtime": 1791379382.948028,
+    "seen": 1791432781.2582002,
+    "ast_hash": "1d627f3d5922d0efa49c777bf669c245",
+    "semantic_hash": "1d627f3d5922d0efa49c777bf669c245"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/strict-yaml.test.mjs": {
+    "mtime": 1791379384.2611246,
+    "seen": 1791432781.2582006,
+    "ast_hash": "afb4c87e639026d1821f1912d20038f3",
+    "semantic_hash": "afb4c87e639026d1821f1912d20038f3"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/subprocess-allowlist.test.mjs": {
+    "mtime": 1791379386.099151,
+    "seen": 1791432781.2582011,
+    "ast_hash": "860383c8dd9d0aad7f47bded04cea1d1",
+    "semantic_hash": "860383c8dd9d0aad7f47bded04cea1d1"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/tests/subprocess.test.mjs": {
+    "mtime": 1791380572.7756772,
+    "seen": 1791432781.2582016,
+    "ast_hash": "444aba156783f3971474aaa7bfb0f895",
+    "semantic_hash": "444aba156783f3971474aaa7bfb0f895"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-ajv-formats.20261004T191337Z.json": {
+    "mtime": 1791141248.7171867,
+    "seen": 1791432781.258202,
+    "ast_hash": "7cb6e9065ee3c3e8ce5bd4716df9f1c8",
+    "semantic_hash": "7cb6e9065ee3c3e8ce5bd4716df9f1c8"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-ajv.20261004T191337Z.json": {
+    "mtime": 1791141248.5621843,
+    "seen": 1791432781.2582026,
+    "ast_hash": "39d163d1b22ad8e492ff751c8274edc2",
+    "semantic_hash": "39d163d1b22ad8e492ff751c8274edc2"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-fast-deep-equal.20261004T194645Z.json": {
+    "mtime": 1791143205.9794617,
+    "seen": 1791432781.2582035,
+    "ast_hash": "039c5205851b64095bdd15ef68d3483f",
+    "semantic_hash": "039c5205851b64095bdd15ef68d3483f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-fast-uri.20261004T194645Z.json": {
+    "mtime": 1791143206.1174638,
+    "seen": 1791432781.2582042,
+    "ast_hash": "1d679ed25894dfd7db25d5d06f137f30",
+    "semantic_hash": "1d679ed25894dfd7db25d5d06f137f30"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-json-schema-traverse.20261004T194645Z.json": {
+    "mtime": 1791143206.2774663,
+    "seen": 1791432781.2582047,
+    "ast_hash": "f74688861276ed54c5fae339f2f452cf",
+    "semantic_hash": "f74688861276ed54c5fae339f2f452cf"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-jsonc-parser.20261004T191337Z.json": {
+    "mtime": 1791141246.8431582,
+    "seen": 1791432781.2582052,
+    "ast_hash": "8154ded011b8d08707d201d0202fbbe0",
+    "semantic_hash": "8154ded011b8d08707d201d0202fbbe0"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-redocly-cli.20261004T191337Z.json": {
+    "mtime": 1791141247.62017,
+    "seen": 1791432781.2582057,
+    "ast_hash": "8fb89fbc1bda4f5e00b09b50f7ee4484",
+    "semantic_hash": "8fb89fbc1bda4f5e00b09b50f7ee4484"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-require-from-string.20261004T194645Z.json": {
+    "mtime": 1791143206.380468,
+    "seen": 1791432781.2582061,
+    "ast_hash": "0f3036b4fe001e0d5d594e9f2a0316ae",
+    "semantic_hash": "0f3036b4fe001e0d5d594e9f2a0316ae"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/npmjs-yaml.20261004T191337Z.json": {
+    "mtime": 1791141246.4541523,
+    "seen": 1791432781.2582066,
+    "ast_hash": "2281872ef5c225ffa7fce335f6629ae1",
+    "semantic_hash": "2281872ef5c225ffa7fce335f6629ae1"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/README.md": {
+    "mtime": 1791153078.3308222,
+    "seen": 1791432781.2582073,
+    "ast_hash": "8d2965da9bcc81049f3a82df780d2cc3",
+    "semantic_hash": "8d2965da9bcc81049f3a82df780d2cc3"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/README.md": {
+    "mtime": 1791094385.0635512,
+    "seen": 1791432781.2582078,
+    "ast_hash": "90d091142af179e3284d02b1aeafaa3f",
+    "semantic_hash": "90d091142af179e3284d02b1aeafaa3f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/architecture-proposal.md": {
+    "mtime": 1791153078.333125,
+    "seen": 1791432781.2582088,
+    "ast_hash": "919909fc8af70b4351f45f68c47c670c",
+    "semantic_hash": "919909fc8af70b4351f45f68c47c670c"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/architecture-review-request.md": {
+    "mtime": 1790958430.200684,
+    "seen": 1791432781.2582092,
+    "ast_hash": "d32831db99e0a30d323ea2276c93add1",
+    "semantic_hash": "d32831db99e0a30d323ea2276c93add1"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/context-map.md": {
+    "mtime": 1790899270.6255884,
+    "seen": 1791432781.2582097,
+    "ast_hash": "605c8a64b1df4607d71db3a6554f3929",
+    "semantic_hash": "605c8a64b1df4607d71db3a6554f3929"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/decision-records/ADR-001-servicios-y-ownership.md": {
+    "mtime": 1790875965.8360226,
+    "seen": 1791432781.2582104,
+    "ast_hash": "79218088606d73c222d0e9d81967fbea",
+    "semantic_hash": "79218088606d73c222d0e9d81967fbea"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/decision-records/ADR-002-gateway-y-mensajeria.md": {
+    "mtime": 1790875965.8381307,
+    "seen": 1791432781.258211,
+    "ast_hash": "a7cfad0f1da99552c90dd39c096b3d6b",
+    "semantic_hash": "a7cfad0f1da99552c90dd39c096b3d6b"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/decision-records/ADR-003-cognito-bff-y-canales.md": {
+    "mtime": 1790899270.6365886,
+    "seen": 1791432781.2582114,
+    "ast_hash": "4ac71c0249ab797330b75c53f36949da",
+    "semantic_hash": "4ac71c0249ab797330b75c53f36949da"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/decision-records/ADR-004-sagas-y-efectos-idempotentes.md": {
+    "mtime": 1790958430.207684,
+    "seen": 1791432781.2582119,
+    "ast_hash": "7e931eae6341e38265820e0b9e2d888b",
+    "semantic_hash": "7e931eae6341e38265820e0b9e2d888b"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/decision-records/ADR-005-pruebas-durables-y-documentos.md": {
+    "mtime": 1790875965.8476553,
+    "seen": 1791432781.2582123,
+    "ast_hash": "3d56c4872223ffd141fb90c6244d99d8",
+    "semantic_hash": "3d56c4872223ffd141fb90c6244d99d8"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/decision-records/ADR-006-stack-runtime-y-entrega.md": {
+    "mtime": 1791153621.2403998,
+    "seen": 1791432781.2582128,
+    "ast_hash": "a74776081860608d9d6ac902b32ec15a",
+    "semantic_hash": "a74776081860608d9d6ac902b32ec15a"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/decision-summary.md": {
+    "mtime": 1790958430.206684,
+    "seen": 1791432781.2582133,
+    "ast_hash": "81a1cc313135108540974a6f3c28537a",
+    "semantic_hash": "81a1cc313135108540974a6f3c28537a"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/integration-map.md": {
+    "mtime": 1790899270.6335886,
+    "seen": 1791432781.258214,
+    "ast_hash": "e56cdbcea4a3ddc0ff570c0feaa6c31d",
+    "semantic_hash": "e56cdbcea4a3ddc0ff570c0feaa6c31d"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/solution-architect-review.md": {
+    "mtime": 1790886478.4909291,
+    "seen": 1791432781.2582145,
+    "ast_hash": "58e740199e32cadbd4629874720c1127",
+    "semantic_hash": "58e740199e32cadbd4629874720c1127"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/system-landscape.md": {
+    "mtime": 1791153621.2398486,
+    "seen": 1791432781.258215,
+    "ast_hash": "7bb0eca2989c636165dcd2260cdea7d3",
+    "semantic_hash": "7bb0eca2989c636165dcd2260cdea7d3"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/architecture/workspace-mapping.md": {
+    "mtime": 1790880160.0586908,
+    "seen": 1791432781.2582154,
+    "ast_hash": "2e9a3f0bf0e475fd186a644a2ca626f6",
+    "semantic_hash": "2e9a3f0bf0e475fd186a644a2ca626f6"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/designs/entralo-exploracion/README.md": {
+    "mtime": 1790724738.4127405,
+    "seen": 1791432781.258216,
+    "ast_hash": "69429115daed2261dd2a5e5fdf2769ec",
+    "semantic_hash": "69429115daed2261dd2a5e5fdf2769ec"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/designs/entralo-exploracion/a-escenario.html": {
+    "mtime": 1790533151.411743,
+    "seen": 1791432781.2582164,
+    "ast_hash": "eef68390140c9e5e3e964b1beb99480e",
+    "semantic_hash": "eef68390140c9e5e3e964b1beb99480e"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/designs/entralo-exploracion/b-agenda.html": {
+    "mtime": 1790533238.5950627,
+    "seen": 1791432781.2582169,
+    "ast_hash": "6fb16771c05e61a3167b45bc0621dc3f",
+    "semantic_hash": "6fb16771c05e61a3167b45bc0621dc3f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/designs/entralo-exploracion/c-radar.html": {
+    "mtime": 1790533331.7354715,
+    "seen": 1791432781.2582176,
+    "ast_hash": "5ce13d4228cc746ac26772c2042e3ce3",
+    "semantic_hash": "5ce13d4228cc746ac26772c2042e3ce3"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/designs/entralo-exploracion/design-context.md": {
+    "mtime": 1790533057.137315,
+    "seen": 1791432781.258218,
+    "ast_hash": "e0d872d59d3830ca67fb4e505d7a9227",
+    "semantic_hash": "e0d872d59d3830ca67fb4e505d7a9227"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/designs/entralo-referencia-imagenes/README.md": {
+    "mtime": 1790724610.0820746,
+    "seen": 1791432781.2582185,
+    "ast_hash": "b76f660cb6cba74ac41f04caef6b3c9a",
+    "semantic_hash": "b76f660cb6cba74ac41f04caef6b3c9a"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/designs/entralo-referencia-imagenes/demo.html": {
+    "mtime": 1790642213.4994984,
+    "seen": 1791432781.258219,
+    "ast_hash": "d5bc3c21322783d9735793c6e55cd53b",
+    "semantic_hash": "d5bc3c21322783d9735793c6e55cd53b"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/designs/entralo-referencia-imagenes/design-context.md": {
+    "mtime": 1790724610.0830748,
+    "seen": 1791432781.2582223,
+    "ast_hash": "de358dee524b129c1008dd25ccb98644",
+    "semantic_hash": "de358dee524b129c1008dd25ccb98644"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/reviews/2026-10-03-documentation-recovery.md": {
+    "mtime": 1791094385.0635512,
+    "seen": 1791432781.2582228,
+    "ast_hash": "1017841bc2f8a7222232adb3d376774f",
+    "semantic_hash": "1017841bc2f8a7222232adb3d376774f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/reviews/2026-10-03-gitleaks-fixture-adjudication.md": {
+    "mtime": 1791094385.0641835,
+    "seen": 1791432781.2582233,
+    "ast_hash": "2a1721bd7954180da7d3c8facca223a7",
+    "semantic_hash": "2a1721bd7954180da7d3c8facca223a7"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-architecture-discussion.md": {
+    "mtime": 1790736570.0220387,
+    "seen": 1791432781.2582238,
+    "ast_hash": "d8151f7e76be8f214fa34c616b6fda46",
+    "semantic_hash": "d8151f7e76be8f214fa34c616b6fda46"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-architecture-global-validation-report-2026-10-01-ca04.md": {
+    "mtime": 1790879804.1861224,
+    "seen": 1791432781.2582245,
+    "ast_hash": "27fadd2e7afee2a7cd293a9d9dcb6285",
+    "semantic_hash": "27fadd2e7afee2a7cd293a9d9dcb6285"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-architecture-global-validation-report-2026-10-01-r2.md": {
+    "mtime": 1790893058.0892186,
+    "seen": 1791432781.258225,
+    "ast_hash": "9f18155b05ed441f7006f9ecbde7c6cb",
+    "semantic_hash": "9f18155b05ed441f7006f9ecbde7c6cb"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-architecture-global-validation-report.md": {
+    "mtime": 1790872274.0501666,
+    "seen": 1791432781.2582254,
+    "ast_hash": "f4619dfc08be981ae3f1ef95e4d0fa18",
+    "semantic_hash": "f4619dfc08be981ae3f1ef95e4d0fa18"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-architecture-planning-context.md": {
+    "mtime": 1791094385.064259,
+    "seen": 1791432781.258226,
+    "ast_hash": "72d5e2786d8fbe4e41d0ac5f77304559",
+    "semantic_hash": "72d5e2786d8fbe4e41d0ac5f77304559"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-architecture-sdd-context.md": {
+    "mtime": 1791094385.064259,
+    "seen": 1791432781.2582264,
+    "ast_hash": "37636ece2671d72452462621e0ac723b",
+    "semantic_hash": "37636ece2671d72452462621e0ac723b"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-architecture-selective-validation-summary-2026-10-01-r3.md": {
+    "mtime": 1790899373.9257302,
+    "seen": 1791432781.2582269,
+    "ast_hash": "c3c38683cf75aec3f4f12eb5dedce03b",
+    "semantic_hash": "c3c38683cf75aec3f4f12eb5dedce03b"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-fiscal-colombia-cargo-servicio-planning-context.md": {
+    "mtime": 1790741901.335749,
+    "seen": 1791432781.2582273,
+    "ast_hash": "36ce766ef676c44435252fa37236e76a",
+    "semantic_hash": "36ce766ef676c44435252fa37236e76a"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-greenfield-bootstrap-planning-context.md": {
+    "mtime": 1790736582.9362094,
+    "seen": 1791432781.258228,
+    "ast_hash": "8cc50c3da876ab386178460de1c7d95e",
+    "semantic_hash": "8cc50c3da876ab386178460de1c7d95e"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-rename-docs-migration-planning-context.md": {
+    "mtime": 1790532003.2041473,
+    "seen": 1791432781.2582285,
+    "ast_hash": "a508867a5f0835bf5fbf59f5312762ee",
+    "semantic_hash": "a508867a5f0835bf5fbf59f5312762ee"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-requirements-closure-proposal.md": {
+    "mtime": 1790795682.8134186,
+    "seen": 1791432781.258229,
+    "ast_hash": "1d34b9dc0c2e00bbac55eca4562a03f3",
+    "semantic_hash": "1d34b9dc0c2e00bbac55eca4562a03f3"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-v1-executable-specs-commit-coverage-planning-context.md": {
+    "mtime": 1791094385.064259,
+    "seen": 1791432781.2582295,
+    "ast_hash": "0272d7595e6d13f67526d2d629da505f",
+    "semantic_hash": "0272d7595e6d13f67526d2d629da505f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-v1-executable-specs-goas-tooling-plan.md": {
+    "mtime": 1791402852.7069883,
+    "seen": 1791432781.25823,
+    "ast_hash": "0df2a5b214e6679d375ae86f35e78f4b",
+    "semantic_hash": "0df2a5b214e6679d375ae86f35e78f4b"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-v1-executable-specs-java25-compatibility-proposal.md": {
+    "mtime": 1791150844.2779384,
+    "seen": 1791432781.2582304,
+    "ast_hash": "a9fa241cc3fd65f62cf9c8eda0ec09b8",
+    "semantic_hash": "a9fa241cc3fd65f62cf9c8eda0ec09b8"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-v1-executable-specs-java25-sa-review.md": {
+    "mtime": 1791151102.7824523,
+    "seen": 1791432781.258231,
+    "ast_hash": "a16bd9c4563a4b5999ca214cc0a6b9c5",
+    "semantic_hash": "a16bd9c4563a4b5999ca214cc0a6b9c5"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-v1-executable-specs-npm-core-security-review-2026-10-05.md": {
+    "mtime": 1791259393.2540028,
+    "seen": 1791432781.2582316,
+    "ast_hash": "2ded9dafe1986ba1bcb57f241687b746",
+    "semantic_hash": "2ded9dafe1986ba1bcb57f241687b746"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-v1-executable-specs-planning-context.md": {
+    "mtime": 1791429650.0342717,
+    "seen": 1791432781.258232,
+    "ast_hash": "bba2acd6eff8d0c0230b06c29df044af",
+    "semantic_hash": "bba2acd6eff8d0c0230b06c29df044af"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-v1-executable-specs-redocly-security-review-2026-10-05.md": {
+    "mtime": 1791167061.2557456,
+    "seen": 1791432781.2582326,
+    "ast_hash": "b05325947d0f6ddf40aa62fd6f26360c",
+    "semantic_hash": "b05325947d0f6ddf40aa62fd6f26360c"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-v1-executable-specs-sdd-context.md": {
+    "mtime": 1791431381.1906204,
+    "seen": 1791432781.2582328,
+    "ast_hash": "364a2663924a73751880d631dca1a055",
+    "semantic_hash": "364a2663924a73751880d631dca1a055"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/.working/entralo-visual-proposals-sdd-gate-planning-context.md": {
+    "mtime": 1790718857.1325793,
+    "seen": 1791432781.2582333,
+    "ast_hash": "909e70af02dda0521e6279926e3bfd0e",
+    "semantic_hash": "909e70af02dda0521e6279926e3bfd0e"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/api-governance.md": {
+    "mtime": 1791419162.066858,
+    "seen": 1791432781.2582338,
+    "ast_hash": "28dbd4d8db3f3f99e8b17a05f618317a",
+    "semantic_hash": "28dbd4d8db3f3f99e8b17a05f618317a"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/api-lint-policy.md": {
+    "mtime": 1791419162.0678582,
+    "seen": 1791432781.2582343,
+    "ast_hash": "ee801eac62ba54ec855df506771d9b58",
+    "semantic_hash": "ee801eac62ba54ec855df506771d9b58"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/api/admin-bff.yaml": {
+    "mtime": 1791094385.06648,
+    "seen": 1791432781.258235,
+    "ast_hash": "a0ca844c2d6cebaa9a70999902347f69",
+    "semantic_hash": "a0ca844c2d6cebaa9a70999902347f69"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/api/buyer-bff.yaml": {
+    "mtime": 1791094385.066601,
+    "seen": 1791432781.2582355,
+    "ast_hash": "cbe85cabdc6a813b7834c9da2e0b84c3",
+    "semantic_hash": "cbe85cabdc6a813b7834c9da2e0b84c3"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/api/catalog.yaml": {
+    "mtime": 1791094385.066601,
+    "seen": 1791432781.2582362,
+    "ast_hash": "75637d2670fd9fdf567db63a24d12f8b",
+    "semantic_hash": "75637d2670fd9fdf567db63a24d12f8b"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/api/common.yaml": {
+    "mtime": 1791094385.066601,
+    "seen": 1791432781.2582366,
+    "ast_hash": "b2a88c09018e21d986776d41a9181608",
+    "semantic_hash": "b2a88c09018e21d986776d41a9181608"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/api/identity.yaml": {
+    "mtime": 1791094385.066601,
+    "seen": 1791432781.2582371,
+    "ast_hash": "745c7cbb061af96db358100e368f11b1",
+    "semantic_hash": "745c7cbb061af96db358100e368f11b1"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/api/payments.yaml": {
+    "mtime": 1791094385.066601,
+    "seen": 1791432781.2582374,
+    "ast_hash": "e88339cafd6b150899b0a31315a759aa",
+    "semantic_hash": "e88339cafd6b150899b0a31315a759aa"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/api/purchases.yaml": {
+    "mtime": 1791094385.066601,
+    "seen": 1791432781.2582383,
+    "ast_hash": "bc07c9ddfd78a6972fc2df8ac7bd3191",
+    "semantic_hash": "bc07c9ddfd78a6972fc2df8ac7bd3191"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/api/ticketing.yaml": {
+    "mtime": 1791094385.066601,
+    "seen": 1791432781.2582388,
+    "ast_hash": "0295605fb7764df697598b9d8e5c8096",
+    "semantic_hash": "0295605fb7764df697598b9d8e5c8096"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/consistency-review.md": {
+    "mtime": 1791153656.8178992,
+    "seen": 1791432781.258239,
+    "ast_hash": "9364983ec3ad09cc13de0ce38236286a",
+    "semantic_hash": "9364983ec3ad09cc13de0ce38236286a"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/data/blockchain.md": {
+    "mtime": 1791094385.067277,
+    "seen": 1791432781.2582395,
+    "ast_hash": "80a1d1adab68cd41787d07ea38ab1e2d",
+    "semantic_hash": "80a1d1adab68cd41787d07ea38ab1e2d"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/data/catalog.md": {
+    "mtime": 1791094385.067312,
+    "seen": 1791432781.25824,
+    "ast_hash": "c5f703677fd1631296af7596a2c97aae",
+    "semantic_hash": "c5f703677fd1631296af7596a2c97aae"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/data/common.md": {
+    "mtime": 1791094385.067312,
+    "seen": 1791432781.2582407,
+    "ast_hash": "f6ab4af814b1c70a193d061d018c653f",
+    "semantic_hash": "f6ab4af814b1c70a193d061d018c653f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/data/identity.md": {
+    "mtime": 1791094385.067312,
+    "seen": 1791432781.2582412,
+    "ast_hash": "78222bb2716303ed39b38a9364250e22",
+    "semantic_hash": "78222bb2716303ed39b38a9364250e22"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/data/payments.md": {
+    "mtime": 1791094385.067312,
+    "seen": 1791432781.2582417,
+    "ast_hash": "f8eebc581149851e9877c569e1f071fe",
+    "semantic_hash": "f8eebc581149851e9877c569e1f071fe"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/data/purchases.md": {
+    "mtime": 1791094385.067312,
+    "seen": 1791432781.2582421,
+    "ast_hash": "bd12f450dff520306560489c50e7d334",
+    "semantic_hash": "bd12f450dff520306560489c50e7d334"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/data/ticketing.md": {
+    "mtime": 1791094385.067312,
+    "seen": 1791432781.2582426,
+    "ast_hash": "98331533bdee5a314d24a4a49977e421",
+    "semantic_hash": "98331533bdee5a314d24a4a49977e421"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/decomposition-contract.md": {
+    "mtime": 1791153221.5048883,
+    "seen": 1791432781.258243,
+    "ast_hash": "b5f9787c67e7e68ec1d1493ebf815efd",
+    "semantic_hash": "b5f9787c67e7e68ec1d1493ebf815efd"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/fixtures/mercado-pago/README.md": {
+    "mtime": 1791094385.0684316,
+    "seen": 1791432781.2582436,
+    "ast_hash": "37b5b452fb0ae2fca5542384e8ffbdab",
+    "semantic_hash": "37b5b452fb0ae2fca5542384e8ffbdab"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/gate-register.md": {
+    "mtime": 1791429348.2127154,
+    "seen": 1791432781.258244,
+    "ast_hash": "e16fe2c5fb3393bf14f52441910a0981",
+    "semantic_hash": "e16fe2c5fb3393bf14f52441910a0981"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/integration-contract.md": {
+    "mtime": 1791094385.0686285,
+    "seen": 1791432781.2582445,
+    "ast_hash": "e38aa07765fb1a8dc96a74cb69204530",
+    "semantic_hash": "e38aa07765fb1a8dc96a74cb69204530"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/master-spec.md": {
+    "mtime": 1791153221.5026684,
+    "seen": 1791432781.2582452,
+    "ast_hash": "5ffc613acf4b773fd0705c6e2e228c55",
+    "semantic_hash": "5ffc613acf4b773fd0705c6e2e228c55"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/review-request.md": {
+    "mtime": 1791153350.6038053,
+    "seen": 1791432781.2582457,
+    "ast_hash": "f08065ae977fd0a069033e2c9251c877",
+    "semantic_hash": "f08065ae977fd0a069033e2c9251c877"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/solution-architect-rereview-2026-10-03.md": {
+    "mtime": 1791094385.0686285,
+    "seen": 1791432781.2582462,
+    "ast_hash": "b9f5390123e308668c774a1ab7b1162b",
+    "semantic_hash": "b9f5390123e308668c774a1ab7b1162b"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/increments/entralo-v1-executable-specs/solution-architect-review.md": {
+    "mtime": 1791094385.0686285,
+    "seen": 1791432781.2582467,
+    "ast_hash": "f55fffef359072196815accdd31c5bc5",
+    "semantic_hash": "f55fffef359072196815accdd31c5bc5"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/docs/specs/requirements/entralo-v1-requirements-brief.md": {
+    "mtime": 1790958430.1836839,
+    "seen": 1791432781.2582474,
+    "ast_hash": "1ed5c7dcffd90a0d1dde969c1b28055d",
+    "semantic_hash": "1ed5c7dcffd90a0d1dde969c1b28055d"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/.tmp/config-help-jbr25-openapi-generator-spring.20261006T151425Z/config-help.exit.txt": {
+    "mtime": 1791299666.3252547,
+    "seen": 1791432781.2582479,
+    "ast_hash": "897316929176464ebc9ad085f31e7284",
+    "semantic_hash": "897316929176464ebc9ad085f31e7284"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/.tmp/config-help-jbr25-openapi-generator-spring.20261006T151425Z/isolation.txt": {
+    "mtime": 1791299665.769896,
+    "seen": 1791432781.2582483,
+    "ast_hash": "b7942eb6dfc521743736cc83633a1857",
+    "semantic_hash": "b7942eb6dfc521743736cc83633a1857"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/ACQUISITION-REPORT-npm-core-tarballs.20261005T015000Z.md": {
+    "mtime": 1791165234.7827961,
+    "seen": 1791432781.258249,
+    "ast_hash": "610a75fce250b7de1c24055fe9dcdb9e",
+    "semantic_hash": "610a75fce250b7de1c24055fe9dcdb9e"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/CAPTURE-REPORT-20261004T191337Z.md": {
+    "mtime": 1791141348.0646849,
+    "seen": 1791432781.2582495,
+    "ast_hash": "2aaeb547eeaa3b786b011383ff07ddbf",
+    "semantic_hash": "2aaeb547eeaa3b786b011383ff07ddbf"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/CAPTURE-REPORT-ajv820-frontier.20261004T194645Z.md": {
+    "mtime": 1791143262.8003354,
+    "seen": 1791432781.25825,
+    "ast_hash": "2ec784e83a49b942d3cb1a4fe8a4ece5",
+    "semantic_hash": "2ec784e83a49b942d3cb1a4fe8a4ece5"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/CAPTURE-REPORT-maven-jar-sha512-7.25.0.20261004T234041Z.md": {
+    "mtime": 1791157261.5564265,
+    "seen": 1791432781.2582505,
+    "ast_hash": "d682d15ffccd7c34b59b91a9f36d6789",
+    "semantic_hash": "d682d15ffccd7c34b59b91a9f36d6789"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/CAPTURE-REPORT-maven-openapi-generator-cli.20261004T233531Z.md": {
+    "mtime": 1791156960.1707304,
+    "seen": 1791432781.258251,
+    "ast_hash": "d101efbeabd7f5e76006c3b0c4e57511",
+    "semantic_hash": "d101efbeabd7f5e76006c3b0c4e57511"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/CAPTURE-REPORT-maven-pom-7.25.0.20261004T233705Z.md": {
+    "mtime": 1791157049.5751493,
+    "seen": 1791432781.2582514,
+    "ast_hash": "26a767773f0b46c327c97b926fb703ec",
+    "semantic_hash": "26a767773f0b46c327c97b926fb703ec"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/CAPTURE-REPORT-maven-project-pom-7.25.0.20261004T233810Z.md": {
+    "mtime": 1791157148.0272295,
+    "seen": 1791432781.2582521,
+    "ast_hash": "7455f2e331e23be932b3bd873bd1d0f6",
+    "semantic_hash": "7455f2e331e23be932b3bd873bd1d0f6"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/CONFIG-HELP-REPORT-jbr25-openapi-generator-spring.20261006T151425Z.md": {
+    "mtime": 1791299716.276831,
+    "seen": 1791432781.2582526,
+    "ast_hash": "f87f40dc4d3842ff5fd9a8ec8c1286a0",
+    "semantic_hash": "f87f40dc4d3842ff5fd9a8ec8c1286a0"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/INSPECTION-npm-core-tarballs.20261005T015000Z.md": {
+    "mtime": 1791165123.8631954,
+    "seen": 1791432781.258253,
+    "ast_hash": "d75a81b76a3d5070a947f9895b6f25b8",
+    "semantic_hash": "d75a81b76a3d5070a947f9895b6f25b8"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/INSTALL-REPORT-npm-offline-N01-N09.20261006T041741Z.md": {
+    "mtime": 1791260386.8009012,
+    "seen": 1791432781.2582536,
+    "ast_hash": "51430f22b5b76550fc67f8a05725cae7",
+    "semantic_hash": "51430f22b5b76550fc67f8a05725cae7"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/PROVENANCE-openapi-generator-cli-7.25.0.20261005T010240537579199Z-1687.md": {
+    "mtime": 1791162189.3293788,
+    "seen": 1791432781.258254,
+    "ast_hash": "05bd0b822e07dd1cf67c176d971852b0",
+    "semantic_hash": "05bd0b822e07dd1cf67c176d971852b0"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/SMOKE-REPORT-jbr25-openapi-generator-version.20261006T135704Z.md": {
+    "mtime": 1791295041.276036,
+    "seen": 1791432781.2582545,
+    "ast_hash": "614f5364c416707a83eb88c8354489b2",
+    "semantic_hash": "614f5364c416707a83eb88c8354489b2"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/config-help-jbr25-openapi-generator-spring.20261006T151425Z.command.txt": {
+    "mtime": 1791299698.9356308,
+    "seen": 1791432781.2582564,
+    "ast_hash": "993134cf3de2d8857c1859e6a4200e95",
+    "semantic_hash": "993134cf3de2d8857c1859e6a4200e95"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/config-help-jbr25-openapi-generator-spring.20261006T151425Z.exit.txt": {
+    "mtime": 1791299692.9038286,
+    "seen": 1791432781.258257,
+    "ast_hash": "897316929176464ebc9ad085f31e7284",
+    "semantic_hash": "897316929176464ebc9ad085f31e7284"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/config-help-jbr25-openapi-generator-spring.20261006T151425Z.isolation.txt": {
+    "mtime": 1791299692.9055612,
+    "seen": 1791432781.2582574,
+    "ast_hash": "b7942eb6dfc521743736cc83633a1857",
+    "semantic_hash": "b7942eb6dfc521743736cc83633a1857"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/config-help-jbr25-openapi-generator-spring.20261006T151425Z.version.txt": {
+    "mtime": 1791299692.905483,
+    "seen": 1791432781.2582579,
+    "ast_hash": "e708c743e6a0a2852d4dbf9a65f1bcd0",
+    "semantic_hash": "e708c743e6a0a2852d4dbf9a65f1bcd0"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-maven-jar-7.25.0.20261005T010240537579199Z-1687.txt": {
+    "mtime": 1791162160.6669703,
+    "seen": 1791432781.2582583,
+    "ast_hash": "985c745cf0b8d1ae40aa93f49b594d2f",
+    "semantic_hash": "985c745cf0b8d1ae40aa93f49b594d2f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-maven-openapi-generator-cli-jar-sha512.7.25.0.20261004T234041Z.txt": {
+    "mtime": 1791157241.9181273,
+    "seen": 1791432781.258259,
+    "ast_hash": "fddb4bfd8e25df788b4d5b7eabcec258",
+    "semantic_hash": "fddb4bfd8e25df788b4d5b7eabcec258"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-maven-openapi-generator-cli-pom-7.25.0.20261004T233705Z.txt": {
+    "mtime": 1791157025.5297701,
+    "seen": 1791432781.2582607,
+    "ast_hash": "eee05b331b1d9f5f693122811e0326be",
+    "semantic_hash": "eee05b331b1d9f5f693122811e0326be"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-maven-openapi-generator-cli.20261004T233531Z.txt": {
+    "mtime": 1791156942.0514395,
+    "seen": 1791432781.2582612,
+    "ast_hash": "01b2b98e25444ec977b7e5d31576fd66",
+    "semantic_hash": "01b2b98e25444ec977b7e5d31576fd66"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-maven-openapi-generator-project-pom-7.25.0.20261004T233810Z.txt": {
+    "mtime": 1791157090.5847921,
+    "seen": 1791432781.258262,
+    "ast_hash": "475596ce9b979946439ebeae3e346ded",
+    "semantic_hash": "475596ce9b979946439ebeae3e346ded"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npm-tarball-N01.20261005T015000Z.txt": {
+    "mtime": 1791165051.8311539,
+    "seen": 1791432781.2582622,
+    "ast_hash": "bdc38b72ea21d98d31787c6f60e7343b",
+    "semantic_hash": "bdc38b72ea21d98d31787c6f60e7343b"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npm-tarball-N02.20261005T015000Z.txt": {
+    "mtime": 1791165051.971156,
+    "seen": 1791432781.258263,
+    "ast_hash": "a72c3638c9b7663e29aca1d30a721edb",
+    "semantic_hash": "a72c3638c9b7663e29aca1d30a721edb"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npm-tarball-N03.20261005T015000Z.txt": {
+    "mtime": 1791165052.3541613,
+    "seen": 1791432781.2582636,
+    "ast_hash": "f1eaacae47f9fb6f5c23ee88d0748330",
+    "semantic_hash": "f1eaacae47f9fb6f5c23ee88d0748330"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npm-tarball-N04.20261005T015000Z.txt": {
+    "mtime": 1791165052.6181653,
+    "seen": 1791432781.2582638,
+    "ast_hash": "3ac7a52e0c0fd246cd8cb3d93693f86e",
+    "semantic_hash": "3ac7a52e0c0fd246cd8cb3d93693f86e"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npm-tarball-N05.20261005T015000Z.txt": {
+    "mtime": 1791165052.7941678,
+    "seen": 1791432781.2582643,
+    "ast_hash": "2556fff0ce667fd529cd75b617440d53",
+    "semantic_hash": "2556fff0ce667fd529cd75b617440d53"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npm-tarball-N06.20261005T015000Z.txt": {
+    "mtime": 1791165052.9071693,
+    "seen": 1791432781.2582648,
+    "ast_hash": "79b9a4d7fd55b314b24975209c585cf4",
+    "semantic_hash": "79b9a4d7fd55b314b24975209c585cf4"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npm-tarball-N07.20261005T015000Z.txt": {
+    "mtime": 1791165053.017171,
+    "seen": 1791432781.2582653,
+    "ast_hash": "fed1e283a5dc1dd3bb033118c900c380",
+    "semantic_hash": "fed1e283a5dc1dd3bb033118c900c380"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npm-tarball-N08.20261005T015000Z.txt": {
+    "mtime": 1791165053.1461728,
+    "seen": 1791432781.258266,
+    "ast_hash": "1cf33034dea2f7ac306e47764c58fad3",
+    "semantic_hash": "1cf33034dea2f7ac306e47764c58fad3"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npm-tarball-N09.20261005T015000Z.txt": {
+    "mtime": 1791165053.2721746,
+    "seen": 1791432781.2582664,
+    "ast_hash": "2b7eb935910f2904beda2ef6d6953250",
+    "semantic_hash": "2b7eb935910f2904beda2ef6d6953250"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-ajv-formats.20261004T191337Z.txt": {
+    "mtime": 1791141248.6901863,
+    "seen": 1791432781.258267,
+    "ast_hash": "b41c115bfe1ca86fdbd44e64f4e39ba1",
+    "semantic_hash": "b41c115bfe1ca86fdbd44e64f4e39ba1"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-ajv.20261004T191337Z.txt": {
+    "mtime": 1791141248.4341824,
+    "seen": 1791432781.2582674,
+    "ast_hash": "075ad646a48c0a083628d0ac0157e292",
+    "semantic_hash": "075ad646a48c0a083628d0ac0157e292"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-fast-deep-equal.20261004T194645Z.txt": {
+    "mtime": 1791143205.9744618,
+    "seen": 1791432781.2582679,
+    "ast_hash": "8bdff6a2e92af45e8abf832a28102036",
+    "semantic_hash": "8bdff6a2e92af45e8abf832a28102036"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-fast-uri.20261004T194645Z.txt": {
+    "mtime": 1791143206.0774632,
+    "seen": 1791432781.2582684,
+    "ast_hash": "4770b15bab3fb90fce15175babf7f515",
+    "semantic_hash": "4770b15bab3fb90fce15175babf7f515"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-json-schema-traverse.20261004T194645Z.txt": {
+    "mtime": 1791143206.2754662,
+    "seen": 1791432781.258269,
+    "ast_hash": "7f71e4a16a3d3b388b5b90aa88c4b4ba",
+    "semantic_hash": "7f71e4a16a3d3b388b5b90aa88c4b4ba"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-jsonc-parser.20261004T191337Z.txt": {
+    "mtime": 1791141246.8171577,
+    "seen": 1791432781.2582698,
+    "ast_hash": "cdf64a3563fee338889a52a9797a948a",
+    "semantic_hash": "cdf64a3563fee338889a52a9797a948a"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-redocly-cli.20261004T191337Z.txt": {
+    "mtime": 1791141247.3771663,
+    "seen": 1791432781.2582703,
+    "ast_hash": "cdb7c08a63f1839846fffaa82780223f",
+    "semantic_hash": "cdb7c08a63f1839846fffaa82780223f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-require-from-string.20261004T194645Z.txt": {
+    "mtime": 1791143206.379468,
+    "seen": 1791432781.2582707,
+    "ast_hash": "ef65b59a354be0a03424873c756ade09",
+    "semantic_hash": "ef65b59a354be0a03424873c756ade09"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-npmjs-yaml.20261004T191337Z.txt": {
+    "mtime": 1791141246.3861513,
+    "seen": 1791432781.2582712,
+    "ast_hash": "2daa25211a7da7d156dc0b24e6506afa",
+    "semantic_hash": "2daa25211a7da7d156dc0b24e6506afa"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/integrity-npm-core-tarballs.20261005T015000Z.txt": {
+    "mtime": 1791165053.293175,
+    "seen": 1791432781.2582717,
+    "ast_hash": "fc6e9ab0971cb04ef4bb05ba2e37d4b0",
+    "semantic_hash": "fc6e9ab0971cb04ef4bb05ba2e37d4b0"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N01.20261005T015000Z.txt": {
+    "mtime": 1791165123.413189,
+    "seen": 1791432781.258272,
+    "ast_hash": "b0f3d6daae6bd83be428e65d12d4eeb4",
+    "semantic_hash": "b0f3d6daae6bd83be428e65d12d4eeb4"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N01.20261005T015000Z.verbose.txt": {
+    "mtime": 1791165123.4171891,
+    "seen": 1791432781.2582724,
+    "ast_hash": "059970941669c221fd225edf526812d9",
+    "semantic_hash": "059970941669c221fd225edf526812d9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N02.20261005T015000Z.txt": {
+    "mtime": 1791165123.4581897,
+    "seen": 1791432781.2582731,
+    "ast_hash": "74603a8e9874fafd5b82450086f1babc",
+    "semantic_hash": "74603a8e9874fafd5b82450086f1babc"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N02.20261005T015000Z.verbose.txt": {
+    "mtime": 1791165123.4601896,
+    "seen": 1791432781.2582736,
+    "ast_hash": "cf9f7bcf4ba23098a0e5a519bf1fd85c",
+    "semantic_hash": "cf9f7bcf4ba23098a0e5a519bf1fd85c"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N03.20261005T015000Z.txt": {
+    "mtime": 1791165123.5201905,
+    "seen": 1791432781.258274,
+    "ast_hash": "87d2036a07160f9abf1b70b1bc449f5f",
+    "semantic_hash": "87d2036a07160f9abf1b70b1bc449f5f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N03.20261005T015000Z.verbose.txt": {
+    "mtime": 1791165123.543191,
+    "seen": 1791432781.2582746,
+    "ast_hash": "dd1c89f1fb96b80af703d2a87fbd3abe",
+    "semantic_hash": "dd1c89f1fb96b80af703d2a87fbd3abe"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N04.20261005T015000Z.txt": {
+    "mtime": 1791165123.6101918,
+    "seen": 1791432781.258275,
+    "ast_hash": "5150230a91bc892c37d8dae96c302ff1",
+    "semantic_hash": "5150230a91bc892c37d8dae96c302ff1"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N04.20261005T015000Z.verbose.txt": {
+    "mtime": 1791165123.615192,
+    "seen": 1791432781.2582755,
+    "ast_hash": "2419f325f168aac7b86fedc22ff70488",
+    "semantic_hash": "2419f325f168aac7b86fedc22ff70488"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N05.20261005T015000Z.txt": {
+    "mtime": 1791165123.6571925,
+    "seen": 1791432781.258276,
+    "ast_hash": "d7821009184a7f76dffd831887896b19",
+    "semantic_hash": "d7821009184a7f76dffd831887896b19"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N05.20261005T015000Z.verbose.txt": {
+    "mtime": 1791165123.6591926,
+    "seen": 1791432781.2582767,
+    "ast_hash": "0def216dfd899b5f495d6579e8b13533",
+    "semantic_hash": "0def216dfd899b5f495d6579e8b13533"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N06.20261005T015000Z.txt": {
+    "mtime": 1791165123.699193,
+    "seen": 1791432781.2582784,
+    "ast_hash": "5f5111de8d7f73d6842ea4071da8445e",
+    "semantic_hash": "5f5111de8d7f73d6842ea4071da8445e"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N06.20261005T015000Z.verbose.txt": {
+    "mtime": 1791165123.701193,
+    "seen": 1791432781.2582788,
+    "ast_hash": "b312065d38db8cfcc7bf48741130d35e",
+    "semantic_hash": "b312065d38db8cfcc7bf48741130d35e"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N07.20261005T015000Z.txt": {
+    "mtime": 1791165123.7411938,
+    "seen": 1791432781.2582793,
+    "ast_hash": "edf6d5e0d6afd867426f1fd500852d05",
+    "semantic_hash": "edf6d5e0d6afd867426f1fd500852d05"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N07.20261005T015000Z.verbose.txt": {
+    "mtime": 1791165123.7431936,
+    "seen": 1791432781.25828,
+    "ast_hash": "b831f0b21a3c6981a30605d8106c70f6",
+    "semantic_hash": "b831f0b21a3c6981a30605d8106c70f6"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N08.20261005T015000Z.txt": {
+    "mtime": 1791165123.7831943,
+    "seen": 1791432781.2582805,
+    "ast_hash": "1838e89c55a3e8ae585722fa02103b6e",
+    "semantic_hash": "1838e89c55a3e8ae585722fa02103b6e"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N08.20261005T015000Z.verbose.txt": {
+    "mtime": 1791165123.7851944,
+    "seen": 1791432781.258281,
+    "ast_hash": "e5777a76e419f8caf71076a302072ad3",
+    "semantic_hash": "e5777a76e419f8caf71076a302072ad3"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N09.20261005T015000Z.txt": {
+    "mtime": 1791165123.8221948,
+    "seen": 1791432781.2582815,
+    "ast_hash": "f13b88c14a44767c40212042af08e400",
+    "semantic_hash": "f13b88c14a44767c40212042af08e400"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/listing-N09.20261005T015000Z.verbose.txt": {
+    "mtime": 1791165123.824195,
+    "seen": 1791432781.258282,
+    "ast_hash": "12fc09d32960d6f6eb7b80df0bbec821",
+    "semantic_hash": "12fc09d32960d6f6eb7b80df0bbec821"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/sha256-ajv820-frontier.20261004T194645Z.txt": {
+    "mtime": 1791143247.5827057,
+    "seen": 1791432781.2582824,
+    "ast_hash": "4914c6939fa1039d1b586c13f5a4ee60",
+    "semantic_hash": "4914c6939fa1039d1b586c13f5a4ee60"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/sha256-custody-maven-jar-7.25.0.20261005T010240537579199Z-1687.txt": {
+    "mtime": 1791162177.5892115,
+    "seen": 1791432781.258283,
+    "ast_hash": "d6b33b0d2e43bc0206e4f9fc5dafc344",
+    "semantic_hash": "d6b33b0d2e43bc0206e4f9fc5dafc344"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/sha256-maven-metadata.20261004T233531Z.txt": {
+    "mtime": 1791156960.1017292,
+    "seen": 1791432781.2582836,
+    "ast_hash": "1e85e290292e3a37982d9cba23dc9889",
+    "semantic_hash": "1e85e290292e3a37982d9cba23dc9889"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/sha256-maven-pom-7.25.0.20261004T233705Z.txt": {
+    "mtime": 1791157039.0771,
+    "seen": 1791432781.258284,
+    "ast_hash": "66b9a5aec5e6761ed52f3e02447adce1",
+    "semantic_hash": "66b9a5aec5e6761ed52f3e02447adce1"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/sha256-maven-project-pom-7.25.0.20261004T233810Z.txt": {
+    "mtime": 1791157120.2562544,
+    "seen": 1791432781.2582846,
+    "ast_hash": "434e67c535efc8d5c98ee880e7d3d2c5",
+    "semantic_hash": "434e67c535efc8d5c98ee880e7d3d2c5"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/writeout-maven-jar-sha256-7.25.0.20261005T004812Z-a7f3.txt": {
+    "mtime": 1791161304.920794,
+    "seen": 1791432781.2582853,
+    "ast_hash": "1a120aacdd5f584a5afdd90fb268a05e",
+    "semantic_hash": "1a120aacdd5f584a5afdd90fb268a05e"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/writeout-npm-tarball-N01.20261005T015000Z.txt": {
+    "mtime": 1791165051.8581543,
+    "seen": 1791432781.2582855,
+    "ast_hash": "7001180bda07da086e8b11c66de11acf",
+    "semantic_hash": "7001180bda07da086e8b11c66de11acf"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/writeout-npm-tarball-N02.20261005T015000Z.txt": {
+    "mtime": 1791165051.973156,
+    "seen": 1791432781.258286,
+    "ast_hash": "4dfbf4c0c18a85460fea1a3afc454d40",
+    "semantic_hash": "4dfbf4c0c18a85460fea1a3afc454d40"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/writeout-npm-tarball-N03.20261005T015000Z.txt": {
+    "mtime": 1791165052.4941635,
+    "seen": 1791432781.2582865,
+    "ast_hash": "ae4ab684d73a292e76a036205c83e6b2",
+    "semantic_hash": "ae4ab684d73a292e76a036205c83e6b2"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/writeout-npm-tarball-N04.20261005T015000Z.txt": {
+    "mtime": 1791165052.6631658,
+    "seen": 1791432781.2582874,
+    "ast_hash": "28b06f88bf17c3c17205d0821d6e01a7",
+    "semantic_hash": "28b06f88bf17c3c17205d0821d6e01a7"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/writeout-npm-tarball-N05.20261005T015000Z.txt": {
+    "mtime": 1791165052.7961679,
+    "seen": 1791432781.2582877,
+    "ast_hash": "1423a47f5d1d6ef6c8d1472d7e3eca11",
+    "semantic_hash": "1423a47f5d1d6ef6c8d1472d7e3eca11"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/writeout-npm-tarball-N06.20261005T015000Z.txt": {
+    "mtime": 1791165052.9085033,
+    "seen": 1791432781.2582884,
+    "ast_hash": "79176cbf65ef8f1a31ba904cc66933e8",
+    "semantic_hash": "79176cbf65ef8f1a31ba904cc66933e8"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/writeout-npm-tarball-N07.20261005T015000Z.txt": {
+    "mtime": 1791165053.020171,
+    "seen": 1791432781.2582889,
+    "ast_hash": "3c78144c908f0350279e329e77e22c54",
+    "semantic_hash": "3c78144c908f0350279e329e77e22c54"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/writeout-npm-tarball-N08.20261005T015000Z.txt": {
+    "mtime": 1791165053.147173,
+    "seen": 1791432781.2582893,
+    "ast_hash": "5a30ee3ff7352e0a2c43fb921b88151d",
+    "semantic_hash": "5a30ee3ff7352e0a2c43fb921b88151d"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/writeout-npm-tarball-N09.20261005T015000Z.txt": {
+    "mtime": 1791165053.2732084,
+    "seen": 1791432781.2582898,
+    "ast_hash": "921d400cd189e5a8c2312bbef20b44af",
+    "semantic_hash": "921d400cd189e5a8c2312bbef20b44af"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/config/.redocly.lint-ignore.yaml": {
+    "mtime": 1791303644.8151438,
+    "seen": 1791432781.2582905,
+    "ast_hash": "e67c7cac25ad234019a44972461ac9c0",
+    "semantic_hash": "e67c7cac25ad234019a44972461ac9c0"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/config/redocly.disposed.yaml": {
+    "mtime": 1791303628.0149412,
+    "seen": 1791432781.258291,
+    "ast_hash": "1cd6f6846beaffac49ec9eb620f2612d",
+    "semantic_hash": "1cd6f6846beaffac49ec9eb620f2612d"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/validation/config/redocly.raw.yaml": {
+    "mtime": 1791303626.7160277,
+    "seen": 1791432781.2582915,
+    "ast_hash": "60ba2dbc8bff4125727f3b7b0608c96d",
+    "semantic_hash": "60ba2dbc8bff4125727f3b7b0608c96d"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/headers-maven-openapi-generator-cli-jar-sha256-7.25.0.20261005T004812Z-a7f3.txt": {
+    "mtime": 1791161304.916794,
+    "seen": 1791432781.2582934,
+    "ast_hash": "00fbefb9235c6c2173a3a2063e3568aa",
+    "semantic_hash": "00fbefb9235c6c2173a3a2063e3568aa"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/Mini-design-system.png": {
+    "mtime": 1790531419.804542,
+    "seen": 1791432781.258294,
+    "ast_hash": "6f5fa36571323ca103930503ade782e1",
+    "semantic_hash": "6f5fa36571323ca103930503ade782e1"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/banner-concierto.png": {
+    "mtime": 1790543626.950125,
+    "seen": 1791432781.2582946,
+    "ast_hash": "2f93b5b821f8e06a20ceaa3319e027f9",
+    "semantic_hash": "2f93b5b821f8e06a20ceaa3319e027f9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/banner.png": {
+    "mtime": 1790529227.012273,
+    "seen": 1791432781.258295,
+    "ast_hash": "4b5181b752e191e3a97f475e53347cc9",
+    "semantic_hash": "4b5181b752e191e3a97f475e53347cc9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/brand-board.png": {
+    "mtime": 1790530835.5931718,
+    "seen": 1791432781.2582955,
+    "ast_hash": "5e44377f89013f7f0e3663172f59dbde",
+    "semantic_hash": "5e44377f89013f7f0e3663172f59dbde"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/evento1.png": {
+    "mtime": 1790544832.5077298,
+    "seen": 1791432781.258296,
+    "ast_hash": "bce69fb0be41946b7853d0e20a37b387",
+    "semantic_hash": "bce69fb0be41946b7853d0e20a37b387"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/evento2.png": {
+    "mtime": 1790544862.685379,
+    "seen": 1791432781.2582967,
+    "ast_hash": "9f4a585b16afd6a6190230e292fca6e7",
+    "semantic_hash": "9f4a585b16afd6a6190230e292fca6e7"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/evento3.png": {
+    "mtime": 1790544892.156967,
+    "seen": 1791432781.2582974,
+    "ast_hash": "4b72fecaa5cbfc83009013ccdf26369d",
+    "semantic_hash": "4b72fecaa5cbfc83009013ccdf26369d"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/evento4.png": {
+    "mtime": 1790544915.430354,
+    "seen": 1791432781.258298,
+    "ast_hash": "b009b6d82dfa2fa704814c85c0dae9ad",
+    "semantic_hash": "b009b6d82dfa2fa704814c85c0dae9ad"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/evento5.png": {
+    "mtime": 1790544942.8886273,
+    "seen": 1791432781.2582984,
+    "ast_hash": "bc8c52dc5d9a2c631c7e6610eb65f0bf",
+    "semantic_hash": "bc8c52dc5d9a2c631c7e6610eb65f0bf"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/evento6.png": {
+    "mtime": 1790544963.8066857,
+    "seen": 1791432781.2582989,
+    "ast_hash": "45bd984e8fae2b2659f81d07579b23cb",
+    "semantic_hash": "45bd984e8fae2b2659f81d07579b23cb"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/evento7.png": {
+    "mtime": 1790545000.9611647,
+    "seen": 1791432781.2582994,
+    "ast_hash": "12955ac453e1be7a77d805586d5fd60c",
+    "semantic_hash": "12955ac453e1be7a77d805586d5fd60c"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/evento8.png": {
+    "mtime": 1790545029.3807178,
+    "seen": 1791432781.2582998,
+    "ast_hash": "90082672b4275afecb72c82ad3980c55",
+    "semantic_hash": "90082672b4275afecb72c82ad3980c55"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/logo-fondo.png": {
+    "mtime": 1790529341.528532,
+    "seen": 1791432781.2583008,
+    "ast_hash": "3a042f4daf0b933dce5235c2989e3209",
+    "semantic_hash": "3a042f4daf0b933dce5235c2989e3209"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/logo.png": {
+    "mtime": 1790529276.437267,
+    "seen": 1791432781.2583013,
+    "ast_hash": "e060472b138caad36f410c4517bcc39f",
+    "semantic_hash": "e060472b138caad36f410c4517bcc39f"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/pagina-img/captura-datos-compra.png": {
+    "mtime": 1790535198.7094636,
+    "seen": 1791432781.2583017,
+    "ast_hash": "2d283d70ef28f06189388601076c2796",
+    "semantic_hash": "2d283d70ef28f06189388601076c2796"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/pagina-img/confirmacion-compra.png": {
+    "mtime": 1790535258.8958366,
+    "seen": 1791432781.2583022,
+    "ast_hash": "0ed905a94c764e93e07357adf4e0a513",
+    "semantic_hash": "0ed905a94c764e93e07357adf4e0a513"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/pagina-img/evento.png": {
+    "mtime": 1790535128.5925028,
+    "seen": 1791432781.2583027,
+    "ast_hash": "8492eb32028884e14f02472e62605fa3",
+    "semantic_hash": "8492eb32028884e14f02472e62605fa3"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/pagina-img/home.png": {
+    "mtime": 1790534966.1933072,
+    "seen": 1791432781.2583032,
+    "ast_hash": "08ed52414290ac32758fd2bc6af8e5cf",
+    "semantic_hash": "08ed52414290ac32758fd2bc6af8e5cf"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/pagina-img/lista-eventos.png": {
+    "mtime": 1790534999.2734168,
+    "seen": 1791432781.2583036,
+    "ast_hash": "9f57278018c05d092593e827b56e0600",
+    "semantic_hash": "9f57278018c05d092593e827b56e0600"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/pagina-img/login.png": {
+    "mtime": 1790535420.6123338,
+    "seen": 1791432781.2583044,
+    "ast_hash": "77affe7a91436cd2918d6563271b53d5",
+    "semantic_hash": "77affe7a91436cd2918d6563271b53d5"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/pagina-img/pago.png": {
+    "mtime": 1790535227.409841,
+    "seen": 1791432781.2583048,
+    "ast_hash": "98ded493ab3ffa9d9fd7d791c3d804e9",
+    "semantic_hash": "98ded493ab3ffa9d9fd7d791c3d804e9"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/pagina-img/registro.png": {
+    "mtime": 1790535455.088429,
+    "seen": 1791432781.2583053,
+    "ast_hash": "7c318ef4f6b345472df6213f09398825",
+    "semantic_hash": "7c318ef4f6b345472df6213f09398825"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/pagina.png": {
+    "mtime": 1790529316.8353627,
+    "seen": 1791432781.2583058,
+    "ast_hash": "07a3b2d1f1bec7fc2047ead265bde77a",
+    "semantic_hash": "07a3b2d1f1bec7fc2047ead265bde77a"
+  },
+  "/mnt/data/Shares/Projects/entralo-workspace/estilo/paleta.png": {
+    "mtime": 1790528724.755132,
+    "seen": 1791432781.2583063,
+    "ast_hash": "72cc42f37ee657d2da2c802f49a1575a",
+    "semantic_hash": "72cc42f37ee657d2da2c802f49a1575a"
+  }
+}

@@ -1,0 +1,7 @@
+# SHA-256 manifest — OpenAPI Generator CLI 7.25.0 POM capture
+# run_utc=20261004T233705Z
+# url=https://repo.maven.apache.org/maven2/org/openapitools/openapi-generator-cli/7.25.0/openapi-generator-cli-7.25.0.pom
+# attempts=1  redirects_followed=0  retries=0
+8fd322115776682468db4887ede1a0e432bd859efc5570efe68d826fff20f109  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/maven-openapi-generator-cli-7.25.0.pom.20261004T233705Z.xml
+3b6a7217e67b4184c0114d25da19e8545470d289352c43392ba5b8f6c341b3aa  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-maven-openapi-generator-cli-pom-7.25.0.20261004T233705Z.txt
+765f2bf033e7cb5c5545aa6770dfdf1d8dade4a8931b658111f5f071fc939d47  /mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/fetch-maven-pom-7.25.0.20261004T233705Z.log

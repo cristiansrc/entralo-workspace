@@ -1,0 +1,15 @@
+HTTP/2 200 
+date: Sun, 04 Oct 2026 23:37:05 GMT
+content-type: text/xml
+content-length: 4303
+cf-ray: a4580330dc49b61c-BOG
+cf-cache-status: HIT
+accept-ranges: bytes
+age: 917922
+etag: "c73890c475d665d7cd4d2f39d253c3bd"
+last-modified: Mon, 24 Aug 2026 08:25:01 GMT
+x-checksum-md5: c73890c475d665d7cd4d2f39d253c3bd
+x-checksum-sha1: 8b7aa14d474ed19a106ad5d38c76475de3fa3897
+server: cloudflare
+alt-svc: h3=":443"; ma=86400
+

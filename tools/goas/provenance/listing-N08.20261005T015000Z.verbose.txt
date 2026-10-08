@@ -1,0 +1,12 @@
+-rw-r--r-- 0/0            1074 1985-10-26 03:15 package/LICENSE
+-rw-r--r-- 0/0            2428 1985-10-26 03:15 package/index.js
+-rw-r--r-- 0/0            6042 1985-10-26 03:15 package/spec/index.spec.js
+-rw-r--r-- 0/0            5544 1985-10-26 03:15 package/spec/fixtures/schema.js
+-rw-r--r-- 0/0            1004 1985-10-26 03:15 package/package.json
+-rw-r--r-- 0/0            3350 1985-10-26 03:15 package/README.md
+-rw-r--r-- 0/0             740 1985-10-26 03:15 package/index.d.ts
+-rw-r--r-- 0/0             630 1985-10-26 03:15 package/.eslintrc.yml
+-rw-r--r-- 0/0              91 1985-10-26 03:15 package/spec/.eslintrc.yml
+-rw-r--r-- 0/0             582 1985-10-26 03:15 package/.github/workflows/build.yml
+-rw-r--r-- 0/0              57 1985-10-26 03:15 package/.github/FUNDING.yml
+-rw-r--r-- 0/0             678 1985-10-26 03:15 package/.github/workflows/publish.yml

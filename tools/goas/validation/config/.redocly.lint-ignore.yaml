@@ -1,0 +1,38 @@
+# This file instructs Redocly's linter to ignore the rules contained for specific parts of your API.
+# See https://redocly.com/docs/cli/ for more information.
+#
+# G-OAS — plan §4 / api-lint-policy §"Excepciones de lint estrechas".
+# EXACTLY TEN approved tuples (file + rule + JSON Pointer). Paths are the
+# canonical ones relative to the increment root `I/`. The future run must map
+# the external snapshot paths unambiguously onto these canonical paths and
+# record the correspondence table. Any pointer that does not match the real
+# lint location BLOCKS that exception (return to Planner); never widen to a
+# whole operation / file / rule, never use wildcards.
+api/admin-bff.yaml:
+  info-license:
+    - "#/info"
+  operation-2xx-response:
+    - "#/paths/~1v1~1auth~1callback/get/responses"
+api/buyer-bff.yaml:
+  info-license:
+    - "#/info"
+  operation-2xx-response:
+    - "#/paths/~1v1~1auth~1callback/get/responses"
+api/catalog.yaml:
+  info-license:
+    - "#/info"
+api/common.yaml:
+  info-license:
+    - "#/info"
+api/identity.yaml:
+  info-license:
+    - "#/info"
+api/payments.yaml:
+  info-license:
+    - "#/info"
+api/purchases.yaml:
+  info-license:
+    - "#/info"
+api/ticketing.yaml:
+  info-license:
+    - "#/info"

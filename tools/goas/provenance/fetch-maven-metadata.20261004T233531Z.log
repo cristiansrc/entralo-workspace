@@ -1,0 +1,6 @@
+http_code=200 size_download=2948 num_redirects=0 url_effective=https://repo.maven.apache.org/maven2/org/openapitools/openapi-generator-cli/maven-metadata.xml time_total=0.183947
+exit_code=0
+run_utc=20261004T233531Z
+url_requested=https://repo.maven.apache.org/maven2/org/openapitools/openapi-generator-cli/maven-metadata.xml
+body=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/vendor/metadata/maven-openapi-generator-cli-maven-metadata.20261004T233531Z.xml
+headers=/mnt/data/Shares/Projects/entralo-workspace/tools/goas/provenance/headers-maven-openapi-generator-cli.20261004T233531Z.txt

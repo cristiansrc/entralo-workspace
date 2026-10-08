@@ -1,0 +1,16 @@
+HTTP/1.1 200 OK
+Date: Mon, 05 Oct 2026 01:02:40 GMT
+Content-Type: application/java-archive
+Content-Length: 31942042
+Connection: keep-alive
+CF-Ray: a458809019f78e5f-BOG
+CF-Cache-Status: HIT
+Accept-Ranges: bytes
+Age: 923089
+ETag: "e01eddf220074439f733bdf6e8c3daad"
+Last-Modified: Mon, 24 Aug 2026 08:25:01 GMT
+X-Checksum-MD5: e01eddf220074439f733bdf6e8c3daad
+X-Checksum-SHA1: 56a9bb79e3bb565f477eddca2c6daa288a9c6f35
+Server: cloudflare
+alt-svc: h3=":443"; ma=86400
+

@@ -1,0 +1,111 @@
+{
+  "profile": "g-oas-generation-profile",
+  "profile_version": "1.0.0",
+  "lifecycle_status": "planning",
+  "plan_refs": ["plan §16", "plan §14.4", "plan §15.3", "shared §Decisión técnica aprobada 2026-10-06"],
+  "authority": "Propuesta documental ABIERTA. No ejecutada. No cierra AC-GOAS-07 ni G-OAS. No es aprobación de plan ni de negocio.",
+  "generator": {
+    "generatorName": "spring",
+    "library": "spring-boot",
+    "jar_workspace_relative": "tools/goas/vendor/tarballs/openapi-generator-cli-7.25.0.20261005T010240537579199Z-1687.jar",
+    "jar_bytes": 31942042,
+    "jar_sha256_custody": "41ce4f6b07f196676439d710759fa1ced7a08066d06ff1bf314681470289efae",
+    "jar_sha1_header_expected": "56a9bb79e3bb565f477eddca2c6daa288a9c6f35",
+    "wrapper": null,
+    "note": "Direct JAR only. Do NOT download again, extract, install or use a wrapper."
+  },
+  "java": {
+    "runtime": "JBR",
+    "version": "25.0.3",
+    "major": 25,
+    "implementor_version": "JBR-25.0.3+9-508.16-nomod",
+    "runtime_version": "25.0.3+9-b508.16",
+    "os": "linux",
+    "os_arch": "x86_64",
+    "sha256_custody": "4bb57cc896ef2c6833e63583e34aef4f605ec63b52617e3f4b25f447284a68ac",
+    "tarball_url": "https://cache-redirector.jetbrains.com/intellij-jbr/jbr-25.0.3-linux-x64-b508.16.tar.gz",
+    "tarball_checksum_url": "https://cache-redirector.jetbrains.com/intellij-jbr/jbr-25.0.3-linux-x64-b508.16.tar.gz.checksum",
+    "tarball_sha512": "f936d2a4048485d3cb552c26f69b41f13eba0f75de1178c9ff6185547755c336d0ef5af9641f004e916d0d0414e34d1e9f9d12c08d262038cbca517dcad0dc96",
+    "source_commit": "c624f1bd958763cf442320ee570b5ad468b226bb",
+    "explicit_absolute_path_only": true,
+    "path_binding": "Provided at run time as JBR25_JAVA and JBR25_HOME (corroborated absolute paths). Never stored in the repo and never discovered via HOME search.",
+    "forbidden": ["Java 26", "java from PATH", "/usr/bin/java", "/usr/lib/jvm/default"],
+    "system_java_must_not_change": true
+  },
+  "global_property": {
+    "flag": "--global-property",
+    "value": "apis,models,apiDocs=false,modelDocs=false,apiTests=false,modelTests=false",
+    "must_not_use_additional_properties": true
+  },
+  "additional_properties": {
+    "flag": "--additional-properties",
+    "ordered_pairs": [
+      ["interfaceOnly", "true"],
+      ["skipDefaultInterface", "true"],
+      ["useSpringBoot4", "true"],
+      ["useSpringBoot3", "false"],
+      ["useJakartaEe", "true"],
+      ["useJackson3", "true"],
+      ["useBeanValidation", "true"],
+      ["documentationProvider", "none"],
+      ["useSwaggerUI", "false"],
+      ["annotationLibrary", "none"],
+      ["hideGenerationTimestamp", "true"],
+      ["useTags", "true"]
+    ],
+    "count": 12,
+    "serialized": "interfaceOnly=true,skipDefaultInterface=true,useSpringBoot4=true,useSpringBoot3=false,useJakartaEe=true,useJackson3=true,useBeanValidation=true,documentationProvider=none,useSwaggerUI=false,annotationLibrary=none,hideGenerationTimestamp=true,useTags=true"
+  },
+  "supporting_files": {
+    "must_not_set": true,
+    "note": "Neither `supportingFiles` nor `supportingFiles=false` is ever passed. Fixing `--invoker-package` does not select supporting files."
+  },
+  "config_help_provenance": {
+    "evidence_only": "existence of options",
+    "report_workspace_relative": "tools/goas/provenance/CONFIG-HELP-REPORT-jbr25-openapi-generator-spring.20261006T151425Z.md",
+    "stdout_workspace_relative": "tools/goas/provenance/config-help-jbr25-openapi-generator-spring.20261006T151425Z.stdout.log",
+    "exit_workspace_relative": "tools/goas/provenance/config-help-jbr25-openapi-generator-spring.20261006T151425Z.exit.txt",
+    "rerun": false,
+    "limit": "config-help proves option existence only; it does not prove generate, Spring Boot/Jackson/Java compatibility, full runtime support or AC-GOAS-07 compliance."
+  },
+  "roots": [
+    { "slug": "admin-bff", "segment": "adminbff", "input_bundle": "${run}/bundles/admin-bff.yaml", "output_dir": "${run}/generate/admin-bff", "apiPackage": "com.entralo.goas.validation.adminbff.api", "modelPackage": "com.entralo.goas.validation.adminbff.model", "invokerPackage": "com.entralo.goas.validation.adminbff.invoker" },
+    { "slug": "buyer-bff", "segment": "buyerbff", "input_bundle": "${run}/bundles/buyer-bff.yaml", "output_dir": "${run}/generate/buyer-bff", "apiPackage": "com.entralo.goas.validation.buyerbff.api", "modelPackage": "com.entralo.goas.validation.buyerbff.model", "invokerPackage": "com.entralo.goas.validation.buyerbff.invoker" },
+    { "slug": "catalog", "segment": "catalog", "input_bundle": "${run}/bundles/catalog.yaml", "output_dir": "${run}/generate/catalog", "apiPackage": "com.entralo.goas.validation.catalog.api", "modelPackage": "com.entralo.goas.validation.catalog.model", "invokerPackage": "com.entralo.goas.validation.catalog.invoker" },
+    { "slug": "identity", "segment": "identity", "input_bundle": "${run}/bundles/identity.yaml", "output_dir": "${run}/generate/identity", "apiPackage": "com.entralo.goas.validation.identity.api", "modelPackage": "com.entralo.goas.validation.identity.model", "invokerPackage": "com.entralo.goas.validation.identity.invoker" },
+    { "slug": "payments", "segment": "payments", "input_bundle": "${run}/bundles/payments.yaml", "output_dir": "${run}/generate/payments", "apiPackage": "com.entralo.goas.validation.payments.api", "modelPackage": "com.entralo.goas.validation.payments.model", "invokerPackage": "com.entralo.goas.validation.payments.invoker" },
+    { "slug": "purchases", "segment": "purchases", "input_bundle": "${run}/bundles/purchases.yaml", "output_dir": "${run}/generate/purchases", "apiPackage": "com.entralo.goas.validation.purchases.api", "modelPackage": "com.entralo.goas.validation.purchases.model", "invokerPackage": "com.entralo.goas.validation.purchases.invoker" },
+    { "slug": "ticketing", "segment": "ticketing", "input_bundle": "${run}/bundles/ticketing.yaml", "output_dir": "${run}/generate/ticketing", "apiPackage": "com.entralo.goas.validation.ticketing.api", "modelPackage": "com.entralo.goas.validation.ticketing.model", "invokerPackage": "com.entralo.goas.validation.ticketing.invoker" }
+  ],
+  "common": {
+    "is_service": false,
+    "gets_namespace": false,
+    "gets_generate": false,
+    "note": "common.yaml is documentary: it supplies schemas by resolved refs and does not receive a generation output."
+  },
+  "output": {
+    "root": "/tmp/opencode/entralo-v1-executable-specs/<run_id>",
+    "bundles_pattern": "${run}/bundles/<root>.yaml",
+    "generate_pattern": "${run}/generate/<root>",
+    "outside_repo": true,
+    "refuse_if_exists": true
+  },
+  "sequence": {
+    "order": "per root: validate first; generate only if that validate exited 0 and preconditions/deadline still hold",
+    "skip_validate_spec": false,
+    "commands_total": 14,
+    "per_root_timeout_ms": 120000,
+    "run_total_timeout_ms": 900000,
+    "note": "Seven pairs at max would require 1680 s; this plan does NOT claim they fit in 900 s."
+  },
+  "prohibited": [
+    "compile / javac / maven / gradle / product build / running generated code",
+    "supportingFiles",
+    "generate for common",
+    "output under build/generated or any product path",
+    "copy / promotion / packaging / install",
+    "network / git / scan",
+    "using Java 26 or PATH java",
+    "altering contracts, bundles or the profile to obtain exit 0"
+  ]
+}
